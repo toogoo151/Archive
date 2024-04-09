@@ -1,0 +1,27 @@
+.Headicon{
+    margin-left: 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.iconImg{
+    width: 30px;
+    height: 30px;
+
+}
+.counter{
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    padding: 8px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    color: white;
+}
+
