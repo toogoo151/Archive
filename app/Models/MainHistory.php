@@ -49,6 +49,46 @@ class MainHistory extends Model
 }
 
 
+    public function getOfficerProcessCheck($req)
+    {
+        try {
+            $getProcess = DB::table("pko_officer_main")
+            ->where("pko_officer_main.missionID", "=",  $req->_missionID)
+                ->where("pko_officer_main.eeljID", "=",  $req->_eeljID)
+                ->where("pko_officer_main.pkoUserID", "=", Auth::user()->id)
+
+                ->leftJoin("pko_documents", function ($query) {
+                    $query->on("pko_documents.pkoMainHistoryID", "=", "pko_officer_main.id");
+                })
+                ->leftJoin("pko_doc_description", function ($query) {
+                    $query->on("pko_doc_description.pkoDocumentID", "=", "pko_documents.id");
+                })
+
+                ->leftJoin("pko_health", function ($query) use ($req) {
+                $query->where("pko_health.missionID", "=", $req->_missionID)
+                        ->where("pko_health.eeljID", "=", $req->_eeljID)
+                        ->on("pko_health.pkoMainHistoryID", "=", "pko_officer_main.id");
+                })
+                ->select("pko_officer_main.*", "pko_documents.id as pkoDocID", "pko_doc_description.docDescription", "pko_doc_description.id as pkoDocDescID",  "pko_health.healthPdf")
+
+                ->get();
+            return $getProcess;
+        } catch (\Throwable $th) {
+            return $th;
+            return response(
+                array(
+                    "status" => "error",
+                    "msg" => "Тохиргоо татаж чадсангүй."
+                ),
+                500
+            );
+        }
+    }
+
+
+
+
+
 //  public function getProssDesc($req){
 //     try {
 //         $getProcess = DB::table("pko_documents")

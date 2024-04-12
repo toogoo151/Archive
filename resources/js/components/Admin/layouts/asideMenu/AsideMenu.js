@@ -2647,6 +2647,20 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                             )}
                                                         </>
                                                     )}
+                                                                      <MenuItem
+                                                                url="/pko/officer/documents"
+                                                                icon="nav-icon fa fa-file-text"
+                                                                menuName="Бичиг баримтын бүрдэл"
+                                                            />
+                                                            <MenuItem
+                                                                url="/OfficerProcess"
+                                                                icon="nav-icon fa fa-spinner"
+                                                                menuName="Оролцооны байдал"
+                                                            />
+                                                        </>
+                                                    )}
+                                                </>
+                                            )}
 
                                                     <MenuItem
                                                         url="/user/complaints"

@@ -56,6 +56,16 @@ use App\Http\Controllers\OffResearchController;
 use App\Http\Controllers\DocumentOfficerController;
 use App\Http\Controllers\HealthOfficerController;
 use App\Http\Controllers\SportOfficerController;
+use App\Http\Controllers\DocumentOffItemController;
+
+
+
+
+
+
+
+
+
 use App\Models\Airplane;
 use App\Models\AirplaneArrived;
 use App\Models\AirplaneShiftItem;
@@ -95,6 +105,10 @@ use App\Models\Sport;
 use App\Models\UuregGuitsetgelt;
 use App\Models\YearWish;
 use App\Models\BT_recommendation;
+
+use App\Models\DocumentOfficer;
+use App\Models\DocumentOfficerItem;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -333,6 +347,7 @@ Route::post("/count/doc/items",function(Request $req){
 //DocumentItems end
 //Document User start
 Route::post("/get/document/user", [DocumentUserController::class, "getDocUser"]);
+
 //Document User end
 
 //Document Unit start
@@ -860,6 +875,12 @@ Route::post("/get/check/process", function(Request $req){
     $getProcess = new MainHistory();
         return $getProcess->getProcessCheck($req);
 });
+//Officer process
+Route::get("/get/process", [ProcessController::class, "get"]);
+Route::post("/get/check/officer/process", function (Request $req) {
+    $getProcess = new MainHistory();
+    return $getProcess->getOfficerProcessCheck($req);
+});
 
 // Notify start
 Route::get("/get/notify", [ZarlanController::class, "notify"]);
@@ -1000,7 +1021,25 @@ Route::post("/first/officer/rescheck", [OffResearchController::class, "firstChec
 Route::post("/new/officer/research", [OffResearchController::class, "newofficerResearch"]);
 
 //OffDocument
-Route::post("/get/document/officer", [DocumentOfficerController::class, "getDocOfficer"]);
+// Route::post("/get/document/officer", [DocumentOfficerController::class, "getDocOfficer"]);
+
+Route::post("/get/document/officer", [DocumentUserController::class, "getDocOff"]);
+
+
+
+//OffDocumentItem
+// Route::post("/get/off/doc/items", function (Request $req) {
+//     $docItem = new DocumentOfficerItem();
+//     return $docItem->getOffDocItems($req);
+// });
+// Route::post("/get/off/doc/shaardlaga", [DocumentOffItemController::class, "documentOffItemiinShaardlaga"]);
+// Route::post("/new/doc/item", [DocumentOffItemController::class, "newOffDocItem"]);
+// Route::post("/edit/doc/item", [DocumentOffItemController::class, "editOffDocItem"]);
+// Route::post("/delete/doc/item", [DocumentOffItemController::class, "deleteOffDocItem"]);
+// Route::post("/count/doc/items", function (Request $req) {
+//     $countDocItems = new DocumentOfficerItem();
+//     return $countDocItems->countOffDocItems($req);
+// });
 
 
 //OffMission start

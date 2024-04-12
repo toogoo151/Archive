@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 import MUIDatatable from "../../../../components/Admin/general/MUIDatatable/MUIDatatable";
 import axios from "../../../../AxiosUser";
 import CustomToolbar from "../../../../components/Admin/general/MUIDatatable/CustomToolbar";
-// import DocumentOfficerNew from "../Document/DocumentOfficerNew";
-// import DocumentOfficerEdit from "../Document/DocumentOfficerEdit";
+import DocumentOfficerNew from "../Document/DocumentOfficerNew";
+import DocumentOfficerEdit from "../Document/DocumentOfficerEdit";
 import Swal from "sweetalert2";
 import CheckButton from "@mui/icons-material/CheckCircleOutlineOutlined";
 import DangerousButton from "@mui/icons-material/DangerousSharp";
-// import DocumentUnitDes from "../DocumentUnit/DocumentUnitDes";
+import DocumentUnitDes from "../../Documents/DocumentUnit/DocumentUnitDes";
 
 const DocumentOfficer = () => {
     const [getDocUser, setDocUser] = useState([]);
@@ -42,9 +42,6 @@ const DocumentOfficer = () => {
         };
     }, []);
 
-
-
-
     useEffect(() => {
         axios
             .get("/get/missions2")
@@ -58,8 +55,9 @@ const DocumentOfficer = () => {
         fn_isDocumentAddButton(missionID, eeljID);
     }, []);
 
-     const changeMission = (e) => {
+    const changeMission = (e) => {
         setMissionID(e.target.value);
+        setEeljID("");
         axios
             .post("/get/eelj/by/missionID", {
                 _missionID: e.target.value,
@@ -71,21 +69,6 @@ const DocumentOfficer = () => {
                 console.log(err);
             });
     };
-
-    // const changeMission = (e) => {
-    //     setMissionID(e.target.value);
-    //     setEeljID("");
-    //     axios
-    //         .post("/get/eelj/by/missionID", {
-    //             _missionID: e.target.value,
-    //         })
-    //         .then((res) => {
-    //             setEelj(res.data);
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //         });
-    // };
 
     useEffect(() => {
         refreshDocUser(missionID, eeljID);
@@ -103,7 +86,7 @@ const DocumentOfficer = () => {
     const refreshDocUser = (missionID, eeljID) => {
         if (missionID != undefined && eeljID != undefined) {
             axios
-                .post("/get/document/user", {
+                .post("/get/document/officer", {
                     _missionID: missionID,
                     _eeljID: eeljID,
                 })
@@ -195,18 +178,18 @@ const DocumentOfficer = () => {
                                         Ажиллагаа:
                                     </span>
                                 </div>
-                               <select
-                                className="form-control"
-                                onChange={changeMission}
-                                value={missionID}
-                            >
-                                <option value="">Сонгоно уу</option>
-                                {getMission.map((el) => (
-                                    <option key={el.id} value={el.id}>
-                                        {el.missionName}
-                                    </option>
-                                ))}
-                            </select>
+                                <select
+                                    className="form-control"
+                                    onChange={changeMission}
+                                    value={missionID}
+                                >
+                                    <option value="">Сонгоно уу</option>
+                                    {getMission.map((el) => (
+                                        <option key={el.id} value={el.id}>
+                                            {el.missionName}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
                         <div className="col-md-3">
@@ -297,7 +280,7 @@ const DocumentOfficer = () => {
                                         title={"БҮРДҮҮЛСЭН БИЧИГ БАРИМТ"}
                                         btnClassName={"btn btn-success"}
                                         modelType={"modal"}
-                                        dataTargetID={"#documentUserNew"}
+                                        dataTargetID={"#documentOfficerNew"}
                                         spanIconClassName={
                                             "fas fa-solid fa-plus"
                                         }
@@ -312,7 +295,7 @@ const DocumentOfficer = () => {
                                         title={"БҮРДҮҮЛСЭН БИЧИГ БАРИМТ"}
                                         btnClassName={"btn btn-success"}
                                         modelType={"modal"}
-                                        dataTargetID={"#documentUserNew"}
+                                        dataTargetID={"#documentOfficerNew"}
                                         spanIconClassName={
                                             "fas fa-solid fa-plus"
                                         }
@@ -326,7 +309,8 @@ const DocumentOfficer = () => {
                         }
                         btnEdit={btnEdit}
                         modelType={showModal}
-                        editdataTargetID={"#documentUserEdit"}
+                        editdataTargetID={"#documentOfficerEdit"}
+
                         btnDelete={btnDelete}
                         avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
                         avgColumnName={"email"} //
@@ -337,20 +321,20 @@ const DocumentOfficer = () => {
                         isHideEdit={true}
                     />
                     <br />
-                    {/* {missionID != "" &&
+                    {missionID != "" &&
                         eeljID != "" &&
                         isDocumentAddButton &&
                         getMyDocTotal != 1 && (
-                            <DocumentUserNew
+                            <DocumentOfficerNew
                                 refreshDocUser={refreshDocUser}
                                 missionID={missionID}
                                 eeljID={eeljID}
                                 getMainHistoryID={getMainHistoryID}
                                 countRow={getDocUser.length}
                             />
-                        )} */}
+                        )}
 
-                    {/* <DocumentUserEdit
+                    <DocumentOfficerEdit
                         setRowsSelected={setRowsSelected}
                         refreshDocUser={refreshDocUser}
                         missionID={missionID}
@@ -358,10 +342,10 @@ const DocumentOfficer = () => {
                         changeDataRow={clickedRowDataChild}
                         isEditBtnClick={isEditBtnClick}
                         getMainHistoryID={getMainHistoryID}
-                    /> */}
-                    {clickedRowDataChild.approveComandlal == 2 && (
+                    />
+                        {
                         <>
-                            {clickedRowDataChild.approveGsmaf == 2 ? (
+                            {/* {clickedRowDataChild.approveGsmaf == 2 ? (
                                 <DocumentUnitDes
                                     clickedRowData={clickedRowDataChild}
                                 />
@@ -369,14 +353,15 @@ const DocumentOfficer = () => {
                                 <DocumentUnitDes
                                     clickedRowData={clickedRowDataChild}
                                 />
-                            )}
-                            {/* {clickedRowDataChild.approveGsmaf == 2 && (
+                            )} */}
+                            {clickedRowDataChild.approveGsmaf == 2 && (
                                 <DocumentUnitDes
                                     clickedRowData={clickedRowDataChild}
                                 />
-                            )} */}
+                            )}
                         </>
-                    )}
+
+                        }
                 </div>
             )}
         </div>
@@ -500,37 +485,8 @@ const columns = [
         },
     },
     {
-        name: "approveComandlal",
-        label: "Командлал зөвшөөрсөн эсэх",
-        options: {
-            filter: true,
-            sort: false,
-            setCellProps: () => {
-                return { align: "center" };
-            },
-            setCellHeaderProps: (value) => {
-                return {
-                    style: {
-                        backgroundColor: "#5DADE2",
-                        color: "white",
-                        // width: 120,
-                    },
-                };
-            },
-            customBodyRender: (value) => {
-                if (value == 1) {
-                    return <CheckButton color={"success"}></CheckButton>;
-                } else if (value == 0) {
-                    return "Шийдвэрлэгдээгүй";
-                } else {
-                    return <DangerousButton color={"error"}></DangerousButton>;
-                }
-            },
-        },
-    },
-    {
         name: "approveGsmaf",
-        label: "ЗХЖШ зөвшөөрсөн эсэх",
+        label: "Зөвшөөрсөн эсэх",
         options: {
             filter: true,
             sort: false,
@@ -557,12 +513,41 @@ const columns = [
             },
         },
     },
+    // {
+    //     name: "approveGsmaf",
+    //     label: "ЗХЖШ зөвшөөрсөн эсэх",
+    //     options: {
+    //         filter: true,
+    //         sort: false,
+    //         setCellProps: () => {
+    //             return { align: "center" };
+    //         },
+    //         setCellHeaderProps: (value) => {
+    //             return {
+    //                 style: {
+    //                     backgroundColor: "#5DADE2",
+    //                     color: "white",
+    //                     // width: 120,
+    //                 },
+    //             };
+    //         },
+    //         customBodyRender: (value) => {
+    //             if (value == 1) {
+    //                 return <CheckButton color={"success"}></CheckButton>;
+    //             } else if (value == 0) {
+    //                 return "Шийдвэрлэгдээгүй";
+    //             } else {
+    //                 return <DangerousButton color={"error"}></DangerousButton>;
+    //             }
+    //         },
+    //     },
+    // },
 ];
 
 const excelHeaders = [
     { label: "Бичиг баримтын нэр", key: "documentName" },
     { label: "Бичиг баримтад тавигдах шаардлага", key: "documentShaardlaga" },
     { label: "PDF", key: "documentPdf" },
-    { label: "Командлал зөвшөөрсөн эсэх", key: "approveComandlal" },
-    { label: "ЗХЖШ зөвшөөрсөн эсэх", key: "approveGsmaf" },
+    { label: "зөвшөөрсөн эсэх", key: "approveGsmaf" },
+    // { label: "ЗХЖШ зөвшөөрсөн эсэх", key: "approveGsmaf" },
 ];
