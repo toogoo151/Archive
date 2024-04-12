@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\DateNews;
-use Cookie;
+// use Cookie;
+use Illuminate\Support\Facades\Cookie;
 
 class AravtController extends Controller
 {

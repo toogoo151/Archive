@@ -144,20 +144,16 @@ import SportOther from "../../../../Pages/OptionFund/Sport/SportOther/SportOther
 import OffQuestion from "../../../../Pages/OptionFund/Officer/Question/OffQuestion";
 import OffResearch from "../../../../Pages/OptionFund/Officer/Question/OffResearch";
 import DocumentOfficer from "../../../../Pages/OptionFund/Officer/Document/DocumentOfficer";
+import OfficerMainHistory from "../../../../Pages/OfficerBack/MainHistory/OfficerMainHistory";
+import HealthOfficer from "../../../../Pages/OfficerBack/HealtApprove/Health";
+import SportApproveOfficer from "../../../../Pages/OfficerBack/SportApprove/SportApprove";
 // import OffResearch from "../../../../Pages/OptionFund/Officer/Question/OffResearch";
-
-
-
-
-
-
-
 
 //Login tsag
 // import UserProfile from "../../../../Pages/OptionFund/UserProfile/UserProfile";
 
 const MyRoutes = (props) => {
-     const {
+    const {
         showFirstMenu,
         showSecondMenu,
         handleFirstMenuClick,
@@ -235,7 +231,7 @@ const MyRoutes = (props) => {
             />
             <Route path="/comission/health" element={<ComissionHealth />} />
             <Route path="/comission/sport" element={<ComissionSport />} />
-            <Route path="/pko/user/question" element={<Question/>} />
+            <Route path="/pko/user/question" element={<Question />} />
             <Route path="/user/requirements" element={<Requirements />} />
             <Route path="/pko/question/edit" element={<QuestionEdit />} />
             <Route path="/pko/user/documents" element={<DocumentUser />} />
@@ -245,16 +241,18 @@ const MyRoutes = (props) => {
                 path="dadaaFancy/jquery.fancybox.min.css"
                 element={<Home />}
             />
-                <Route
+            <Route
                 path="/Home"
-                element={<Home
-                showFirstMenu={showFirstMenu}
-                showSecondMenu={showSecondMenu}
-                handleFirstMenuClick={handleFirstMenuClick}
-                handleSecondMenuClick={handleSecondMenuClick}
-                />}
+                element={
+                    <Home
+                        showFirstMenu={showFirstMenu}
+                        showSecondMenu={showSecondMenu}
+                        handleFirstMenuClick={handleFirstMenuClick}
+                        handleSecondMenuClick={handleSecondMenuClick}
+                    />
+                }
             />
-             {/* <Route path="/AnotherHome" element={<AnotherHome />}/> */}
+            {/* <Route path="/AnotherHome" element={<AnotherHome />}/> */}
 
             <Route path="/News" element={<News />} />
             <Route path="/Page/new" element={<Page />} />
@@ -268,14 +266,28 @@ const MyRoutes = (props) => {
             {/* Officer */}
             <Route path="/pko/officer/question" element={<OffQuestion />} />
             <Route path="/pko/officer/research" element={<OffResearch />} />
-            <Route path="/pko/officer/documents" element={<DocumentOfficer />} />
+            <Route
+                path="/pko/officer/documents"
+                element={<DocumentOfficer />}
+            />
+
+            {/* officer back start */}
+            <Route
+                path="/officer/back/mainHistory"
+                element={<OfficerMainHistory />}
+            />
+
+            <Route
+                path="/officer/back/healt/approve"
+                element={<HealthOfficer />} // officerBack/HealtApprove/Health
+            />
+
+            <Route
+                path="/officer/back/sport/approve"
+                element={<SportApproveOfficer />} // officerBack/SportApprove/SportApprove
+            />
 
             {/* <Route path="/Officer/Process" element={<OffResearch />} /> */}
-
-
-
-
-
 
             {/* <Route path="/login/attempt" element={<LoginAttempt/>} /> */}
         </Routes>

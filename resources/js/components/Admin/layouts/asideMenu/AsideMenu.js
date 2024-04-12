@@ -1,7 +1,7 @@
 import axios from "../../../../AxiosUser";
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { useLocation , useParams, Link } from "react-router-dom";
+import { useLocation, useParams, Link } from "react-router-dom";
 // import logo from "../../../../../dist/img/psychology_logo.png";
 import user2 from "../../../../../dist/img/userIcon.png";
 import MenuItem from "../../MenuItem/MenuItem";
@@ -21,7 +21,7 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
     const [getWishID, setWishID] = useState(-1);
     const [getUserCheck2, setUserCheck2] = useState(-1);
     const [getWishID2, setWishID2] = useState(-1);
-        const location = useLocation();
+    const location = useLocation();
     const url = location.pathname;
 
     useEffect(() => {
@@ -51,7 +51,7 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
             });
 
         //officer asuumj shalgah
-           axios
+        axios
             .post("/first/officer/qcheck")
             .then((res) => {
                 setUserCheck2(res.data.userCheck);
@@ -732,6 +732,77 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 url="/Page/new"
                                                 icon="nav-icon fa fa-file"
                                                 menuName="Хуудаст мэдээ оруулах"
+                                            /> */}
+                                        </ul>
+                                    </li>
+                                    <a
+                                        href="/home"
+                                        className="brand-link"
+                                        style={{
+                                            textDecoration: "none",
+                                            textAlign: "center",
+                                            borderBottom: "1px solid #FFFFFF",
+                                            color: "#FFFFFF",
+                                        }}
+                                    >
+                                        <span className="brand-text font-weight-light">
+                                            АЖИГЛАГЧ
+                                        </span>
+                                    </a>
+                                    <li className="nav-item">
+                                        <a
+                                            href="#"
+                                            className="nav-link"
+                                            style={{ color: "#FFFFFF" }}
+                                        >
+                                            <i className="nav-icon fa fa-home" />
+                                            <p>
+                                                ҮНДСЭН
+                                                <i className="fas fa-angle-left right" />
+                                            </p>
+                                        </a>
+                                        <ul
+                                            className="nav nav-treeview"
+                                            style={{
+                                                paddingLeft: "10px",
+                                            }}
+                                        >
+                                            <MenuItem
+                                                url="/officer/back/mainHistory"
+                                                icon="nav-icon fa fa-archive"
+                                                menuName="ЦАХ-ийн дэлгэрэнгүй"
+                                            />
+                                            <MenuItem
+                                                url="/document/comandlal"
+                                                icon="nav-icon fa fa-file-text"
+                                                menuName="Бичиг баримт шалгах"
+                                            />
+
+                                            <MenuItem
+                                                url="/officer/back/healt/approve"
+                                                icon="nav-icon fa fa-user-md"
+                                                menuName="Эрүүл мэндийн үзлэг"
+                                            />
+
+                                            <MenuItem
+                                                url="/officer/back/sport/approve"
+                                                icon="nav-icon fa fa-dumbbell"
+                                                menuName="Биеийн тамирын шалгалт"
+                                            />
+                                            {/* <MenuItem
+                                                url="/com/main/history"
+                                                icon="nav-icon fa fa-university"
+                                                menuName="Командлал үндсэн"
+                                            /> */}
+                                            {/* <MenuItem
+                                                url="/document/comandlal"
+                                                icon="nav-icon fa fa-file-text"
+                                                menuName="Бичиг баримт шалгах"
+                                            />
+                                            <MenuItem
+                                                url="/mission/history"
+                                                icon="nav-icon fa fa-history"
+                                                menuName="Ажиллагааны түүх"
                                             /> */}
                                         </ul>
                                     </li>
@@ -2385,291 +2456,289 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                 </>
                             )}
 
-                            {userType === "unitUser" &&  (
-                        <>
-                              {showFirstMenu && (
-                                 <div>
+                            {userType === "unitUser" && (
+                                <>
+                                    {showFirstMenu && (
+                                        <div>
+                                            <li className="nav-item">
+                                                <a
+                                                    href="#"
+                                                    className="nav-link"
+                                                    style={{ color: "#FFFFFF" }}
+                                                >
+                                                    <i className="nav-icon fa fa-home" />
+                                                    <p>
+                                                        ҮНДСЭН
+                                                        <i className="fas fa-angle-left right" />
+                                                    </p>
+                                                </a>
+                                                <ul
+                                                    className="nav nav-treeview"
+                                                    style={{
+                                                        paddingLeft: "10px",
+                                                    }}
+                                                >
+                                                    <MenuItem
+                                                        url="/pko/user/question"
+                                                        icon="nav-icon fa fa-paper-plane"
+                                                        menuName="Хүсэлт илгээх"
+                                                    />
 
-                                    <li className="nav-item">
-                                        <a
-                                            href="#"
-                                            className="nav-link"
-                                            style={{ color: "#FFFFFF" }}
-                                        >
-                                            <i className="nav-icon fa fa-home" />
-                                            <p>
-                                                ҮНДСЭН
-                                                <i className="fas fa-angle-left right" />
-                                            </p>
-                                        </a>
-                                        <ul
-                                            className="nav nav-treeview"
-                                            style={{
-                                                paddingLeft: "10px",
-                                            }}
-                                        >
-                                                <MenuItem
-                                                    url="/pko/user/question"
-                                                    icon="nav-icon fa fa-paper-plane"
-                                                    menuName="Хүсэлт илгээх"
-                                                />
-
-
-                                            <MenuItem
-                                                url="/ReqDate"
-                                                icon="nav-icon far fa-hourglass"
-                                                menuName="Хүсэлт илгээх он"
-                                            />
-                                            {getUserCheck == 1 && (
-                                                <>
-                                                    {getWishID == 1 && (
+                                                    <MenuItem
+                                                        url="/ReqDate"
+                                                        icon="nav-icon far fa-hourglass"
+                                                        menuName="Хүсэлт илгээх он"
+                                                    />
+                                                    {getUserCheck == 1 && (
                                                         <>
-                                                            <MenuItem
-                                                                url="/pko/user/documents"
-                                                                icon="nav-icon fa fa-file-text"
-                                                                menuName="Бичиг баримтын бүрдэл"
-                                                            />
-                                                            <MenuItem
-                                                                url="/Process"
-                                                                icon="nav-icon fa fa-spinner"
-                                                                menuName="Оролцооны байдал"
-                                                            />
-                                                        </>
-                                                    )}
-                                                </>
-                                            )}
-
-                                            <MenuItem
-                                                url="/user/complaints"
-                                                icon="nav-icon fa fa-envelope"
-                                                menuName="Санал гомдол"
-                                            />
-                                        </ul>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a
-                                            href="#"
-                                            className="nav-link"
-                                            style={{ color: "#FFFFFF" }}
-                                        >
-                                            <i className="nav-icon fa fa-bullhorn" />
-                                            <p>
-                                                ЗАРЛАЛ
-                                                <i className="fas fa-angle-left right" />
-                                            </p>
-                                        </a>
-                                        <ul
-                                            className="nav nav-treeview"
-                                            style={{
-                                                paddingLeft: "10px",
-                                            }}
-                                        >
-                                            <MenuItem
-                                                url="/AnnouncementHistory"
-                                                icon="nav-icon fa fa-bullhorn"
-                                                menuName="Зарлал харах"
-                                            />
-                                        </ul>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a
-                                            href="#"
-                                            className="nav-link"
-                                            style={{ color: "#FFFFFF" }}
-                                        >
-                                            <i className="nav-icon fa fa-book-open" />
-                                            <p>
-                                                Ашиглах заавар
-                                                <i className="fas fa-angle-left right" />
-                                            </p>
-                                        </a>
-                                        <ul
-                                            className="nav nav-treeview"
-                                            style={{
-                                                paddingLeft: "10px",
-                                            }}
-                                        >
-                                            <MenuItem
-                                                url="/Video/zaawar"
-                                                icon="nav-icon fa fa-book-open"
-                                                menuName="Видео заавар"
-                                            />
-                                        </ul>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a
-                                            href="#"
-                                            className="nav-link"
-                                            style={{ color: "#FFFFFF" }}
-                                        >
-                                            <i className="nav-icon far fa-user" />
-                                            <p>
-                                                ХЭРЭГЛЭГЧ
-                                                <i className="fas fa-angle-left right" />
-                                            </p>
-                                        </a>
-                                        <ul
-                                            className="nav nav-treeview"
-                                            style={{ paddingLeft: "10px" }}
-                                        >
-                                            <MenuItem
-                                                url="/user/profile"
-                                                icon="nav-icon fa fa-user"
-                                                menuName="Профайл"
-                                            />
-                                            <MenuItem
-                                                url="/admin/password/reset"
-                                                icon="nav-icon fa fa-lock"
-                                                menuName="Нууц үг солих"
-                                            />
-                                        </ul>
-                                            </li>
-                                             </div>
-                                    )}
-                            {showSecondMenu && (
-                                 <div>
-
-                                    <li className="nav-item">
-                                        <a
-                                            href="#"
-                                            className="nav-link"
-                                            style={{ color: "#FFFFFF" }}
-                                        >
-                                            <i className="nav-icon fa fa-home" />
-                                            <p>
-                                                ҮНДСЭН
-                                                <i className="fas fa-angle-left right" />
-                                            </p>
-                                        </a>
-                                        <ul
-                                            className="nav nav-treeview"
-                                            style={{
-                                                paddingLeft: "10px",
-                                            }}
-                                        >
-                                                <MenuItem
-                                                    url="/pko/officer/question"
-                                                    icon="nav-icon fa fa-paper-plane"
-                                                    menuName="Хүсэлт илгээх"
-                                                />
-
-
-
-                                            {getUserCheck2 == 1 && (
-                                                <>
-                                                    {getWishID2 == 1 && (
-                                                        <>
-                                                            <MenuItem
-                                                                url="/pko/officer/research"
-                                                                icon="nav-icon fa fa-file-text"
-                                                                menuName="Судалгаа"
+                                                            {getWishID == 1 && (
+                                                                <>
+                                                                    <MenuItem
+                                                                        url="/pko/user/documents"
+                                                                        icon="nav-icon fa fa-file-text"
+                                                                        menuName="Бичиг баримтын бүрдэл"
                                                                     />
-                                                                      <MenuItem
-                                                                url="/pko/officer/documents"
-                                                                icon="nav-icon fa fa-file-text"
-                                                                menuName="Бичиг баримтын бүрдэл"
-                                                            />
-                                                            <MenuItem
-                                                                url="/Process"
-                                                                icon="nav-icon fa fa-spinner"
-                                                                menuName="Оролцооны байдал"
-                                                            />
+                                                                    <MenuItem
+                                                                        url="/Process"
+                                                                        icon="nav-icon fa fa-spinner"
+                                                                        menuName="Оролцооны байдал"
+                                                                    />
+                                                                </>
+                                                            )}
                                                         </>
                                                     )}
-                                                </>
-                                            )}
 
-                                            <MenuItem
-                                                url="/user/complaints"
-                                                icon="nav-icon fa fa-envelope"
-                                                menuName="Санал гомдол"
-                                            />
-                                        </ul>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a
-                                            href="#"
-                                            className="nav-link"
-                                            style={{ color: "#FFFFFF" }}
-                                        >
-                                            <i className="nav-icon fa fa-bullhorn" />
-                                            <p>
-                                                ЗАРЛАЛ
-                                                <i className="fas fa-angle-left right" />
-                                            </p>
-                                        </a>
-                                        <ul
-                                            className="nav nav-treeview"
-                                            style={{
-                                                paddingLeft: "10px",
-                                            }}
-                                        >
-                                            <MenuItem
-                                                url="/AnnouncementHistory"
-                                                icon="nav-icon fa fa-bullhorn"
-                                                menuName="Зарлал харах"
-                                            />
-                                        </ul>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a
-                                            href="#"
-                                            className="nav-link"
-                                            style={{ color: "#FFFFFF" }}
-                                        >
-                                            <i className="nav-icon fa fa-book-open" />
-                                            <p>
-                                                Ашиглах заавар
-                                                <i className="fas fa-angle-left right" />
-                                            </p>
-                                        </a>
-                                        <ul
-                                            className="nav nav-treeview"
-                                            style={{
-                                                paddingLeft: "10px",
-                                            }}
-                                        >
-                                            <MenuItem
-                                                url="/Video/zaawar"
-                                                icon="nav-icon fa fa-book-open"
-                                                menuName="Видео заавар"
-                                            />
-                                        </ul>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a
-                                            href="#"
-                                            className="nav-link"
-                                            style={{ color: "#FFFFFF" }}
-                                        >
-                                            <i className="nav-icon far fa-user" />
-                                            <p>
-                                                ХЭРЭГЛЭГЧ
-                                                <i className="fas fa-angle-left right" />
-                                            </p>
-                                        </a>
-                                        <ul
-                                            className="nav nav-treeview"
-                                            style={{ paddingLeft: "10px" }}
-                                        >
-                                            <MenuItem
-                                                url="/user/profile"
-                                                icon="nav-icon fa fa-user"
-                                                menuName="Профайл"
-                                            />
-                                            <MenuItem
-                                                url="/admin/password/reset"
-                                                icon="nav-icon fa fa-lock"
-                                                menuName="Нууц үг солих"
-                                            />
-                                        </ul>
+                                                    <MenuItem
+                                                        url="/user/complaints"
+                                                        icon="nav-icon fa fa-envelope"
+                                                        menuName="Санал гомдол"
+                                                    />
+                                                </ul>
                                             </li>
-                                             </div>
-      )}
+                                            <li className="nav-item">
+                                                <a
+                                                    href="#"
+                                                    className="nav-link"
+                                                    style={{ color: "#FFFFFF" }}
+                                                >
+                                                    <i className="nav-icon fa fa-bullhorn" />
+                                                    <p>
+                                                        ЗАРЛАЛ
+                                                        <i className="fas fa-angle-left right" />
+                                                    </p>
+                                                </a>
+                                                <ul
+                                                    className="nav nav-treeview"
+                                                    style={{
+                                                        paddingLeft: "10px",
+                                                    }}
+                                                >
+                                                    <MenuItem
+                                                        url="/AnnouncementHistory"
+                                                        icon="nav-icon fa fa-bullhorn"
+                                                        menuName="Зарлал харах"
+                                                    />
+                                                </ul>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a
+                                                    href="#"
+                                                    className="nav-link"
+                                                    style={{ color: "#FFFFFF" }}
+                                                >
+                                                    <i className="nav-icon fa fa-book-open" />
+                                                    <p>
+                                                        Ашиглах заавар
+                                                        <i className="fas fa-angle-left right" />
+                                                    </p>
+                                                </a>
+                                                <ul
+                                                    className="nav nav-treeview"
+                                                    style={{
+                                                        paddingLeft: "10px",
+                                                    }}
+                                                >
+                                                    <MenuItem
+                                                        url="/Video/zaawar"
+                                                        icon="nav-icon fa fa-book-open"
+                                                        menuName="Видео заавар"
+                                                    />
+                                                </ul>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a
+                                                    href="#"
+                                                    className="nav-link"
+                                                    style={{ color: "#FFFFFF" }}
+                                                >
+                                                    <i className="nav-icon far fa-user" />
+                                                    <p>
+                                                        ХЭРЭГЛЭГЧ
+                                                        <i className="fas fa-angle-left right" />
+                                                    </p>
+                                                </a>
+                                                <ul
+                                                    className="nav nav-treeview"
+                                                    style={{
+                                                        paddingLeft: "10px",
+                                                    }}
+                                                >
+                                                    <MenuItem
+                                                        url="/user/profile"
+                                                        icon="nav-icon fa fa-user"
+                                                        menuName="Профайл"
+                                                    />
+                                                    <MenuItem
+                                                        url="/admin/password/reset"
+                                                        icon="nav-icon fa fa-lock"
+                                                        menuName="Нууц үг солих"
+                                                    />
+                                                </ul>
+                                            </li>
+                                        </div>
+                                    )}
+                                    {showSecondMenu && (
+                                        <div>
+                                            <li className="nav-item">
+                                                <a
+                                                    href="#"
+                                                    className="nav-link"
+                                                    style={{ color: "#FFFFFF" }}
+                                                >
+                                                    <i className="nav-icon fa fa-home" />
+                                                    <p>
+                                                        ҮНДСЭН
+                                                        <i className="fas fa-angle-left right" />
+                                                    </p>
+                                                </a>
+                                                <ul
+                                                    className="nav nav-treeview"
+                                                    style={{
+                                                        paddingLeft: "10px",
+                                                    }}
+                                                >
+                                                    <MenuItem
+                                                        url="/pko/officer/question"
+                                                        icon="nav-icon fa fa-paper-plane"
+                                                        menuName="Хүсэлт илгээх"
+                                                    />
 
+                                                    {getUserCheck2 == 1 && (
+                                                        <>
+                                                            {getWishID2 ==
+                                                                1 && (
+                                                                <>
+                                                                    <MenuItem
+                                                                        url="/pko/officer/research"
+                                                                        icon="nav-icon fa fa-file-text"
+                                                                        menuName="Судалгаа"
+                                                                    />
+                                                                    <MenuItem
+                                                                        url="/pko/officer/documents"
+                                                                        icon="nav-icon fa fa-file-text"
+                                                                        menuName="Бичиг баримтын бүрдэл"
+                                                                    />
+                                                                    <MenuItem
+                                                                        url="/Process"
+                                                                        icon="nav-icon fa fa-spinner"
+                                                                        menuName="Оролцооны байдал"
+                                                                    />
+                                                                </>
+                                                            )}
+                                                        </>
+                                                    )}
+
+                                                    <MenuItem
+                                                        url="/user/complaints"
+                                                        icon="nav-icon fa fa-envelope"
+                                                        menuName="Санал гомдол"
+                                                    />
+                                                </ul>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a
+                                                    href="#"
+                                                    className="nav-link"
+                                                    style={{ color: "#FFFFFF" }}
+                                                >
+                                                    <i className="nav-icon fa fa-bullhorn" />
+                                                    <p>
+                                                        ЗАРЛАЛ
+                                                        <i className="fas fa-angle-left right" />
+                                                    </p>
+                                                </a>
+                                                <ul
+                                                    className="nav nav-treeview"
+                                                    style={{
+                                                        paddingLeft: "10px",
+                                                    }}
+                                                >
+                                                    <MenuItem
+                                                        url="/AnnouncementHistory"
+                                                        icon="nav-icon fa fa-bullhorn"
+                                                        menuName="Зарлал харах"
+                                                    />
+                                                </ul>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a
+                                                    href="#"
+                                                    className="nav-link"
+                                                    style={{ color: "#FFFFFF" }}
+                                                >
+                                                    <i className="nav-icon fa fa-book-open" />
+                                                    <p>
+                                                        Ашиглах заавар
+                                                        <i className="fas fa-angle-left right" />
+                                                    </p>
+                                                </a>
+                                                <ul
+                                                    className="nav nav-treeview"
+                                                    style={{
+                                                        paddingLeft: "10px",
+                                                    }}
+                                                >
+                                                    <MenuItem
+                                                        url="/Video/zaawar"
+                                                        icon="nav-icon fa fa-book-open"
+                                                        menuName="Видео заавар"
+                                                    />
+                                                </ul>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a
+                                                    href="#"
+                                                    className="nav-link"
+                                                    style={{ color: "#FFFFFF" }}
+                                                >
+                                                    <i className="nav-icon far fa-user" />
+                                                    <p>
+                                                        ХЭРЭГЛЭГЧ
+                                                        <i className="fas fa-angle-left right" />
+                                                    </p>
+                                                </a>
+                                                <ul
+                                                    className="nav nav-treeview"
+                                                    style={{
+                                                        paddingLeft: "10px",
+                                                    }}
+                                                >
+                                                    <MenuItem
+                                                        url="/user/profile"
+                                                        icon="nav-icon fa fa-user"
+                                                        menuName="Профайл"
+                                                    />
+                                                    <MenuItem
+                                                        url="/admin/password/reset"
+                                                        icon="nav-icon fa fa-lock"
+                                                        menuName="Нууц үг солих"
+                                                    />
+                                                </ul>
+                                            </li>
+                                        </div>
+                                    )}
                                 </>
                             )}
-
                         </>
                     </ul>
                 </nav>

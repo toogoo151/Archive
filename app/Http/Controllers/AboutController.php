@@ -7,12 +7,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\About;
-use Response;
-use Cookie;
+// use Response;
+// use Cookie;
+use Illuminate\Support\Facades\Cookie;
 class AboutController extends Controller
 {
 
-    
+
      public function showPost($postID, Request $req){
 
           if (Cookie::has('pc' . $postID)){

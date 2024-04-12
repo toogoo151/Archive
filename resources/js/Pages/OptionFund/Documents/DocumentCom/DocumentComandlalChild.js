@@ -202,7 +202,10 @@ const DocumentComandlalChild = (props) => {
             options: {
                 filter: true,
                 sort: false,
-                display: userType == "gsmafAdmin" ? false : true,
+                display:
+                    userType == "gsmafAdmin" || userType === "superAdmin"
+                        ? false
+                        : true,
                 setCellProps: () => {
                     return { align: "center" };
                 },
@@ -235,7 +238,10 @@ const DocumentComandlalChild = (props) => {
             options: {
                 filter: true,
                 sort: false,
-                display: userType == "gsmafAdmin" ? false : true,
+                display:
+                    userType == "gsmafAdmin" || userType === "superAdmin"
+                        ? false
+                        : true,
                 setCellProps: () => {
                     return { align: "center" };
                 },
@@ -390,6 +396,7 @@ const DocumentComandlalChild = (props) => {
                     })
                     .then((res) => {
                         Swal.fire(res.data.msg);
+
                         refreshDocComChild(
                             state.getMissionRowID,
                             state.getEeljRowID,
@@ -500,15 +507,16 @@ const DocumentComandlalChild = (props) => {
                     )}
                 </>
             )}
-            {userType === "gsmafAdmin" && (
-                <>
-                    {clickedRowDataChild.approveGsmaf == 2 && (
-                        <DocumentComadnlalDes
-                            clickedRowData={clickedRowDataChild}
-                        />
-                    )}
-                </>
-            )}
+            {userType === "gsmafAdmin" ||
+                (userType === "superAdmin" && (
+                    <>
+                        {clickedRowDataChild.approveGsmaf == 2 && (
+                            <DocumentComadnlalDes
+                                clickedRowData={clickedRowDataChild}
+                            />
+                        )}
+                    </>
+                ))}
             <br />
         </div>
     );

@@ -9,6 +9,7 @@ use App\Models\all_users;
 use App\Models\DocumentDescription;
 use App\Models\DocumentItem;
 use App\Models\MainHistory;
+use App\Models\OfficerMainHistory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -41,7 +42,8 @@ class DocumentComandlalController extends Controller
 
     public function getDocumentComandlal($req, $myComandlalRow){
         try {
-            if(Auth::user()->user_type === "gsmafAdmin"){
+
+            if(Auth::user()->user_type === "gsmafAdmin" ){
                 $getMainHistory = DB::table("pko_main_history")
                 ->where("pko_main_history.missionID", "=", $req->_missionID)
                 ->where("pko_main_history.eeljID", "=", $req->_eeljID)
@@ -77,6 +79,47 @@ class DocumentComandlalController extends Controller
                     $query->on("all_users.gender", "=", "tb_gender.id");
                 })
                 ->select("pko_main_history.*","all_users.lastName", "all_users.firstName", "all_users.rd", "all_users.age", "tb_gender.genderName", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                ->get();
+            return $getMainHistory;
+            }
+
+            if(Auth::user()->user_type === "superAdmin"){  // ЭДХАХэстэс ажиглагч офицеруудын бичиг баримт харж байна.
+
+                $getMainHistory = DB::table("pko_officer_main")
+                ->where("pko_officer_main.missionID", "=", $req->_missionID)
+                ->where("pko_officer_main.eeljID", "=", $req->_eeljID)
+                ->join("pko_users", function($query){
+                    $query->on("pko_officer_main.pkoUserID", "=", "pko_users.id");
+                })
+                ->join("all_users", function($query) use ($req){
+                    $query->on("pko_users.allUsersID", "=", "all_users.id");
+                    if($req->_comandlalID != ""){
+                        $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                    }
+                    if($req->_unitID != ""){
+                        $query->where("all_users.unitID", "=", $req->_unitID);
+                    }
+
+                })
+                ->join("pko_missions", function($query){
+                    $query->on("pko_officer_main.missionID", "=", "pko_missions.id");
+                })
+                ->join("pko_mission_eelj", function($query){
+                    $query->on("pko_officer_main.eeljID", "=", "pko_mission_eelj.id");
+                })
+                ->join("tb_comandlal", function($query){
+                    $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                })
+                ->join("tb_unit", function($query){
+                    $query->on("all_users.unitID", "=", "tb_unit.id");
+                })
+                ->join("tb_ranks", function($query){
+                    $query->on("all_users.rankID", "=", "tb_ranks.id");
+                })
+                ->join("tb_gender", function($query){
+                    $query->on("all_users.gender", "=", "tb_gender.id");
+                })
+                ->select("pko_officer_main.*","all_users.lastName", "all_users.firstName", "all_users.rd", "all_users.age", "tb_gender.genderName", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
                 ->get();
             return $getMainHistory;
             }
@@ -126,11 +169,13 @@ class DocumentComandlalController extends Controller
 
     public function getDocumentTotal(Request $req) {
         try {
+
             $countDocItems = new DocumentItem();
             $docItemsLength = $countDocItems->countDocItems($req);
 
 
             $myComandlalRow = new all_users();
+
             $getMainHistory = "";
             if($req->_allState == "complete"){
                 $getMainHistory = $this->myCompleteRows($req, $myComandlalRow);
@@ -149,8 +194,64 @@ class DocumentComandlalController extends Controller
                 $countDocItemsHiigdeegui = 0;
                 $countDocItemsComandlalApproved = 0;
                 $countDocItemsComandlalDecline = 0;
-                if(Auth::user()->user_type === "gsmafAdmin" ){
+                if(Auth::user()->user_type === "superAdmin"  ){
                 foreach ($this->getDocumentComandlal($req, $myComandlalRow) as $mainHistoryRow) {
+
+                    $getCompletes = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveComandlal", "=", 1)
+                    ->get();
+
+                    $getNotDone = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveComandlal", "=", 1) // notDone
+                    ->where("pko_documents.approveGsmaf", "=", 0) // notDone
+                    ->get();
+
+                    $getDocApproved = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveComandlal", "=", 1) // approved
+                    ->where("pko_documents.approveGsmaf", "=", 1) // approved
+                    ->get();
+
+                    $getDocDeclined = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveComandlal", "=", 1) // decline
+                    ->where("pko_documents.approveGsmaf", "=", 2) // decline
+                    ->get();
+                    if(count($getCompletes) == $docItemsLength){
+                        $countDocItemsBuren ++;
+                    }
+                    if(count($getCompletes) == $docItemsLength){
+                        if(count($getNotDone) == $docItemsLength || count($getNotDone) > 0){
+                            $countDocItemsHiigdeegui ++;
+                        }
+                    }
+                    if(count($getCompletes) == $docItemsLength){
+                        if(count($getDocApproved) == $docItemsLength ){
+                            $countDocItemsComandlalApproved ++;
+                        }
+                    }
+                    if(count($getCompletes) == $docItemsLength){
+                        if(count($getDocDeclined) == $docItemsLength || count($getDocDeclined) > 0 ){
+                            $countDocItemsComandlalDecline ++;
+                        }
+                    }
+
+                }
+
+            }
+                if(Auth::user()->user_type === "gsmafAdmin"){
+                foreach ($this->getDocumentComandlal($req, $myComandlalRow) as $mainHistoryRow) {
+
                     $getCompletes = DB::table("pko_documents")
                     ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
                     ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
@@ -203,6 +304,7 @@ class DocumentComandlalController extends Controller
                 }
 
             }
+
             if(Auth::user()->user_type === "comandlalAdmin"){
                 foreach ($this->getDocumentComandlal($req, $myComandlalRow) as $mainHistoryRow) {
                     $getCompletes = DB::table("pko_documents")
@@ -274,8 +376,24 @@ class DocumentComandlalController extends Controller
             $docItemsLength = $countDocItems->countDocItems($req);
             $getMainHistory = "";
             $getMainHistory = $this->getDocumentComandlal($req, $myComandlalRow);
-
+            // return $getMainHistory ;
             $getMainHistoryRowIDs = array();
+            if( Auth::user()->user_type === "superAdmin"){
+
+                foreach ($getMainHistory as $mainHistoryRow) {
+                    $getCompletes = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveGsmaf", "=", 0)
+                    ->get();
+
+                    if (count($getCompletes) == $docItemsLength){
+                        array_push($getMainHistoryRowIDs, $mainHistoryRow->id);
+                    }
+                }
+                    return $this->getWhereIn($getMainHistoryRowIDs, $myComandlalRow, $req);
+                }
             if(Auth::user()->user_type === "gsmafAdmin" ){
 
                 foreach ($getMainHistory as $mainHistoryRow) {
@@ -326,7 +444,30 @@ class DocumentComandlalController extends Controller
             $getMainHistory = $this->getDocumentComandlal($req, $myComandlalRow);
 
             $getMainHistoryRowIDs = array();
-            if(Auth::user()->user_type === "gsmafAdmin"){
+            if(Auth::user()->user_type === "superAdmin"){
+                foreach ($getMainHistory as $mainHistoryRow) {
+                    $getCompletes = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveComandlal", "=", 1)
+                    ->get();
+
+                    $getNotDone = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveComandlal", "=", 1)
+                    ->where("pko_documents.approveGsmaf", "=", 0)
+                    ->get();
+                    if(count($getCompletes) == $docItemsLength){
+                        if(count($getNotDone) == $docItemsLength || count($getNotDone) > 0){
+                            array_push($getMainHistoryRowIDs, $mainHistoryRow->id);
+                        }
+                    }
+                }
+            }
+            if(Auth::user()->user_type === "gsmafAdmin" ){
             foreach ($getMainHistory as $mainHistoryRow) {
                 $getCompletes = DB::table("pko_documents")
                 ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
@@ -391,32 +532,54 @@ class DocumentComandlalController extends Controller
            $getMainHistory = $this->getDocumentComandlal($req, $myComandlalRow);
 
            $getMainHistoryRowIDs = array();
-           if(Auth::user()->user_type === "gsmafAdmin"){
-           foreach ($getMainHistory as $mainHistoryRow) {
-            $getCompletes = DB::table("pko_documents")
-            ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
-            ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
-            ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
-            ->where("pko_documents.approveComandlal", "=", 1)
-            ->get();
+           if(Auth::user()->user_type === "superAdmin"){
+            foreach ($getMainHistory as $mainHistoryRow) {
+                    $getCompletes = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveComandlal", "=", 1)
+                    ->get();
 
-            $getDocApproved = DB::table("pko_documents")
-            ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
-            ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
-            ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
-            ->where("pko_documents.approveComandlal", "=", 1)
-            ->where("pko_documents.approveGsmaf", "=", 1)
-            ->get();
+                    $getDocApproved = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveComandlal", "=", 1)
+                    ->where("pko_documents.approveGsmaf", "=", 1)
+                    ->get();
 
-            if(count($getCompletes) == $docItemsLength){
-                if (count($getDocApproved) == $docItemsLength){
-                    array_push($getMainHistoryRowIDs, $mainHistoryRow->id);
+                    if(count($getCompletes) == $docItemsLength){
+                        if (count($getDocApproved) == $docItemsLength){
+                            array_push($getMainHistoryRowIDs, $mainHistoryRow->id);
+                        }
+                    }
                 }
             }
+            if(Auth::user()->user_type === "gsmafAdmin" ){
+            foreach ($getMainHistory as $mainHistoryRow) {
+                    $getCompletes = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    ->where("pko_documents.approveComandlal", "=", 1)
+                    ->get();
 
+                    $getDocApproved = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    ->where("pko_documents.approveComandlal", "=", 1)
+                    ->where("pko_documents.approveGsmaf", "=", 1)
+                    ->get();
 
-        }
-    }
+                    if(count($getCompletes) == $docItemsLength){
+                        if (count($getDocApproved) == $docItemsLength){
+                            array_push($getMainHistoryRowIDs, $mainHistoryRow->id);
+                        }
+                    }
+                }
+            }
     if(Auth::user()->user_type === "comandlalAdmin"){
         foreach ($getMainHistory as $mainHistoryRow) {
             $getCompletes = DB::table("pko_documents")
@@ -460,32 +623,30 @@ class DocumentComandlalController extends Controller
            $getMainHistory = $this->getDocumentComandlal($req, $myComandlalRow);
 
            $getMainHistoryRowIDs = array();
-           if(Auth::user()->user_type === "gsmafAdmin"){
-           foreach ($getMainHistory as $mainHistoryRow) {
-            $getCompletes = DB::table("pko_documents")
-            ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
-            ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
-            ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
-            ->where("pko_documents.approveComandlal", "=", 1)
-            ->get();
+           if(Auth::user()->user_type === "superAdmin"){
+            foreach ($getMainHistory as $mainHistoryRow) {
+                    $getCompletes = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveComandlal", "=", 1)
+                    ->get();
 
-            $getDocDeclined = DB::table("pko_documents")
-            ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
-            ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
-            ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
-            ->where("pko_documents.approveComandlal", "=", 1)
-            ->where("pko_documents.approveGsmaf", "=", 2)
-            ->get();
+                    $getDocDeclined = DB::table("pko_documents")
+                    ->where("pko_documents.missionID", "=", $mainHistoryRow->missionID)
+                    ->where("pko_documents.eeljID", "=", $mainHistoryRow->eeljID)
+                    ->where("pko_documents.pkoMainHistoryID", "=", $mainHistoryRow->id)
+                    // ->where("pko_documents.approveComandlal", "=", 1)
+                    ->where("pko_documents.approveGsmaf", "=", 2)
+                    ->get();
 
-            if(count($getCompletes) == $docItemsLength){
-                if (count($getDocDeclined) == $docItemsLength || count($getDocDeclined) > 0 ){
-                    array_push($getMainHistoryRowIDs, $mainHistoryRow->id);
+                    if(count($getCompletes) == $docItemsLength){
+                        if (count($getDocDeclined) == $docItemsLength || count($getDocDeclined) > 0 ){
+                            array_push($getMainHistoryRowIDs, $mainHistoryRow->id);
+                        }
+                    }
                 }
-            }
-
-
-        }
-    }
+           }
         if(Auth::user()->user_type === "comandlalAdmin"){
             foreach ($getMainHistory as $mainHistoryRow) {
                 $getCompletes = DB::table("pko_documents")
@@ -561,6 +722,45 @@ class DocumentComandlalController extends Controller
 
                 return $getMainHistory;
             }
+            if( Auth::user()->user_type === "superAdmin"){
+
+                $getMainHistory = DB::table("pko_officer_main")
+                    ->whereIn("pko_officer_main.id", $pushIDs)
+                    ->join("pko_users", function($query){
+                        $query->on("pko_officer_main.pkoUserID", "=", "pko_users.id");
+                    })
+                    ->join("all_users", function($query) use ($req){
+                        $query->on("pko_users.allUsersID", "=", "all_users.id");
+                        if($req->_comandlalID != ""){
+                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                        }
+                        if($req->_unitID != ""){
+                            $query->where("all_users.unitID", "=", $req->_unitID);
+                        }
+                    })
+                    ->join("pko_missions", function($query){
+                        $query->on("pko_officer_main.missionID", "=", "pko_missions.id");
+                    })
+                    ->join("pko_mission_eelj", function($query){
+                        $query->on("pko_officer_main.eeljID", "=", "pko_mission_eelj.id");
+                    })
+                    ->join("tb_comandlal", function($query){
+                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                    })
+                    ->join("tb_unit", function($query){
+                        $query->on("all_users.unitID", "=", "tb_unit.id");
+                    })
+                    ->join("tb_ranks", function($query){
+                        $query->on("all_users.rankID", "=", "tb_ranks.id");
+                    })
+                    ->join("tb_gender", function($query){
+                        $query->on("all_users.gender", "=", "tb_gender.id");
+                    })
+                    ->select("pko_officer_main.*", "all_users.lastName", "all_users.firstName","all_users.rd", "all_users.age", "tb_gender.genderName", "tb_ranks.shortRank", "tb_unit.unitShortName", "tb_comandlal.comandlalShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                    ->get();
+
+                return $getMainHistory;
+            }
             if(Auth::user()->user_type === "comandlalAdmin"){
                 $getMainHistory = DB::table("pko_main_history")
                     ->whereIn("pko_main_history.id", $pushIDs)
@@ -607,6 +807,33 @@ class DocumentComandlalController extends Controller
     public function documentComandlalConfirm(Request $req){
         try {
 
+            if( Auth::user()->user_type === "superAdmin"){
+
+                $insertDocumentComandlal = Document::find($req->id);
+                $insertDocumentComandlal->approveGsmaf = 1;
+                $insertDocumentComandlal->save();
+
+                $countDocItems = new DocumentItem();
+                $docItemsLength = $countDocItems->countDocItems($req);
+
+                $getComAllApprove = DB::table("pko_documents")
+                ->where("pko_documents.pkoMainHistoryID", "=", $insertDocumentComandlal->pkoMainHistoryID)
+                ->where("pko_documents.missionID", "=", $req->_missionID)
+                ->where("pko_documents.eeljID", "=", $req->_eeljID)
+                ->where("pko_documents.approveGsmaf", "=", 1)
+                ->get();
+
+                if (count($getComAllApprove) == $docItemsLength){
+                    $insertMainDocApprove = OfficerMainHistory::find($insertDocumentComandlal->pkoMainHistoryID);
+                    $insertMainDocApprove->documentsMainApprove = 1;
+                    $insertMainDocApprove->save();
+                    }
+                return response(
+                    array(
+                        "status" => "success",
+                        "msg" => "Зөвшөөрлөө"
+                    ), 200);
+            }
             if(Auth::user()->user_type === "gsmafAdmin"){
                 $insertDocumentComandlal = Document::find($req->id);
                 $insertDocumentComandlal->approveGsmaf = 1;
@@ -617,6 +844,8 @@ class DocumentComandlalController extends Controller
 
                 $getComAllApprove = DB::table("pko_documents")
                 ->where("pko_documents.pkoMainHistoryID", "=", $insertDocumentComandlal->pkoMainHistoryID)
+                ->where("pko_documents.missionID", "=", $req->_missionID)
+                ->where("pko_documents.eeljID", "=", $req->_eeljID)
                 ->where("pko_documents.approveGsmaf", "=", 1)
                 ->get();
                 if (count($getComAllApprove) == $docItemsLength){
@@ -654,11 +883,33 @@ class DocumentComandlalController extends Controller
 
     public function documentComandlalDecline(Request $req){
         try {
-            if(Auth::user()->user_type === "gsmafAdmin"){
+            if( Auth::user()->user_type === "superAdmin"){
                 $insertDocumentComandlal = Document::find($req->id);
                 // $insertDocumentComandlal->approveComandlal = 2;
                 $insertDocumentComandlal->approveGsmaf = 2;
                 $insertDocumentComandlal->save();
+
+                $insertMainDocApprove = OfficerMainHistory::find($insertDocumentComandlal->pkoMainHistoryID);
+                $insertMainDocApprove->documentsMainApprove = 2;
+                $insertMainDocApprove->save();
+
+                $insertDocDes = new DocumentDescription();
+                $insertDocDes->pkoDocumentID = $req->pkoDocumentID;
+                $insertDocDes->pkoDocumentID = $req->id;
+                $insertDocDes->docDescription = $req->docDescription;
+                $insertDocDes->comandlalName = $req->comandlalName;
+                $insertDocDes->adminName = $req->adminName;
+                $insertDocDes->save();
+            }
+            if(Auth::user()->user_type === "gsmafAdmin" ){
+                $insertDocumentComandlal = Document::find($req->id);
+                // $insertDocumentComandlal->approveComandlal = 2;
+                $insertDocumentComandlal->approveGsmaf = 2;
+                $insertDocumentComandlal->save();
+
+                $insertMainDocApprove = MainHistory::find($insertDocumentComandlal->pkoMainHistoryID);
+                $insertMainDocApprove->documentsMainApprove = 2;
+                $insertMainDocApprove->save();
 
                 $insertDocDes = new DocumentDescription();
                 $insertDocDes->pkoDocumentID = $req->pkoDocumentID;

@@ -1,50 +1,49 @@
 import React, { useState, useEffect, useContext } from "react";
-import MUIDatatable from "../../../../components/Admin/general/MUIDatatable/MUIDatatable";
-import axios from "../../../../AxiosUser";
-import CustomToolbar from "../../../../components/Admin/general/MUIDatatable/CustomToolbar";
-import { AppContext } from "../../../../Context/MyContext";
-import DocumentComandlalChild from "./DocumentComandlalChild";
+import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIDatatable";
+import axios from "../../../AxiosUser";
+import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
+import { AppContext } from "../../../Context/MyContext";
+import HealthChild from "./HealthChild";
 
-const DocumentComandlal = () => {
+const Health = () => {
     const state = useContext(AppContext);
-    const [getDocumentComandlal, setDocumentComandlal] = useState([]);
+    const [getHealth, setHealth] = useState([]);
     const [getRowsSelected, setRowsSelected] = useState([]); // row clear хийж байгаа
     const [clickedRowData, setclickedRowData] = useState([]);
 
     const [getComandlals, setComandlals] = useState([]);
     const [getUnits, setUnits] = useState([]);
 
-    const [getDocumentState, setDocumentState] = useState("complete");
+    const [getHealthState, setHealthState] = useState("");
     const [getComandlalID, setComandlalID] = useState("");
     const [getUnitID, setUnitID] = useState("");
 
-    const [docComTotal, setDocComTotal] = useState(0);
-    const [notDoneDocCom, setNotDoneDocCom] = useState(0);
-    const [approveDocCom, setApproveDocCom] = useState(0);
-    const [declineDocCom, setDeclineDocCom] = useState(0);
+    const [healthTotal, setHealthTotal] = useState(0);
+    const [notDoneHealth, setNotDoneHealth] = useState(0);
+    const [approveHealth, setApproveHealth] = useState(0);
+    const [declineHealth, setDeclineHealth] = useState(0);
 
     const [showModal, setShowModal] = useState("modal");
 
     useEffect(() => {
         axios
-            .post("/get/ID/byComandlal")
+            .get("/get/comandlal")
             .then((res) => {
-                if (userType == "comandlalAdmin") {
-                    setComandlalID(res.data.firstComandlal);
-                    setComandlals(res.data.getComandlals);
-                    changeComandlal(res.data.firstComandlal["id"]);
-                }
-                if (userType == "gsmafAdmin" || userType == "superAdmin") {
-                    setComandlals(res.data);
-                }
+                setComandlals(res.data);
             })
             .catch((err) => {
                 console.log(err);
             });
-        refreshDocumentComandlal(
+        refreshHealth(
             state.getMissionRowID,
             state.getEeljRowID,
-            getDocumentState,
+            getHealthState,
+            getComandlalID,
+            getUnitID
+        );
+        getHealthTotal(
+            state.getMissionRowID,
+            state.getEeljRowID,
             getComandlalID,
             getUnitID
         );
@@ -52,13 +51,11 @@ const DocumentComandlal = () => {
 
     const changeComandlal = (inComandlal) => {
         axios
-            .post("/get/ID/byUnit", {
+            .post("/get/units", {
                 _comandlalID: inComandlal,
             })
             .then((res) => {
-                // if (userType == "gsmafAdmin" || userType == "comandlalAdmin") {
                 setUnits(res.data);
-                // }
             })
             .catch((err) => {
                 console.log(err);
@@ -67,10 +64,16 @@ const DocumentComandlal = () => {
 
     const changeUnit = (e) => {
         setUnitID(e.target.value);
-        refreshDocumentComandlal(
+        refreshHealth(
             state.getMissionRowID,
             state.getEeljRowID,
-            getDocumentState,
+            getHealthState,
+            getComandlalID,
+            e.target.value
+        );
+        getHealthTotal(
+            state.getMissionRowID,
+            state.getEeljRowID,
             getComandlalID,
             e.target.value
         );
@@ -78,70 +81,88 @@ const DocumentComandlal = () => {
 
     useEffect(() => {
         if (getRowsSelected[0] != undefined) {
-            setclickedRowData(getDocumentComandlal[getRowsSelected[0]]);
+            setclickedRowData(getHealth[getRowsSelected[0]]);
         }
     }, [getRowsSelected]);
 
     useEffect(() => {
-        refreshDocumentComandlal(
+        refreshHealth(
             state.getMissionRowID,
             state.getEeljRowID,
-            getDocumentState,
+            getHealthState,
+            getComandlalID,
+            getUnitID
+        );
+        getHealthTotal(
+            state.getMissionRowID,
+            state.getEeljRowID,
             getComandlalID,
             getUnitID
         );
         setclickedRowData([]);
     }, [state.getMissionRowID, state.getEeljRowID]);
 
-    const refreshDocumentComandlal = (
+    const refreshHealth = (
         missionID,
         eeljID,
-        allState,
+        healthState,
         comandlalID,
         unitID
     ) => {
-        if (missionID != undefined || eeljID != undefined) {
-            axios
-                .post("/get/document/comandlal", {
-                    _missionID: missionID,
-                    _eeljID: eeljID,
-                    _allState: allState,
-                    _comandlalID: comandlalID,
-                    _unitID: unitID,
-                })
-                .then((res) => {
-                    setRowsSelected([]);
-                    setDocumentComandlal(res.data.getMainHistory);
-                    console.log(res.data.getMainHistory);
-                    if (res.data.complete != undefined) {
-                        setDocComTotal(res.data.complete);
-                    }
-                    if (res.data.notDone != undefined) {
-                        setNotDoneDocCom(res.data.notDone);
-                    }
-                    if (res.data.approve != undefined) {
-                        setApproveDocCom(res.data.approve);
-                    }
-                    if (res.data.decline != undefined) {
-                        setDeclineDocCom(res.data.decline);
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        }
+        axios
+            .post("/get/users/officer/main/history", {
+                _missionID: missionID,
+                _eeljID: eeljID,
+                _healthState: healthState,
+                _comandlalID: comandlalID,
+                _unitID: unitID,
+            })
+            .then((res) => {
+                setRowsSelected([]);
+                setHealth(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
-    const changeDocumentState = (e) => {
+    const changeHealthState = (e) => {
         setclickedRowData([]);
-        setDocumentState(e.target.value);
-        refreshDocumentComandlal(
+        setHealthState(e.target.value);
+        refreshHealth(
             state.getMissionRowID,
             state.getEeljRowID,
             e.target.value,
             getComandlalID,
             getUnitID
         );
+    };
+
+    const getHealthTotal = (missionID, eeljID, comandlalID, unitID) => {
+        if (missionID != undefined && eeljID != undefined) {
+            axios
+                .post("/officer/health/total", {
+                    _missionID: missionID,
+                    _eeljID: eeljID,
+                    _comandlalID: comandlalID,
+                    _unitID: unitID,
+                })
+                .then((res) => {
+                    console.log(res.data);
+                    if (res.data.total != undefined) {
+                        setHealthTotal(res.data.total);
+                    }
+                    if (res.data.notDone != undefined) {
+                        setNotDoneHealth(res.data.notDone);
+                    }
+                    if (res.data.approve != undefined) {
+                        setApproveHealth(res.data.approve);
+                    }
+                    if (res.data.decline != undefined) {
+                        setDeclineHealth(res.data.decline);
+                    }
+                });
+        }
     };
 
     return (
@@ -160,59 +181,49 @@ const DocumentComandlal = () => {
                         </div>
                         <select
                             className="form-control"
-                            onChange={changeDocumentState}
+                            onChange={changeHealthState}
                         >
-                            <option value="complete">Бүгд</option>
-                            <option value="notDone">Шийдвэрлэгдээгүй</option>
-                            <option value="approved">Зөвшөөрөгдсөн</option>
-                            <option value="declined">Татгалзсан</option>
+                            <option value="">Сонгоно уу</option>
+                            <option value="0">Шийдвэрлэгдээгүй</option>
+                            <option value="1">Зөвшөөрөгдсөн</option>
+                            <option value="2">Татгалзсан</option>
                         </select>
                     </div>
                 </div>
-
                 <div className="col-md-3">
                     <div className="input-group mb-3">
                         <div className="input-group-prepend">
                             <span className="input-group-text">Командлал:</span>
                         </div>
-                        {userType == "gsmafAdmin" ||
-                        userType == "superAdmin" ? (
-                            <select
-                                className="form-control"
-                                onChange={(e) => {
-                                    setComandlalID(e.target.value);
-                                    setUnitID("");
-                                    refreshDocumentComandlal(
-                                        state.getMissionRowID,
-                                        state.getEeljRowID,
-                                        getDocumentState,
-                                        e.target.value,
-                                        ""
-                                    );
-                                    changeComandlal(e.target.value);
-                                }}
-                            >
-                                <option value="">Сонгоно уу</option>
-                                {getComandlals.map((el) => (
-                                    <option key={el.id} value={el.id}>
-                                        {el.comandlalShortName}
-                                    </option>
-                                ))}
-                            </select>
-                        ) : (
-                            <select
-                                className="form-control"
-                                value={getComandlalID["id"]}
-                                disabled={true}
-                            >
-                                <option value="">Сонгоно уу</option>
-                                {getComandlals.map((el) => (
-                                    <option key={el.id} value={el.id}>
-                                        {el.comandlalShortName}
-                                    </option>
-                                ))}
-                            </select>
-                        )}
+
+                        <select
+                            className="form-control"
+                            onChange={(e) => {
+                                setComandlalID(e.target.value);
+                                setUnitID("");
+                                refreshHealth(
+                                    state.getMissionRowID,
+                                    state.getEeljRowID,
+                                    getHealthState,
+                                    e.target.value,
+                                    ""
+                                );
+                                getHealthTotal(
+                                    state.getMissionRowID,
+                                    state.getEeljRowID,
+                                    e.target.value,
+                                    ""
+                                );
+                                changeComandlal(e.target.value);
+                            }}
+                        >
+                            <option value="">Сонгоно уу</option>
+                            {getComandlals.map((el) => (
+                                <option key={el.id} value={el.id}>
+                                    {el.comandlalShortName}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 </div>
                 <div className="col-md-3">
@@ -240,7 +251,7 @@ const DocumentComandlal = () => {
                 <div className="col-md-3">
                     <div className="small-box bg-info">
                         <div className="inner">
-                            <h3>{docComTotal}</h3>
+                            <h3>{healthTotal}</h3>
                             <p>Нийт ЦАХ</p>
                         </div>
                         <div className="icon">
@@ -251,7 +262,7 @@ const DocumentComandlal = () => {
                 <div className="col-md-3">
                     <div className="small-box bg-warning">
                         <div className="inner">
-                            <h3>{notDoneDocCom}</h3>
+                            <h3>{notDoneHealth}</h3>
                             <p>Шийдвэрлэгдээгүй</p>
                         </div>
                         <div className="icon">
@@ -262,7 +273,7 @@ const DocumentComandlal = () => {
                 <div className="col-md-3">
                     <div className="small-box bg-success">
                         <div className="inner">
-                            <h3>{approveDocCom}</h3>
+                            <h3>{approveHealth}</h3>
                             <p>Зөвшөөрөгдсөн</p>
                         </div>
                         <div className="icon">
@@ -273,7 +284,7 @@ const DocumentComandlal = () => {
                 <div className="col-md-3">
                     <div className="small-box bg-danger">
                         <div className="inner">
-                            <h3>{declineDocCom}</h3>
+                            <h3>{declineHealth}</h3>
                             <p>Татгалзсан</p>
                         </div>
                         <div className="icon">
@@ -284,14 +295,14 @@ const DocumentComandlal = () => {
             </div>
 
             <MUIDatatable
-                data={getDocumentComandlal}
-                setdata={setDocumentComandlal}
+                data={getHealth}
+                setdata={setHealth}
                 columns={columns}
                 costumToolbar={
                     <>
                         <CustomToolbar
-                            title={"БИЧИГ БАРИМТЫН БҮРДЭЛ"}
-                            excelDownloadData={getDocumentComandlal}
+                            title={"ЭРҮҮЛ МЭНДИЙН ҮЗЛЭГ"}
+                            excelDownloadData={getHealth}
                             excelHeaders={excelHeaders}
                             isHideInsert={false}
                         />
@@ -308,16 +319,18 @@ const DocumentComandlal = () => {
             />
             <br />
             {clickedRowData != "" && (
-                <DocumentComandlalChild
+                <HealthChild
                     clickedRowData={clickedRowData}
-                    // refreshDocumentComandlal={refreshDocumentComandlal}
+                    getHealthTotal={getHealthTotal}
+                    getComandlalID={getComandlalID}
+                    getUnitID={getUnitID}
                 />
             )}
         </div>
     );
 };
 
-export default DocumentComandlal;
+export default Health;
 
 const columns = [
     {
@@ -356,9 +369,9 @@ const columns = [
             filter: true,
             sort: false,
             display:
-                userType == "gsmafAdmin" || userType == "superAdmin"
-                    ? true
-                    : false,
+                userType == "comandlalAdmin" || userType == "unitAdmin"
+                    ? false
+                    : true,
             setCellHeaderProps: (value) => {
                 return {
                     style: {
@@ -375,6 +388,7 @@ const columns = [
         options: {
             filter: true,
             sort: false,
+            display: userType == "unitAdmin" ? false : true,
             setCellHeaderProps: (value) => {
                 return {
                     style: {
@@ -403,7 +417,7 @@ const columns = [
     },
     {
         name: "rd",
-        label: "Регистрийн дугаар",
+        label: "РД",
         options: {
             filter: true,
             sort: false,
@@ -449,49 +463,13 @@ const columns = [
             },
         },
     },
-    {
-        name: "age",
-        label: "Нас",
-        options: {
-            filter: true,
-            sort: false,
-            setCellHeaderProps: (value) => {
-                return {
-                    style: {
-                        backgroundColor: "#5DADE2",
-                        color: "white",
-                    },
-                };
-            },
-        },
-    },
-    {
-        name: "genderName",
-        label: "Хүйс",
-        options: {
-            filter: true,
-            sort: false,
-            setCellHeaderProps: (value) => {
-                return {
-                    style: {
-                        backgroundColor: "#5DADE2",
-                        color: "white",
-                    },
-                };
-            },
-        },
-    },
 ];
 
 const excelHeaders = [
     { label: "Ажиллагааны нэр", key: "missionName" },
     { label: "Ээлж", key: "eeljName" },
-    { label: "Командлал", key: "comandlalShortName" },
-    { label: "Анги", key: "unitShortName" },
     { label: "Цол", key: "ranks" },
-    { label: "Регистрийн дугаар", key: "rd" },
+    { label: "РД", key: "rd" },
     { label: "Овог", key: "lastName" },
     { label: "Нэр", key: "firstName" },
-    { label: "age", key: "Нас" },
-    { label: "Хүйс", key: "genderName" },
 ];

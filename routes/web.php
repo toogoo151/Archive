@@ -54,13 +54,8 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\OfficerQuestionController;
 use App\Http\Controllers\OffResearchController;
 use App\Http\Controllers\DocumentOfficerController;
-
-
-
-
-
-
-
+use App\Http\Controllers\HealthOfficerController;
+use App\Http\Controllers\SportOfficerController;
 use App\Models\Airplane;
 use App\Models\AirplaneArrived;
 use App\Models\AirplaneShiftItem;
@@ -102,6 +97,8 @@ use App\Models\YearWish;
 use App\Models\BT_recommendation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+
+use App\Models\OfficerMainHistory;
 
 Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/logout',[App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
@@ -354,6 +351,11 @@ Route::post("/document/comandlal/confirm", [DocumentComandlalController::class, 
 Route::post("/document/comandlal/decline", [DocumentComandlalController::class, "documentComandlalDecline"]);
 Route::post("/get/document/comandlal/child", [DocumentComandlalController::class, "getDocumentComandlalChild"]);
 //Document Comandlal end
+
+//document Officer Back start
+// Route::post("/get/document/officer/back", [DocumentComandlalController::class, "getDocumentTotal"]);
+//document Officer Back end
+
 //Document Super start
 Route::post("/get/document/super", [DocumentSuperController::class, "getDocumentSuperTotal"]);
 Route::post("/get/document/super/child", [DocumentSuperController::class, "getDocumentSuperChild"]);
@@ -1006,6 +1008,26 @@ Route::post("/get/eelj/officer/missionID", function (Request $req) {
     $eeljByMission = new Eelj();
     return $eeljByMission->getEeljOfficerMissionID($req);
 });
+
+
+// officer backEnd start
+Route::post("get/officer/back/main/historys", function(Request $req){
+    $getMainHistorys = new OfficerMainHistory();
+        return $getMainHistorys->getMainHistorys($req);
+});
+Route::post("/get/users/officer/main/history", [HealthOfficerController::class, "getUsersFromOfficerMainHistory"]);
+
+Route::post("/officer/get/health/child", [HealthOfficerController::class, "getHealthChild"]);
+Route::post("/officer/new/health/child", [HealthOfficerController::class, "newHealthChild"]);
+Route::post("/officer/edit/health/child", [HealthOfficerController::class, "editHealthChild"]);
+Route::post("/officer/delete/health/child", [HealthOfficerController::class, "deleteHealthChild"]);
+Route::post("/officer/health/total", [HealthOfficerController::class, "getHealthTotal"]);
+
+Route::post("/get/users/officer/main/history/for/sportApprove", [SportOfficerController::class, "getUsersFromOfficerMainHistory"]);
+
+
+
+
 
 
 
