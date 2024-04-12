@@ -144,6 +144,9 @@ import SportOther from "../../../../Pages/OptionFund/Sport/SportOther/SportOther
 import OffQuestion from "../../../../Pages/OptionFund/Officer/Question/OffQuestion";
 import OffResearch from "../../../../Pages/OptionFund/Officer/Question/OffResearch";
 import DocumentOfficer from "../../../../Pages/OptionFund/Officer/Document/DocumentOfficer";
+import OfficerProcess from "../../../../Pages/OptionFund/Officer/Process/OfficerProcess";
+
+
 // import OffResearch from "../../../../Pages/OptionFund/Officer/Question/OffResearch";
 
 
@@ -269,6 +272,9 @@ const MyRoutes = (props) => {
             <Route path="/pko/officer/question" element={<OffQuestion />} />
             <Route path="/pko/officer/research" element={<OffResearch />} />
             <Route path="/pko/officer/documents" element={<DocumentOfficer />} />
+            <Route path="/OfficerProcess" element={<OfficerProcess />} />
+
+
 
             {/* <Route path="/Officer/Process" element={<OffResearch />} /> */}
 

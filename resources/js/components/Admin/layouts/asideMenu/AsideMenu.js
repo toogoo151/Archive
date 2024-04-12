@@ -2570,7 +2570,7 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                                 menuName="Бичиг баримтын бүрдэл"
                                                             />
                                                             <MenuItem
-                                                                url="/Process"
+                                                                url="/OfficerProcess"
                                                                 icon="nav-icon fa fa-spinner"
                                                                 menuName="Оролцооны байдал"
                                                             />

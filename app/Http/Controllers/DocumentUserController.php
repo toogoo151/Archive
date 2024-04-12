@@ -34,6 +34,26 @@ class DocumentUserController extends Controller
         }
     }
 
+    public function myOffID($req)
+    {
+        try {
+            $myID = DB::table("pko_officer_main")
+                ->where("pko_officer_main.missionID", "=", $req->_missionID)
+                ->where("pko_officer_main.eeljID", "=", $req->_eeljID)
+                ->where("pko_officer_main.pkoUserID", "=", Auth::user()->id)
+                ->first();
+            return $myID->id;
+        } catch (\Throwable $th) {
+            return response(
+                array(
+                    "status" => "error",
+                    "msg" => "Алдаа гарлаа."
+                ),
+                500
+            );
+        }
+    }
+
     public function getDocUser(Request $req){
         try {
             $getDocUser = DB::table("pko_documents")
@@ -71,6 +91,49 @@ class DocumentUserController extends Controller
                     "status" => "error",
                     "msg" => "Алдаа гарлаа."
                 ), 500
+            );
+        }
+    }
+
+    public function getDocOff(Request $req)
+    {
+        try {
+            $getDocUser = DB::table("pko_documents")
+            ->where("pko_documents.missionID", "=", $req->_missionID)
+                ->where("pko_documents.eeljID", "=", $req->_eeljID)
+                ->where("pko_documents.pkoMainHistoryID", "=", $this->myOffID($req))
+                ->join("pko_document_items", "pko_document_items.id", "=", "pko_documents.documentItemID")
+                ->select("pko_documents.*", "pko_document_items.documentName", "pko_document_items.documentShaardlaga")
+                ->get();
+
+            $countDocItems = new DocumentItem();
+            $docItemsLength = $countDocItems->countDocItems($req);
+
+            $getMyDocTotal = DB::table("pko_documents")
+            ->where("pko_documents.missionID", "=", $req->_missionID)
+                ->where("pko_documents.eeljID", "=", $req->_eeljID)
+                ->where("pko_documents.pkoMainHistoryID", "=", $this->myOffID($req))
+                ->count();
+
+            if ($getMyDocTotal === $docItemsLength) {
+                $getTotal = 1;
+            } else {
+                $getTotal = 0;
+            }
+
+            $row = array(
+                "getDocUser" => $getDocUser,
+                "pkoMainHistoryID" => $this->myOffID($req),
+                "getMyDocTotal" => $getTotal,
+            );
+            return $row;
+        } catch (\Throwable $th) {
+            return response(
+                array(
+                    "status" => "error",
+                    "msg" => "Алдаа гарлаа."
+                ),
+                500
             );
         }
     }
