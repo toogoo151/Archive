@@ -8,6 +8,10 @@ use App\Models\Wish;
 use App\Models\OfficerWish;
 use App\Models\MainHistory;
 use App\Models\OfficerMainHistory;
+use App\Models\OfficerDriver;
+use App\Models\OfficerLanguage;
+use App\Models\OfficerSkill;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -143,6 +147,27 @@ class RequserController extends Controller
             $store->missionID = $insertlist->missionID;
             $store->eeljID = $insertlist->eeljID;
             $store->save();
+
+            $driver = new OfficerDriver;
+            $driver->pkoUserID = $insertlist->pkoUserID;
+            $driver->missionID = $insertlist->missionID;
+            $driver->eeljID = $insertlist->eeljID;
+            $driver->MainTableID = $store->id;
+            $driver->save();
+
+            $language = new OfficerLanguage;
+            $language->pkoUserID = $insertlist->pkoUserID;
+            $language->missionID = $insertlist->missionID;
+            $language->eeljID = $insertlist->eeljID;
+            $language->MainTableID = $store->id;
+            $language->save();
+
+            $skill = new OfficerSkill;
+            $skill->pkoUserID = $insertlist->pkoUserID;
+            $skill->missionID = $insertlist->missionID;
+            $skill->eeljID = $insertlist->eeljID;
+            $skill->MainTableID = $store->id;
+            $skill->save();
 
             return response(
                 array(

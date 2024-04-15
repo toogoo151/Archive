@@ -141,6 +141,7 @@ import SportOther from "../../../../Pages/OptionFund/Sport/SportOther/SportOther
 
 //Officer ehlel
 //Question start
+import OfficerRequirements from "../../../../Pages/OptionFund/Officer/Question/OfficerRequirements";
 import OffQuestion from "../../../../Pages/OptionFund/Officer/Question/OffQuestion";
 import OffResearch from "../../../../Pages/OptionFund/Officer/Question/OffResearch";
 import DocumentOfficer from "../../../../Pages/OptionFund/Officer/Document/DocumentOfficer";
@@ -149,6 +150,9 @@ import OfficerProcess from "../../../../Pages/OptionFund/Officer/Process/Officer
 import OfficerMainHistory from "../../../../Pages/OfficerBack/MainHistory/OfficerMainHistory";
 import HealthOfficer from "../../../../Pages/OfficerBack/HealtApprove/Health";
 import SportApproveOfficer from "../../../../Pages/OfficerBack/SportApprove/SportApprove";
+import SkillApproveOfficer from "../../../../Pages/OfficerBack/SkillApprove/SkillApproveOfficer";
+
+
 // import OffResearch from "../../../../Pages/OptionFund/Officer/Question/OffResearch";
 
 //Login tsag
@@ -266,6 +270,7 @@ const MyRoutes = (props) => {
             <Route path="/sport/gereet" element={<SportGereet />} />
             <Route path="/sport/other" element={<SportOther />} />
             {/* Officer */}
+            <Route path="/officer/requirements" element={<OfficerRequirements />} />
             <Route path="/pko/officer/question" element={<OffQuestion />} />
             <Route path="/pko/officer/research" element={<OffResearch />} />
             <Route
@@ -294,6 +299,11 @@ const MyRoutes = (props) => {
                 path="/officer/back/sport/approve"
                 element={<SportApproveOfficer />} // officerBack/SportApprove/SportApprove
             />
+                <Route
+                path="/officer/back/skill/approve"
+                element={<SkillApproveOfficer />} // officerBack/SkillApproveOfficer/SkillApproveOfficer
+            />
+
 
             {/* <Route path="/Officer/Process" element={<OffResearch />} /> */}
 

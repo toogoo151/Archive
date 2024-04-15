@@ -8,6 +8,8 @@ use App\Models\MainHistory;
 use App\Models\UserQuestion;
 use App\Models\UserQuestionHistory;
 use App\Models\UserRequirements;
+use App\Models\OfficerRequirements;
+
 use App\Models\Wish;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -397,6 +399,45 @@ class UserQuestionController extends Controller
         }
     }
 
+    public function getOfficerRequirements()
+    {
+        try {
+            $getRequirements = DB::table("pko_officer_requirements")
+            ->get();
+            $startedDate = DB::table("pko_officer_requirements")
+            ->first()->startedDate;
+            $missionTypeHalf = DB::table("pko_officer_requirements")
+            ->first()->missionTypeHalf;
+            $missionTypeFull = DB::table("pko_officer_requirements")
+            ->first()->missionTypeFull;
+
+            if (count($getRequirements) == 0) {
+                $row = array(
+                    "requirements" => count($getRequirements),
+                );
+            } else {
+                $row = array(
+                    "requirements" => count($getRequirements),
+                    "startedDate" => $startedDate,
+                    "half" => $missionTypeHalf,
+                    "full" => $missionTypeFull,
+
+
+                );
+            }
+
+            return $row;
+        } catch (\Throwable $th) {
+            return response(
+                array(
+                    "status" => "error",
+                    "msg" => "Алдаа гарлаа."
+                ),
+                500
+            );
+        }
+    }
+
 
 
     public function getRequirements()
@@ -438,6 +479,42 @@ class UserQuestionController extends Controller
         }
     }
 
+
+
+    public function newofficerRequirements(Request $req)
+    {
+        try {
+            // $newRequirements = OfficerRequirements::find($req);
+            $newRequirements = OfficerRequirements::findOrFail(1);
+
+
+            // $newRequirements->id = 1;
+            $newRequirements->startedDate = $req->startedDate;
+            $newRequirements->missionTypeHalf = $req->missionTypeHalf;
+            $newRequirements->missionTypeFull = $req->missionTypeFull;
+             $newRequirements->update();
+            return response(
+                array(
+                    "status" => "success",
+                    "msg" => "Амжилттай заслаа."
+                ),
+                200
+            );
+        } catch (\Throwable $th) {
+            return response([
+                "status" => "error",
+                "msg" => "Алдаа гарлаа.",
+                "error" => $th->getMessage() // Include the error message in the response
+            ], 500);
+        }
+    }
+    // private function getRandomRankID()
+    // {
+    //     $rankIDs = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12];
+    //     return $rankIDs;
+    // }
+
+
     public function newRequirements(Request $req)
     {
         try {
@@ -464,6 +541,7 @@ class UserQuestionController extends Controller
             );
         }
     }
+
 
     public function getQuestionEdit(Request $req)
     {
