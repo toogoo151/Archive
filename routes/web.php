@@ -105,6 +105,7 @@ use App\Models\Sport;
 use App\Models\UuregGuitsetgelt;
 use App\Models\YearWish;
 use App\Models\BT_recommendation;
+use App\Models\OfficerSkill;
 
 use App\Models\DocumentOfficer;
 use App\Models\DocumentOfficerItem;
@@ -1061,6 +1062,17 @@ Route::post("/officer/new/health/child", [HealthOfficerController::class, "newHe
 Route::post("/officer/edit/health/child", [HealthOfficerController::class, "editHealthChild"]);
 Route::post("/officer/delete/health/child", [HealthOfficerController::class, "deleteHealthChild"]);
 Route::post("/officer/health/total", [HealthOfficerController::class, "getHealthTotal"]);
+Route::get("/get/officer/requirements", [UserQuestionController::class, "getOfficerRequirements"]);
+Route::post("/new/officer/requirements", [UserQuestionController::class, "newofficerRequirements"]);
+
+//skill start
+Route::post("/get/skill", function (Request $req) {
+    $getSkill = new OfficerSkill();
+    return $getSkill->getSkill($req);
+});
+
+
+
 
 
 

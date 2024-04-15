@@ -789,6 +789,11 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 icon="nav-icon fa fa-dumbbell"
                                                 menuName="Биеийн тамирын шалгалт"
                                             />
+                                            <MenuItem
+                                                url="/officer/back/skill/approve"
+                                                icon="nav-icon fa fa-newspaper-o"
+                                                menuName="Ур чадварын шалгалт"
+                                            />
                                             {/* <MenuItem
                                                 url="/com/main/history"
                                                 icon="nav-icon fa fa-university"
@@ -804,6 +809,31 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 icon="nav-icon fa fa-history"
                                                 menuName="Ажиллагааны түүх"
                                             /> */}
+                                        </ul>
+                                    </li>
+                                    <li className="nav-item">
+                                        <a
+                                            href="#"
+                                            className="nav-link"
+                                            style={{ color: "#FFFFFF" }}
+                                        >
+                                            <i className="nav-icon fa fa-paper-plane" />
+                                            <p>
+                                                МЭДЭЭЛЭЛ
+                                                <i className="fas fa-angle-left right" />
+                                            </p>
+                                        </a>
+                                        <ul
+                                            className="nav nav-treeview"
+                                            style={{
+                                                paddingLeft: "10px",
+                                            }}
+                                        >
+                                            <MenuItem
+                                                url="/officer/requirements"
+                                                icon="nav-icon fa fa-archive"
+                                                menuName="Тавигдах шаардлага"
+                                            />
                                         </ul>
                                     </li>
                                 </>
@@ -2639,24 +2669,25 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                                         menuName="Бичиг баримтын бүрдэл"
                                                                     />
                                                                     <MenuItem
-                                                                        url="/Process"
+                                                                        url="/OfficerProcess"
                                                                         icon="nav-icon fa fa-spinner"
                                                                         menuName="Оролцооны байдал"
                                                                     />
+                                                                    {/* <MenuItem
+                                                                        url="/pko/officer/documents"
+                                                                        icon="nav-icon fa fa-file-text"
+                                                                        menuName="Бичиг баримтын бүрдэл"
+                                                                    />
+                                                                    <MenuItem
+                                                                        url="/Process"
+                                                                        icon="nav-icon fa fa-spinner"
+                                                                        menuName="Оролцооны байдал"
+                                                                    /> */}
                                                                 </>
                                                             )}
                                                         </>
                                                     )}
-                                                    <MenuItem
-                                                        url="/pko/officer/documents"
-                                                        icon="nav-icon fa fa-file-text"
-                                                        menuName="Бичиг баримтын бүрдэл"
-                                                    />
-                                                    <MenuItem
-                                                        url="/OfficerProcess"
-                                                        icon="nav-icon fa fa-spinner"
-                                                        menuName="Оролцооны байдал"
-                                                    />
+
                                                     {/* </>
                                                     )}
                                                 </>
