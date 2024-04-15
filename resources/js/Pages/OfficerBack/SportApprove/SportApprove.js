@@ -206,6 +206,9 @@ const SportApprove = () => {
                 _healthDate: healthDate,
             })
             .then((res) => {
+                console.log(res.data);
+                console.log("above");
+
                 setRowsSelected([]);
                 setSportApprove(res.data);
             })
@@ -238,7 +241,7 @@ const SportApprove = () => {
     ) => {
         if (missionID != undefined && eeljID != undefined) {
             axios
-                .post("/get/sport/total", {
+                .post("/get/officer/sportTotal", {
                     _missionID: missionID,
                     _eeljID: eeljID,
                     _comandlalID: comandlalID,

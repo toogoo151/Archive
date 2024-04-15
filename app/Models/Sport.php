@@ -17,8 +17,10 @@ class Sport extends Model
         $getTomilogdooguiID = DB::table("pko_main_history")
                 ->where("pko_main_history.missionID", "=", $req->_missionID)
                 ->where("pko_main_history.eeljID", "=", $req->_eeljID)
-                ->join("pko_sport_changed", function($query){
+                ->join("pko_sport_changed", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_sport_changed.pkoMainHistoryID");
+                    $query->where("pko_sport_changed.missionID", "=",$req->_missionID)
+                        ->where("pko_sport_changed.eeljID", "=",$req->_eeljID);
                 })
                 ->select("pko_sport_changed.pkoMainHistoryID")
                 ->get();
@@ -86,6 +88,8 @@ class Sport extends Model
                     })
                     ->join("pko_sport_changed", function($query)use($req){
                         $query->on("pko_main_history.id", "=", "pko_sport_changed.pkoMainHistoryID");
+                        $query->where("pko_sport_changed.missionID", "=",$req->_missionID)
+                        ->where("pko_sport_changed.eeljID", "=",$req->_eeljID);
                     })
                     // ->join("pko_health", function($query)use($req){
                     //     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");

@@ -251,46 +251,46 @@ if($req->_childRowID != []){
     ->where("all_users.id", "=", Auth::user()->allUsersID)
     ->first();
 
-$objectRD = DB::table("pko_main_history")
+    $objectRD = DB::table("pko_main_history")
     ->where("pko_main_history.id", "=", $req->pkoMainHistoryID)
     ->first();
 
-if ($objectRD) {
-    $objectRD2 = DB::table("pko_users")
-        ->where("pko_users.id", "=", $objectRD->pkoUserID)
-        ->first();
-
-    if ($objectRD2) {
-        $objectRD3 = DB::table("all_users")
-            ->where("all_users.id", "=", $objectRD2->allUsersID)
-            ->first();
-       $objectRD4 = DB::table("all_users")
-            ->where("all_users.id", "=", $objectRD2->allUsersID)
+    if ($objectRD) {
+        $objectRD2 = DB::table("pko_users")
+            ->where("pko_users.id", "=", $objectRD->pkoUserID)
             ->first();
 
-        SportSec::create([
-            'missionID' => $req->missionID,
-            'eeljID' => $req->eeljID,
-            'pkoMainHistoryID' => $req->pkoMainHistoryID,
-            'genderID' => $req->genderID,
-            'sportType1' => $req->sportType1,
-            'sportType2' => $req->sportType2,
-            'sportType3' => $req->sportType3,
-            'sportType4' => $req->sportType4,
-            'averageScore' => ($req->sportType1 + $req->sportType2+ $req->sportType3 + $req->sportType4) / 4,
-            'successful' => "Нэмсэн",
-            'admin_id' => Auth::user()->id,
-            'admin_email' => Auth::user()->email,
-            'admin_name' => all_users::find(Auth::user()->allUsersID)->getUserName(),
-            'adminRD' => $editorRD->rd,
-            'objectName' => $objectRD4->firstName,
-            'objectmail' => $objectRD2->email,
-            'objectRD' => $objectRD3->rd,
-            'user_ip' => $req->ip(),
+        if ($objectRD2) {
+            $objectRD3 = DB::table("all_users")
+                ->where("all_users.id", "=", $objectRD2->allUsersID)
+                ->first();
+        $objectRD4 = DB::table("all_users")
+                ->where("all_users.id", "=", $objectRD2->allUsersID)
+                ->first();
 
-        ]);
+            SportSec::create([
+                'missionID' => $req->missionID,
+                'eeljID' => $req->eeljID,
+                'pkoMainHistoryID' => $req->pkoMainHistoryID,
+                'genderID' => $req->genderID,
+                'sportType1' => $req->sportType1,
+                'sportType2' => $req->sportType2,
+                'sportType3' => $req->sportType3,
+                'sportType4' => $req->sportType4,
+                'averageScore' => ($req->sportType1 + $req->sportType2+ $req->sportType3 + $req->sportType4) / 4,
+                'successful' => "Нэмсэн",
+                'admin_id' => Auth::user()->id,
+                'admin_email' => Auth::user()->email,
+                'admin_name' => all_users::find(Auth::user()->allUsersID)->getUserName(),
+                'adminRD' => $editorRD->rd,
+                'objectName' => $objectRD4->firstName,
+                'objectmail' => $objectRD2->email,
+                'objectRD' => $objectRD3->rd,
+                'user_ip' => $req->ip(),
+
+            ]);
+        }
     }
-}
 
             $insertScore = new SportChanged();
             $insertScore->missionID = $req->missionID;
@@ -326,50 +326,50 @@ if ($objectRD) {
     public function editSportChanged(Request $req){
         try {
              $editorRD = DB::table("all_users")
-    ->where("all_users.id", "=", Auth::user()->allUsersID)
-    ->first();
-
-$objectRD = DB::table("pko_main_history")
-    ->where("pko_main_history.id", "=", $req->pkoMainHistoryID)
-    ->first();
-
-if ($objectRD) {
-    $objectRD2 = DB::table("pko_users")
-        ->where("pko_users.id", "=", $objectRD->pkoUserID)
-        ->first();
-
-    if ($objectRD2) {
-        $objectRD3 = DB::table("all_users")
-            ->where("all_users.id", "=", $objectRD2->allUsersID)
-            ->first();
-       $objectRD4 = DB::table("all_users")
-            ->where("all_users.id", "=", $objectRD2->allUsersID)
+            ->where("all_users.id", "=", Auth::user()->allUsersID)
             ->first();
 
-        SportSec::create([
-            'missionID' => $req->missionID,
-            'eeljID' => $req->eeljID,
-            'pkoMainHistoryID' => $req->pkoMainHistoryID,
-            'genderID' => $req->genderID,
-            'sportType1' => $req->sportType1,
-            'sportType2' => $req->sportType2,
-            'sportType3' => $req->sportType3,
-            'sportType4' => $req->sportType4,
-            'averageScore' => ($req->sportType1 + $req->sportType2+ $req->sportType3 + $req->sportType4) / 4,
-            'sportEdit' => 4,
-            'successful' => "Зассан",
-            'admin_id' => Auth::user()->id,
-            'admin_email' => Auth::user()->email,
-            'admin_name' => all_users::find(Auth::user()->allUsersID)->getUserName(),
-            'adminRD' => $editorRD->rd,
-            'objectName' => $objectRD4->firstName,
-            'objectmail' => $objectRD2->email,
-            'objectRD' => $objectRD3->rd,
-            'user_ip' => $req->ip(),
+            $objectRD = DB::table("pko_main_history")
+                ->where("pko_main_history.id", "=", $req->pkoMainHistoryID)
+                ->first();
 
-        ]);
-    }
-}
+            if ($objectRD) {
+                $objectRD2 = DB::table("pko_users")
+                    ->where("pko_users.id", "=", $objectRD->pkoUserID)
+                    ->first();
+
+                if ($objectRD2) {
+                    $objectRD3 = DB::table("all_users")
+                        ->where("all_users.id", "=", $objectRD2->allUsersID)
+                        ->first();
+                $objectRD4 = DB::table("all_users")
+                        ->where("all_users.id", "=", $objectRD2->allUsersID)
+                        ->first();
+
+                    SportSec::create([
+                        'missionID' => $req->missionID,
+                        'eeljID' => $req->eeljID,
+                        'pkoMainHistoryID' => $req->pkoMainHistoryID,
+                        'genderID' => $req->genderID,
+                        'sportType1' => $req->sportType1,
+                        'sportType2' => $req->sportType2,
+                        'sportType3' => $req->sportType3,
+                        'sportType4' => $req->sportType4,
+                        'averageScore' => ($req->sportType1 + $req->sportType2+ $req->sportType3 + $req->sportType4) / 4,
+                        'sportEdit' => 4,
+                        'successful' => "Зассан",
+                        'admin_id' => Auth::user()->id,
+                        'admin_email' => Auth::user()->email,
+                        'admin_name' => all_users::find(Auth::user()->allUsersID)->getUserName(),
+                        'adminRD' => $editorRD->rd,
+                        'objectName' => $objectRD4->firstName,
+                        'objectmail' => $objectRD2->email,
+                        'objectRD' => $objectRD3->rd,
+                        'user_ip' => $req->ip(),
+
+                    ]);
+                }
+            }
 
             $edit = SportChanged::find($req->id);
             $edit->missionID = $req->missionID;
@@ -432,8 +432,10 @@ if ($objectRD) {
         $getTomilogdooguiID = DB::table("pko_main_history")
                 ->where("pko_main_history.missionID", "=", $req->_missionID)
                 ->where("pko_main_history.eeljID", "=", $req->_eeljID)
-                ->join("pko_sport_changed", function($query){
+                ->join("pko_sport_changed", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_sport_changed.pkoMainHistoryID");
+                        $query->where("pko_sport_changed.missionID", "=",$req->_missionID)
+                        ->where("pko_sport_changed.eeljID", "=",$req->_eeljID);
                 })
                 ->select("pko_sport_changed.pkoMainHistoryID")
                 ->get();
@@ -498,6 +500,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -537,8 +541,10 @@ if ($objectRD) {
                         $query->where("all_users.gender", "=", $req->_genderID);
                     }
                 })
-                ->join("pko_sport_changed", function($query){
+                ->join("pko_sport_changed", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_sport_changed.pkoMainHistoryID");
+                        $query->where("pko_sport_changed.missionID", "=",$req->_missionID)
+                        ->where("pko_sport_changed.eeljID", "=",$req->_eeljID);
 
                 })
                 ->join("pko_missions", function($query){
@@ -561,6 +567,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -624,6 +632,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -700,6 +710,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -741,6 +753,8 @@ if ($objectRD) {
                 })
                 ->join("pko_sport_changed", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_sport_changed.pkoMainHistoryID");
+                        $query->where("pko_sport_changed.missionID", "=",$req->_missionID)
+                        ->where("pko_sport_changed.eeljID", "=",$req->_eeljID);
                 })
                 // ->leftJoin("pko_sport_score", function($query)use($req){
                 //     $query->on("pko_main_history.id", "=", "pko_sport_score.pkoMainHistoryID")
@@ -767,6 +781,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -830,6 +846,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -903,6 +921,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -943,6 +963,8 @@ if ($objectRD) {
                 })
                 ->join("pko_sport_changed", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_sport_changed.pkoMainHistoryID");
+                        $query->where("pko_sport_changed.missionID", "=",$req->_missionID)
+                        ->where("pko_sport_changed.eeljID", "=",$req->_eeljID);
                 })
                 // ->leftJoin("pko_sport_score", function($query)use($req){
                 //     $query->on("pko_main_history.id", "=", "pko_sport_score.pkoMainHistoryID")
@@ -969,6 +991,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -1031,6 +1055,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -1101,6 +1127,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -1137,6 +1165,8 @@ if ($objectRD) {
                 })
                 ->join("pko_sport_changed", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_sport_changed.pkoMainHistoryID");
+                        $query->where("pko_sport_changed.missionID", "=",$req->_missionID)
+                        ->where("pko_sport_changed.eeljID", "=",$req->_eeljID);
                 })
                 // ->leftJoin("pko_sport_score", function($query)use($req){
                 //     $query->on("pko_main_history.id", "=", "pko_sport_score.pkoMainHistoryID")
@@ -1163,6 +1193,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }
@@ -1221,6 +1253,8 @@ if ($objectRD) {
                 })
                 ->join("pko_health", function($query)use($req){
                     $query->on("pko_main_history.id", "=", "pko_health.pkoMainHistoryID");
+                        $query->where("pko_health.missionID", "=",$req->_missionID)
+                        ->where("pko_health.eeljID", "=",$req->_eeljID);
                     if($req->_healthDate != ""){
                         $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                     }

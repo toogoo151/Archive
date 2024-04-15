@@ -47,7 +47,7 @@ const SportOverEdit = (props) => {
         }
 
         axios
-            .post("/edit/sport/changed", {
+            .post("/edit/sport/officer/changed", {
                 id: props.changeDataRow.id,
                 missionID: state.getMissionRowID,
                 eeljID: state.getEeljRowID,

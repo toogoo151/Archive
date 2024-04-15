@@ -32,7 +32,7 @@ const SportNew = (props) => {
 
     const onSubmit = (data) => {
         axios
-            .post("/new/sport/changed", {
+            .post("/new/sport/officer/changed", {
                 missionID: state.getMissionRowID,
                 eeljID: state.getEeljRowID,
                 pkoMainHistoryID: props.clickParentRowID,

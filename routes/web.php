@@ -1062,7 +1062,15 @@ Route::post("/officer/edit/health/child", [HealthOfficerController::class, "edit
 Route::post("/officer/delete/health/child", [HealthOfficerController::class, "deleteHealthChild"]);
 Route::post("/officer/health/total", [HealthOfficerController::class, "getHealthTotal"]);
 
+
+
+// биеийн тамирийн оноо оруулах
 Route::post("/get/users/officer/main/history/for/sportApprove", [SportOfficerController::class, "getUsersFromOfficerMainHistory"]);
+Route::post("/get/sport/officer/changed", [SportOfficerController::class, "getSportChanged"]);
+Route::post("/new/sport/officer/changed", [SportOfficerController::class, "newSportChanged"]);
+Route::post("/edit/sport/officer/changed", [SportOfficerController::class, "editSportChanged"]);
+Route::post("/get/officer/sportTotal", [SportOfficerController::class, "getSportTotal"]);
+
 
 
 

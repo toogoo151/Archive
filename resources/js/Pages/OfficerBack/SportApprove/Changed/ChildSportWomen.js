@@ -32,9 +32,9 @@ const ChildSportWomen = (props) => {
         );
     }, [state.getMissionRowID, state.getEeljRowID, props.clickedRowData.id]);
 
-    useEffect(() => {
-        fn_editBtn(state.getMissionRowID, state.getEeljRowID, getEditRowData);
-    }, [state.getMissionRowID, state.getEeljRowID, getEditRowData]);
+    // useEffect(() => {
+    //     fn_editBtn(state.getMissionRowID, state.getEeljRowID, getEditRowData);
+    // }, [state.getMissionRowID, state.getEeljRowID, getEditRowData]);
 
     useEffect(() => {
         if (getRowsSelected[0] != undefined) {
@@ -51,7 +51,7 @@ const ChildSportWomen = (props) => {
             rowID != undefined
         ) {
             axios
-                .post("/get/sport/changed", {
+                .post("/get/sport/officer/changed", {
                     _missionID: missionID,
                     _eeljID: eeljID,
                     _rowID: rowID,
@@ -262,57 +262,57 @@ const ChildSportWomen = (props) => {
                 },
             },
         },
-        {
-            name: "sportEdit",
-            label: "Засах хүсэлт",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                        },
-                    };
-                },
-                setCellProps: () => {
-                    return { align: "center" };
-                },
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    if (value == 4) {
-                        return "Засах хүсэлт дахин илгээх боломжгүй.";
-                    } else if (value == 1) {
-                        return "Хүсэлт илгээсэн..";
-                    } else if (value == 2) {
-                        return <CheckButton color={"success"}></CheckButton>;
-                    } else if (value == 3) {
-                        return (
-                            <DangerousButton color={"error"}></DangerousButton>
-                        );
-                    } else {
-                        return (
-                            <>
-                                <button
-                                    type="button"
-                                    className="btn btn-warning"
-                                    data-dismiss=""
-                                    onClick={() => {
-                                        fn_request_btn(
-                                            value,
-                                            tableMeta,
-                                            updateValue
-                                        );
-                                    }}
-                                >
-                                    Илгээх
-                                </button>
-                            </>
-                        );
-                    }
-                },
-            },
-        },
+        // {
+        //     name: "sportEdit",
+        //     label: "Засах хүсэлт",
+        //     options: {
+        //         filter: true,
+        //         sort: false,
+        //         setCellHeaderProps: (value) => {
+        //             return {
+        //                 style: {
+        //                     backgroundColor: "#5DADE2",
+        //                     color: "white",
+        //                 },
+        //             };
+        //         },
+        //         setCellProps: () => {
+        //             return { align: "center" };
+        //         },
+        //         customBodyRender: (value, tableMeta, updateValue) => {
+        //             if (value == 4) {
+        //                 return "Засах хүсэлт дахин илгээх боломжгүй.";
+        //             } else if (value == 1) {
+        //                 return "Хүсэлт илгээсэн..";
+        //             } else if (value == 2) {
+        //                 return <CheckButton color={"success"}></CheckButton>;
+        //             } else if (value == 3) {
+        //                 return (
+        //                     <DangerousButton color={"error"}></DangerousButton>
+        //                 );
+        //             } else {
+        //                 return (
+        //                     <>
+        //                         <button
+        //                             type="button"
+        //                             className="btn btn-warning"
+        //                             data-dismiss=""
+        //                             onClick={() => {
+        //                                 fn_request_btn(
+        //                                     value,
+        //                                     tableMeta,
+        //                                     updateValue
+        //                                 );
+        //                             }}
+        //                         >
+        //                             Илгээх
+        //                         </button>
+        //                     </>
+        //                 );
+        //             }
+        //         },
+        //     },
+        // },
         // {
         //     name: "sportEditDes",
         //     label: "Засах болсон шалтгаан",
@@ -469,7 +469,7 @@ const ChildSportWomen = (props) => {
                     getRowsSelected={getRowsSelected}
                     setRowsSelected={setRowsSelected}
                     isHideDelete={false}
-                    isHideEdit={false}
+                    isHideEdit={true}
                 />
             )}
 
