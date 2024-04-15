@@ -11,8 +11,84 @@ const SkillApproveOfficer = () => {
     const [getRowsSelected, setRowsSelected] = useState([]); // row clear хийж байгаа
     const [clickedRowData, setclickedRowData] = useState([]);
 
+    const [getComandlals, setComandlals] = useState([]);
+    const [getUnits, setUnits] = useState([]);
+
+    const [getComandlalID, setComandlalID] = useState("");
+    const [getUnitID, setUnitID] = useState("");
+
+   const [skillTotal, setSkillTotal] = useState(0);
+
+
+
+
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
     const [showModal, setShowModal] = useState("modal");
+
+    useEffect(() => {
+          axios
+            .post("skill/count")
+            .then((res) => {
+                // console.log(res.data);
+                setSkillTotal(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
+)
+
+      useEffect(() => {
+        axios
+            .post("/get/ID/byComandlal")
+            .then((res) => {
+                if (userType == "comandlalAdmin") {
+                    setComandlalID(res.data.firstComandlal);
+                    setComandlals(res.data.getComandlals);
+                    changeComandlal(res.data.firstComandlal["id"]);
+                }
+                if (userType == "superAdmin") {
+                    setComandlals(res.data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        refreshSkill(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
+        );
+      }, []);
+
+     const changeComandlal = (inComandlal) => {
+        axios
+            .post("/get/ID/byUnit", {
+                _comandlalID: inComandlal,
+            })
+            .then((res) => {
+                setUnits(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+     };
+
+      const changeUnit = (e) => {
+        setUnitID(e.target.value);
+        refreshSkill(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            e.target.value,
+        );
+    };
+
+
+
+
 
     useEffect(() => {
         refreshSkill(state.getMissionRowID, state.getEeljRowID);
@@ -26,16 +102,42 @@ const SkillApproveOfficer = () => {
             setclickedRowData(getSkill[getRowsSelected[0]]);
         }
     }, [getRowsSelected]);
-    const refreshSkill = (missionID, eeljID) => {
+
+
+       useEffect(() => {
+        refreshSkill(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
+        );
+    }, [state.getMissionRowID, state.getEeljRowID]);
+
+
+
+
+    const refreshSkill =
+    (
+        missionID,
+        eeljID,
+        comandlalID,
+        unitID,
+    ) =>
+    {
         if (missionID != undefined && eeljID != undefined) {
             axios
                 .post("/get/skill", {
-                    _missionID: missionID,
-                    _eeljID: eeljID,
+                _missionID: missionID,
+                _eeljID: eeljID,
+                _comandlalID: comandlalID,
+                _unitID: unitID,
                 })
                 .then((res) => {
                     setSkill(res.data);
                     setRowsSelected([]);
+                //   if (res.data.complete != undefined) {
+                //         setSkillTotal(res.data.complete);
+                //     }
                 })
                 .catch((err) => {
                     console.log(err);
@@ -60,7 +162,9 @@ const SkillApproveOfficer = () => {
                             Swal.fire(res.data.msg);
                             refreshSkill(
                                 state.getMissionRowID,
-                                state.getEeljRowID
+                                state.getEeljRowID,
+                                getComandlalID,
+                                getUnitID,
                             );
                         })
                         .catch((err) => {
@@ -72,11 +176,99 @@ const SkillApproveOfficer = () => {
             });
         }
     };
+
+
     const btnEdit = () => {
         setIsEditBtnClick(true);
     };
     return (
         <div>
+            <div
+                className="info-box"
+                style={{
+                    padding: "20px",
+                    paddingBottom: "0px",
+                }}
+            >
+                <div className="col-md-3">
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">Командлал:</span>
+                        </div>
+                        {userType == "superAdmin" ? (
+                            <select
+                                className="form-control"
+                                onChange={(e) => {
+                                    setComandlalID(e.target.value);
+                                    setUnitID("");
+                                    refreshSkill(
+                                        state.getMissionRowID,
+                                        state.getEeljRowID,
+                                        e.target.value,
+                                        "",
+
+                                    );
+                                    changeComandlal(e.target.value);
+                                }}
+                            >
+                                <option value="">Сонгоно уу</option>
+                                {getComandlals.map((el) => (
+                                    <option key={el.id} value={el.id}>
+                                        {el.comandlalShortName}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <select
+                                className="form-control"
+                                value={getComandlalID["id"]}
+                                disabled={true}
+                            >
+                                <option value="">Сонгоно уу</option>
+                                {getComandlals.map((el) => (
+                                    <option key={el.id} value={el.id}>
+                                        {el.comandlalShortName}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
+                    </div>
+                </div>
+                <div className="col-md-3">
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">Анги:</span>
+                        </div>
+
+                        <select className="form-control" onChange={changeUnit}>
+                            <option value="">Сонгоно уу</option>
+                            {getUnits.map((el) => (
+                                <option key={el.id} value={el.id}>
+                                    {el.unitShortName}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+                <div
+                className="info-box"
+                style={{ padding: "20px", paddingBottom: "0px" }}
+            >
+                <div className="col-md-3">
+                    <div className="small-box bg-info">
+                        <div className="inner">
+                            {/* <h3>{skillTotal}</h3> */}
+                            <p>Нийт ЦАХ</p>
+                        </div>
+                        <div className="icon">
+                            <i className="fas fa-calculator" />
+                        </div>
+                    </div>
+                </div>
+                </div>
+
             <MUIDatatable
                 data={getSkill}
                 setdata={setSkill}

@@ -5,8 +5,8 @@ import { AppContext } from "../../../Context/MyContext";
 const SkillApproveOfficerEdit = (props) => {
     const state = useContext(AppContext);
     const [showModal, setShowModal] = useState("");
-    const [SignalScore, setRotName] = useState("");
-    const [LocationScore, setRotShortName] = useState("");
+    const [SignalScore, setSignalScore] = useState("");
+    const [LocationScore, setLocationScore] = useState("");
 
     const [getDataRow, setDataRow] = useState([]);
 
@@ -16,17 +16,21 @@ const SkillApproveOfficerEdit = (props) => {
 
     useEffect(() => {
         if (props.isEditBtnClick) {
-            setRotName(props.changeDataRow.SignalScore);
-            setRotShortName(props.changeDataRow.LocationScore);
+            setSignalScore(props.changeDataRow.SignalScore);
+            setLocationScore(props.changeDataRow.LocationScore);
         }
     }, [props.isEditBtnClick]);
 
     const saveRot = () => {
         props.setRowsSelected([]);
-        // if (SignalScore == "" || SignalScore == null) {
-        //     Swal.fire("Ротын нэр оруулна уу.");
-        //     return;
-        // }
+        if (SignalScore == "" || SignalScore == null) {
+            Swal.fire("Холбоо оруулна уу.");
+            return;
+        }
+           if (LocationScore == "" || LocationScore == null) {
+            Swal.fire("Байр зүй оруулна уу.");
+            return;
+        }
 
         axios
             .post("/edit/officer/skill", {
@@ -39,31 +43,31 @@ const SkillApproveOfficerEdit = (props) => {
             })
             .then((res) => {
                 Swal.fire(res.data.msg);
-                setRotName("");
-                setRotShortName("");
+                setSignalScore("");
+                setLocationScore("");
                 setShowModal("");
 
-                props.refreshRot(state.getMissionRowID, state.getEeljRowID);
+                props.refreshSkill(state.getMissionRowID, state.getEeljRowID);
             })
             .catch((err) => {
                 Swal.fire(err.response.data.msg);
             });
     };
 
-    const changeRot = (e) => {
-        setRotName(e.target.value);
+    const changeSignal = (e) => {
+        setSignalScore(e.target.value);
     };
-    const changeRotShortName = (e) => {
-        setRotShortName(e.target.value);
+    const changeLocationScore = (e) => {
+        setLocationScore(e.target.value);
     };
 
     return (
         <>
-            <div className="modal" id="rotEdit">
+            <div className="modal" id="skillApproveOfficerEdit">
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h4 className="modal-title">РОТЫН НЭР ЗАСАХ</h4>
+                            <h4 className="modal-title">УР ЧАДВАР</h4>
 
                             <button
                                 type="button"
@@ -85,7 +89,7 @@ const SkillApproveOfficerEdit = (props) => {
                                         </div>
                                         <input
                                             className="form-control"
-                                            onChange={changeRot}
+                                            onChange={changeSignal}
                                             value={SignalScore}
                                         />
                                     </div>
@@ -99,8 +103,8 @@ const SkillApproveOfficerEdit = (props) => {
                                         </div>
                                         <input
                                             className="form-control"
-                                            onChange={changeRotShortName}
-                                            value={rotShortName}
+                                            onChange={changeLocationScore}
+                                            value={LocationScore}
                                         />
                                     </div>
                                 </div>
@@ -115,7 +119,7 @@ const SkillApproveOfficerEdit = (props) => {
                                 data-dismiss=""
                                 onClick={saveRot}
                             >
-                                Засах
+                                Нэмэх
                             </button>
                             <button
                                 type="button"

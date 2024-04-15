@@ -89,6 +89,15 @@ class OfficerSkill extends Model
                 "tb_comandlal.comandlalShortName",
                 "tb_unit.unitShortName"
             );
+            // $getSkill->update([
+            //     'SignalScore' => DB::raw('SignalScore + 2'),
+            //     'LocationScore' => DB::raw('LocationScore + 2')
+            // ]);
+
+            // // Calculate TotalScore
+            // $getSkill->selectRaw('SignalScore + LocationScore as TotalScore');
+
+
 
             // Execute the query and get the results
             $skills = $getSkill->get();
@@ -98,7 +107,7 @@ class OfficerSkill extends Model
             return response(
                 array(
                     "status" => "error",
-                    "msg" => "Рот татаж чадсангүй."
+                    "msg" => "татаж чадсангүй."
                 ),
                 500
             );

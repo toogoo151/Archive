@@ -57,6 +57,9 @@ use App\Http\Controllers\DocumentOfficerController;
 use App\Http\Controllers\HealthOfficerController;
 use App\Http\Controllers\SportOfficerController;
 use App\Http\Controllers\DocumentOffItemController;
+use App\Http\Controllers\SkillOfficerController;
+
+
 
 
 
@@ -1071,9 +1074,8 @@ Route::post("/get/skill", function (Request $req) {
     return $getSkill->getSkill($req);
 });
 
-
-
-
+Route::post("/edit/officer/skill", [SkillOfficerController::class, "editSkill"]);
+Route::post("/skill/count", [SkillOfficerController::class, "count"]);
 
 
 // биеийн тамирийн оноо оруулах

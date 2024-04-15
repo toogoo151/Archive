@@ -200,7 +200,7 @@ const MyRoutes = (props) => {
             <Route path="/unit/covot" element={<UnitCovot />} />
             <Route path="/main/history" element={<MainHistory />} />
             <Route path="/wish/info" element={<WishInfo />} />
-            <Route path="/admin/control" element={<Control />} />
+            <Route path="/admin/control" element={<Control />} />   
             <Route path="/com/main/history" element={<ComMainHistory />} />
             <Route path="/document/unit" element={<DocumentUnit />} />
             <Route path="/health/department" element={<HealthApprove />} />
