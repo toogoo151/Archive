@@ -25,19 +25,19 @@ const SkillApproveOfficer = () => {
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
     const [showModal, setShowModal] = useState("modal");
 
-    useEffect(() => {
-          axios
-            .post("skill/count")
-            .then((res) => {
-                // console.log(res.data);
-                setSkillTotal(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }
+//     useEffect(() => {
+//           axios
+//             .post("skill/count")
+//             .then((res) => {
+//                 // console.log(res.data);
+//                 setSkillTotal(res.data);
+//             })
+//             .catch((err) => {
+//                 console.log(err);
+//             });
+//     }
 
-)
+// )
 
       useEffect(() => {
         axios
