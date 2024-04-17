@@ -49,40 +49,17 @@ class OfficerMainHistory extends Model
     }
 
 
-    //  public function getProssDesc($req){
-    //     try {
-    //         $getProcess = DB::table("pko_documents")
-    //         ->where("missionID", "=", $req->_missionID)
-    //         ->where("eeljID", "=", $req->_eeljID)
-    //         ->where("pko_main_history.pkoUserID", "=", Auth::user()->id)
-    //         //    ->join("pko_documents", function($query){
-    //         //             $query->on("pko_documents.pkoMainHistoryID", "=", "pko_main_history.id");
-    //         //         })
-    //         // ->join()
-    //         ->get();
-    //         return $getProcess;
-    //         // return array(
-    //         //     "count"=>($getProcess),
-    //         //     "row"=>$getProcess,
-    //         // );
 
-    //     } catch (\Throwable $th) {
-    //         return response(
-    //             array(
-    //                 "status" => "error",
-    //                 "msg" => "Тохиргоо татаж чадсангүй."
-    //             ), 500
-    //         );
-    //     }
-    // }
 
-    public function getShalgaltUguuguiIDs($req)
+    public function getShalgaltUguuguiIDs($req) // changed
     {
-        $getTomilogdooguiID = DB::table("pko_main_history")
-            ->where("pko_main_history.missionID", "=", $req->_missionID)
-            ->where("pko_main_history.eeljID", "=", $req->_eeljID)
-            ->join("pko_sport_changed", function ($query) {
-                $query->on("pko_main_history.id", "=", "pko_sport_changed.pkoMainHistoryID");
+        $getTomilogdooguiID = DB::table("pko_officer_main")
+            ->where("pko_officer_main.missionID", "=", $req->_missionID)
+            ->where("pko_officer_main.eeljID", "=", $req->_eeljID)
+            ->join("pko_sport_changed", function ($query)use($req) {
+                $query->on("pko_officer_main.id", "=", "pko_sport_changed.pkoMainHistoryID")
+                    ->where("pko_sport_changed.missionID", "=", $req->_missionID)
+                    ->where("pko_sport_changed.eeljID", "=", $req->_eeljID);
             })
             ->select("pko_sport_changed.pkoMainHistoryID")
             ->get();
@@ -93,7 +70,7 @@ class OfficerMainHistory extends Model
         return $array;
     }
 
-    public function getMainHistorys($req)
+    public function getMainHistorys($req) // changed
     {
         try {
             if (Auth::user()->user_type == "superAdmin") {
@@ -150,9 +127,11 @@ class OfficerMainHistory extends Model
                     ->join("tb_gender", function ($query) {
                         $query->on("all_users.gender", "=", "tb_gender.id");
                     })
-                    ->when($req->_sportScore === "gived", function ($query) {
-                        $query->join("pko_sport_changed", function ($query) {
-                            $query->on("pko_officer_main.id", "=", "pko_sport_changed.pkoMainHistoryID");
+                    ->when($req->_sportScore === "gived", function ($query)use($req) {
+                        $query->join("pko_sport_changed", function ($query)use($req) {
+                            $query->on("pko_officer_main.id", "=", "pko_sport_changed.pkoMainHistoryID")
+                            ->where("pko_sport_changed.missionID", "=", $req->_missionID)
+                            ->where("pko_sport_changed.eeljID", "=", $req->_eeljID);
                         });
                     })
                     ->select("pko_officer_main.*", "all_users.firstName", "all_users.lastName", "all_users.rd", "all_users.age", "tb_gender.genderName", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")

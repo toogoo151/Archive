@@ -325,7 +325,7 @@ const HealthChild = (props) => {
                 </div>
                 <br />
             </div>
-            <MUIDatatable
+            {/* <MUIDatatable
                 data={getHealthChild}
                 setdata={setHealthChild}
                 columns={columns}
@@ -337,6 +337,47 @@ const HealthChild = (props) => {
                             excelHeaders={excelHeaders}
                             isHideInsert={false}
                         />
+                    </>
+                }
+                btnEdit={btnEdit}
+                modelType={showModal}
+                editdataTargetID={"#healthChildEdit"}
+                btnDelete={btnDelete}
+                avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
+                avgColumnName={"email"} //
+                avgName={"Дундаж: "}
+                getRowsSelected={getRowsSelected}
+                setRowsSelected={setRowsSelected}
+                isHideDelete={false}
+                isHideEdit={true}
+            /> */}
+            <MUIDatatable
+                data={getHealthChild}
+                setdata={setHealthChild}
+                columns={columns}
+                costumToolbar={
+                    <>
+                        {getHealthChild == "" ? (
+                            <CustomToolbar
+                                title={"ЭРҮҮЛ МЭНДИЙН ҮЗЛЭГИЙН ХАРИУ"}
+                                btnClassName={"btn btn-success"}
+                                modelType={"modal"}
+                                dataTargetID={"#healthChildNew"}
+                                spanIconClassName={"fas fa-solid fa-plus"}
+                                buttonName={"НЭМЭХ"}
+                                // btnInsert={btnInsert}
+                                excelDownloadData={getHealthChild}
+                                excelHeaders={excelHeaders}
+                                isHideInsert={true}
+                            />
+                        ) : (
+                            <CustomToolbar
+                                title={"ЭРҮҮЛ МЭНДИЙН ҮЗЛЭГИЙН ХАРИУ"}
+                                excelDownloadData={getHealthChild}
+                                excelHeaders={excelHeaders}
+                                isHideInsert={false}
+                            />
+                        )}
                     </>
                 }
                 btnEdit={btnEdit}

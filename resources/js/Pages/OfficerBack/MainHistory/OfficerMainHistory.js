@@ -392,399 +392,6 @@ const OfficerMainHistory = () => {
         );
     };
 
-    const columnsOld = [
-        {
-            name: "id",
-            label: "№",
-            options: {
-                filter: true,
-                sort: true,
-                filter: false,
-                align: "center",
-                customBodyRenderLite: (rowIndex) => {
-                    if (rowIndex == 0) {
-                        return rowIndex + 1;
-                    } else {
-                        return rowIndex + 1;
-                    }
-                },
-                setCellProps: () => {
-                    return { align: "center" };
-                },
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 50,
-                        },
-                    };
-                },
-            },
-        },
-        {
-            name: "comandlalShortName",
-            label: "Командлал",
-            options: {
-                filter: true,
-                sort: false,
-                display:
-                    userType == "comandlalAdmin" || userType == "unitAdmin"
-                        ? false
-                        : true,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 50,
-                        },
-                    };
-                },
-            },
-        },
-        {
-            name: "unitShortName",
-            label: "Анги",
-            options: {
-                filter: true,
-                sort: false,
-                display: userType == "unitAdmin" ? false : true,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 150,
-                        },
-                    };
-                },
-            },
-        },
-        {
-            name: "shortRank",
-            label: "Цол",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 40,
-                        },
-                    };
-                },
-                setCellProps: () => {
-                    return { align: "center" };
-                },
-            },
-        },
-        {
-            name: "rd",
-            label: "Регистрийн дугаар",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 150,
-                        },
-                    };
-                },
-            },
-        },
-        {
-            name: "lastName",
-            label: "Овог",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 180,
-                        },
-                    };
-                },
-            },
-        },
-        {
-            name: "firstName",
-            label: "Нэр",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 180,
-                        },
-                    };
-                },
-            },
-        },
-        {
-            name: "age",
-            label: "Нас",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 180,
-                        },
-                    };
-                },
-            },
-        },
-        {
-            name: "genderName",
-            label: "Хүйс",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 180,
-                        },
-                    };
-                },
-            },
-        },
-
-        {
-            name: "documentsMainApprove",
-            label: "Бичиг баримтын бүрдэл",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 50,
-                        },
-                    };
-                },
-                customBodyRender: (value) => {
-                    if (value == 1) {
-                        return <CheckButton color={"success"}></CheckButton>;
-                    } else if (value == 0) {
-                        return "Шийдвэрлэгдээгүй";
-                    } else if (value == 2) {
-                        return (
-                            <DangerousButton color={"error"}></DangerousButton>
-                        );
-                    }
-                },
-                setCellProps: () => {
-                    return { align: "center" };
-                },
-            },
-        },
-        {
-            name: "eruulMendHeltesApprove",
-            label: "Эрүүл мэндийн хэлтэс",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 50,
-                        },
-                    };
-                },
-                customBodyRender: (value) => {
-                    if (value == 2) {
-                        return (
-                            <DangerousButton color={"error"}></DangerousButton>
-                        );
-                    } else if (value == 0) {
-                        return "Шийдвэрлэгдээгүй";
-                    } else if (value == 1) {
-                        return <CheckButton color={"success"}></CheckButton>;
-                    }
-                },
-                setCellProps: () => {
-                    return { align: "center" };
-                },
-            },
-        },
-        {
-            name: "healthApprove",
-            label: "Эрүүл мэндийн үзлэг",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 50,
-                        },
-                    };
-                },
-                customBodyRender: (value) => {
-                    if (value == 2) {
-                        return (
-                            <DangerousButton color={"error"}></DangerousButton>
-                        );
-                    } else if (value == 0) {
-                        return "Ороогүй";
-                    } else if (value == 1) {
-                        return <CheckButton color={"success"}></CheckButton>;
-                    }
-                },
-                setCellProps: () => {
-                    return { align: "center" };
-                },
-            },
-        },
-        {
-            name: "sportScore",
-            label: "Биеийн тамирын оноо",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 50,
-                        },
-                    };
-                },
-                setCellProps: () => {
-                    return { align: "center" };
-                },
-            },
-        },
-        {
-            name: "id",
-            label: "Байр",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                        },
-                    };
-                },
-                customBodyRenderLite: (rowIndex) => {
-                    if (rowIndex == 0) {
-                        return rowIndex + 1;
-                    } else {
-                        return rowIndex + 1;
-                    }
-                },
-
-                setCellProps: (value, rowIndex) => {
-                    const el = getMainHistory[rowIndex];
-                    if (el.sportScore >= 80) {
-                        return {
-                            align: "center",
-                            style: {
-                                backgroundColor: "#7FF6BA",
-                                color: "black",
-                            },
-                        };
-                    } else if (el.sportScore >= 50) {
-                        return {
-                            align: "center",
-                            style: {
-                                backgroundColor: "#F8EA71",
-                                color: "black",
-                            },
-                        };
-                    } else {
-                        return {
-                            align: "center",
-                            style: {
-                                backgroundColor: "#DD596F",
-                                color: "black",
-                            },
-                        };
-                    }
-                },
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 50,
-                            fontWeight: "bold",
-                        },
-                    };
-                },
-            },
-        },
-
-        {
-            name: "id",
-            label: "Дэлгэрэнгүй",
-            options: {
-                filter: true,
-                sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                            width: 100,
-                        },
-                    };
-                },
-                setCellProps: () => {
-                    return { align: "center" };
-                },
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <>
-                            <button
-                                type="button"
-                                className="btn btn-success"
-                                data-toggle="modal"
-                                data-target="#userDetails"
-                                onClick={() => {
-                                    fn_details_btn(
-                                        value,
-                                        tableMeta,
-                                        updateValue
-                                    );
-                                }}
-                            >
-                                Дэлгэрэнгүй
-                            </button>
-                        </>
-                    );
-                },
-            },
-        },
-    ];
     const columns = [
         {
             name: "id",
@@ -1114,7 +721,7 @@ const OfficerMainHistory = () => {
             },
         },
         {
-            name: "",
+            name: "skillScore",
             label: "Ур чадвар",
             options: {
                 filter: true,
@@ -1584,6 +1191,23 @@ const OfficerMainHistory = () => {
                             </div>
                         </div>
                         <div className="row">
+                            <div className="input-group mb-3">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">
+                                        ALCPT:
+                                    </span>
+                                </div>
+                                <select
+                                    className="form-control"
+                                    // onChange={changeHeltes}
+                                >
+                                    <option value="">Сонгоно уу</option>
+                                    <option value="0">Өгөөгүй</option>
+                                    <option value="1">Өгсөн</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="row">
                             <div className="col-md-3">
                                 <button
                                     className="btn btn-info"
@@ -1620,17 +1244,16 @@ const OfficerMainHistory = () => {
                             <div className="input-group mb-3">
                                 <div className="input-group-prepend">
                                     <span className="input-group-text">
-                                        Эрүүл мэндийн хэлтэс:
+                                        Англи хэлний 4 чадвар:
                                     </span>
                                 </div>
                                 <select
                                     className="form-control"
-                                    onChange={changeHeltes}
+                                    // onChange={changeHeltes}
                                 >
                                     <option value="">Сонгоно уу</option>
-                                    <option value="0">Шийдвэрлэгдээгүй</option>
-                                    <option value="1">Зөвшөөрөгдсөн</option>
-                                    <option value="2">Татгалзсан</option>
+                                    <option value="0">Өгөөгүй</option>
+                                    <option value="1">Өгсөн</option>
                                 </select>
                             </div>
                         </div>
@@ -1648,6 +1271,42 @@ const OfficerMainHistory = () => {
                                     <option value="">Сонгоно уу</option>
                                     <option value="gived">Өгсөн</option>
                                     <option value="notGiven">Өгөөгүй</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="input-group mb-3">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">
+                                        Жолооны шалгалт:
+                                    </span>
+                                </div>
+                                <select
+                                    className="form-control"
+                                    // onChange={changePhysic}
+                                >
+                                    <option value="">Сонгоно уу</option>
+                                    <option value="0">Өгөөгүй</option>
+                                    <option value="1">Тэнцсэн</option>
+                                    <option value="2">Тэнцээгүй</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="input-group mb-3">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">
+                                        Ур чадвар:
+                                    </span>
+                                </div>
+                                <select
+                                    className="form-control"
+                                    // onChange={changePhysic}
+                                >
+                                    <option value="">Сонгоно уу</option>
+                                    <option value="0">Өгөөгүй</option>
+                                    <option value="1">Тэнцсэн</option>
+                                    <option value="2">Тэнцээгүй</option>
                                 </select>
                             </div>
                         </div>
