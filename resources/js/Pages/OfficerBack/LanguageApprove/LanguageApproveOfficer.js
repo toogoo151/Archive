@@ -21,14 +21,8 @@ const LanguageApproveOfficer = () => {
     const [scoretrueTotal, setScoretrueTotal] = useState(0);
     const [scorefalseTotal, setScorefalseTotal] = useState(0);
 
-
-
-
-
-
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
     const [showModal, setShowModal] = useState("modal");
-
 
     //    useEffect(() => {
     //  axios
@@ -42,21 +36,21 @@ const LanguageApproveOfficer = () => {
     //         });
     //   }, []);
 
-//     useEffect(() => {
-//           axios
-//             .post("skill/count")
-//             .then((res) => {
-//                 // console.log(res.data);
-//                 setSkillTotal(res.data);
-//             })
-//             .catch((err) => {
-//                 console.log(err);
-//             });
-//     }
+    //     useEffect(() => {
+    //           axios
+    //             .post("skill/count")
+    //             .then((res) => {
+    //                 // console.log(res.data);
+    //                 setSkillTotal(res.data);
+    //             })
+    //             .catch((err) => {
+    //                 console.log(err);
+    //             });
+    //     }
 
-// )
+    // )
 
-      useEffect(() => {
+    useEffect(() => {
         axios
             .post("/get/ID/byComandlal")
             .then((res) => {
@@ -76,11 +70,11 @@ const LanguageApproveOfficer = () => {
             state.getMissionRowID,
             state.getEeljRowID,
             getComandlalID,
-            getUnitID,
+            getUnitID
         );
-      }, []);
+    }, []);
 
-     const changeComandlal = (inComandlal) => {
+    const changeComandlal = (inComandlal) => {
         axios
             .post("/get/ID/byUnit", {
                 _comandlalID: inComandlal,
@@ -91,27 +85,27 @@ const LanguageApproveOfficer = () => {
             .catch((err) => {
                 console.log(err);
             });
-     };
+    };
 
-      const changeUnit = (e) => {
+    const changeUnit = (e) => {
         setUnitID(e.target.value);
         refreshLanguage(
             state.getMissionRowID,
             state.getEeljRowID,
             getComandlalID,
-            e.target.value,
+            e.target.value
         );
-      };
+    };
 
-     const changeType = (e) => {
+    const changeType = (e) => {
         refreshLanguage(
             state.getMissionRowID,
             state.getEeljRowID,
-            e.target.value,
+            getComandlalID,
+            getUnitID,
+            e.target.value
         );
-      };
-
-
+    };
 
     useEffect(() => {
         refreshLanguage(state.getMissionRowID, state.getEeljRowID);
@@ -126,34 +120,30 @@ const LanguageApproveOfficer = () => {
         }
     }, [getRowsSelected]);
 
-
-       useEffect(() => {
+    useEffect(() => {
         refreshLanguage(
             state.getMissionRowID,
             state.getEeljRowID,
             getComandlalID,
-            getUnitID,
+            getUnitID
         );
     }, [state.getMissionRowID, state.getEeljRowID]);
 
-
-
-
-    const refreshLanguage =
-    (
+    const refreshLanguage = (
         missionID,
         eeljID,
         comandlalID,
         unitID,
-    ) =>
-    {
+        typeID
+    ) => {
         if (missionID != undefined && eeljID != undefined) {
             axios
                 .post("/get/officer/language", {
-                _missionID: missionID,
-                _eeljID: eeljID,
-                _comandlalID: comandlalID,
-                _unitID: unitID,
+                    _missionID: missionID,
+                    _eeljID: eeljID,
+                    _comandlalID: comandlalID,
+                    _unitID: unitID,
+                    _typeID: typeID,
                 })
                 .then((res) => {
                     setLanguage(res.data.data);
@@ -162,12 +152,9 @@ const LanguageApproveOfficer = () => {
                     setScoretrueTotal(res.data.score_true_count);
                     setScorefalseTotal(res.data.score_false_count);
 
-
-
-
-                //   if (res.data.complete != undefined) {
-                //         setSkillTotal(res.data.complete);
-                //     }
+                    //   if (res.data.complete != undefined) {
+                    //         setSkillTotal(res.data.complete);
+                    //     }
                 })
                 .catch((err) => {
                     console.log(err);
@@ -194,7 +181,7 @@ const LanguageApproveOfficer = () => {
                                 state.getMissionRowID,
                                 state.getEeljRowID,
                                 getComandlalID,
-                                getUnitID,
+                                getUnitID
                             );
                         })
                         .catch((err) => {
@@ -206,7 +193,6 @@ const LanguageApproveOfficer = () => {
             });
         }
     };
-
 
     const btnEdit = () => {
         setIsEditBtnClick(true);
@@ -220,7 +206,7 @@ const LanguageApproveOfficer = () => {
                     paddingBottom: "0px",
                 }}
             >
-                 <div className="col-md-3">
+                <div className="col-md-3">
                     <div className="input-group mb-3">
                         <div className="input-group-prepend">
                             <span className="input-group-text">Төлөв:</span>
@@ -230,7 +216,6 @@ const LanguageApproveOfficer = () => {
                             <option value="">Сонгоно уу</option>
                             <option value="1">Өгсөн ЦАХ</option>
                             <option value="0">Өгөөгүй ЦАХ</option>
-
                         </select>
                     </div>
                 </div>
@@ -249,8 +234,7 @@ const LanguageApproveOfficer = () => {
                                         state.getMissionRowID,
                                         state.getEeljRowID,
                                         e.target.value,
-                                        "",
-
+                                        ""
                                     );
                                     changeComandlal(e.target.value);
                                 }}
@@ -294,9 +278,8 @@ const LanguageApproveOfficer = () => {
                         </select>
                     </div>
                 </div>
-
             </div>
-                <div
+            <div
                 className="info-box"
                 style={{ padding: "20px", paddingBottom: "0px" }}
             >
@@ -311,7 +294,7 @@ const LanguageApproveOfficer = () => {
                         </div>
                     </div>
                 </div>
-                    <div className="col-md-3">
+                <div className="col-md-3">
                     <div className="small-box bg-success">
                         <div className="inner">
                             <h3>{scoretrueTotal}</h3>
@@ -322,7 +305,7 @@ const LanguageApproveOfficer = () => {
                         </div>
                     </div>
                 </div>
-                    <div className="col-md-3">
+                <div className="col-md-3">
                     <div className="small-box bg-danger">
                         <div className="inner">
                             <h3>{scorefalseTotal}</h3>
@@ -333,7 +316,7 @@ const LanguageApproveOfficer = () => {
                         </div>
                     </div>
                 </div>
-                </div>
+            </div>
 
             <MUIDatatable
                 data={getlanguage}
@@ -440,7 +423,7 @@ const columns = [
             },
         },
     },
-      {
+    {
         name: "firstName",
         label: "Овог",
         options: {
@@ -456,7 +439,7 @@ const columns = [
             },
         },
     },
-        {
+    {
         name: "lastName",
         label: "Нэр",
         options: {
@@ -488,7 +471,7 @@ const columns = [
             },
         },
     },
-                {
+    {
         name: "writeCol",
         label: "Бичсэн оноо",
         options: {
@@ -504,7 +487,7 @@ const columns = [
             },
         },
     },
-            {
+    {
         name: "listenCol",
         label: "Сонсгол оноо",
         options: {
@@ -520,7 +503,7 @@ const columns = [
             },
         },
     },
-            {
+    {
         name: "speakCol",
         label: "Яриа оноо",
         options: {
@@ -536,7 +519,7 @@ const columns = [
             },
         },
     },
-                        {
+    {
         name: "totalScore",
         label: "Дүн",
         options: {
@@ -552,7 +535,7 @@ const columns = [
             },
         },
     },
-                                      {
+    {
         name: "alcpt",
         label: "ALCPT оноо",
         options: {
@@ -568,7 +551,6 @@ const columns = [
             },
         },
     },
-
 ];
 
 const excelHeaders = [
@@ -576,12 +558,10 @@ const excelHeaders = [
     { label: "Анги", key: "unitShortName" },
     { label: "Овог нэр", key: "firstName" },
     { label: "Нэр", key: "lastName" },
-     { label: "Уншсан оноо", key: "readCol" },
+    { label: "Уншсан оноо", key: "readCol" },
     { label: "Бичсэн оноо", key: "writeCol" },
     { label: "Сонсгол оноо", key: "listenCol" },
     { label: "Яриа оноо", key: "speakCol" },
     { label: "Дүн", key: "totalScore" },
     { label: "ALCPT оноо", key: "alcpt" },
-
-
 ];

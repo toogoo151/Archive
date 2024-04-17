@@ -14,31 +14,30 @@ class OfficerLanguage extends Model
     public function getLanguage($req)
     {
         try {
-            $getLanguage = OfficerLanguage::query()
+            if($req->_typeID == "1"){
+                $getLanguage = OfficerLanguage::query()
                 ->where("pko_officer_language.missionID", "=", $req->_missionID)
                 ->where("pko_officer_language.eeljID", "=", $req->_eeljID)
+                ->where("pko_officer_language.totalScore", ">", 1)
                 ->join("pko_missions", "pko_officer_language.missionID", "=", "pko_missions.id")
                 ->join("pko_mission_eelj", "pko_officer_language.eeljID", "=", "pko_mission_eelj.id")
                 ->join("pko_users", "pko_officer_language.pkoUserID", "=", "pko_users.id")
-                ->join("all_users", "pko_users.allUsersID", "=", "all_users.id");
-            $originalCount = $getLanguage->count();
-            $originalTrueCount = $getLanguage->where("pko_officer_language.totalScore", ">=", 0)->count();
-            $originalFalseCount = $originalCount - $originalTrueCount;
-
-            if ($req->typeID != "") {
-                $getLanguage->where("pko_officer_language.totalScore", "=", $req->typeID);
-            }
-
-            if ($req->_comandlalID != "") {
-                $getLanguage->where("all_users.comandlalID", "=", $req->_comandlalID);
-            }
-            if ($req->_unitID != "") {
-                $getLanguage->where("all_users.unitID", "=", $req->_unitID);
-            }
-
-
-            $getLanguage->leftJoin("tb_comandlal", "tb_comandlal.id", "=", "all_users.comandlalID")
-            ->leftJoin("tb_unit", "tb_unit.id", "=", "all_users.unitID")
+                // ->join("all_users", "pko_users.allUsersID", "=", "all_users.id")
+                ->join("all_users", function($query)use($req){
+                    $query->on("pko_users.allUsersID", "=", "all_users.id");
+                    if($req->_comandlalID != ""){
+                        $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                        if($req->_unitID != ""){
+                        $query->where("all_users.unitID", "=", $req->_unitID);
+                    }
+                    }
+                })
+                ->join("tb_comandlal", function($query){
+                    $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                })
+                ->join("tb_unit", function($query){
+                    $query->on("all_users.unitID", "=", "tb_unit.id");
+                })
             ->select(
                 "pko_officer_language.*",
                 "pko_missions.missionName",
@@ -47,7 +46,77 @@ class OfficerLanguage extends Model
                 "all_users.lastName",
                 "tb_comandlal.comandlalShortName",
                 "tb_unit.unitShortName"
-            );
+            )->get();
+            }
+            if($req->_typeID == "0"){
+                $getLanguage = OfficerLanguage::query()
+                ->where("pko_officer_language.missionID", "=", $req->_missionID)
+                ->where("pko_officer_language.eeljID", "=", $req->_eeljID)
+                ->where("pko_officer_language.totalScore", "=", 0)
+                ->join("pko_missions", "pko_officer_language.missionID", "=", "pko_missions.id")
+                ->join("pko_mission_eelj", "pko_officer_language.eeljID", "=", "pko_mission_eelj.id")
+                ->join("pko_users", "pko_officer_language.pkoUserID", "=", "pko_users.id")
+                // ->join("all_users", "pko_users.allUsersID", "=", "all_users.id")
+                ->join("all_users", function($query)use($req){
+                    $query->on("pko_users.allUsersID", "=", "all_users.id");
+                    if($req->_comandlalID != ""){
+                        $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                        if($req->_unitID != ""){
+                        $query->where("all_users.unitID", "=", $req->_unitID);
+                    }
+                    }
+                })
+                ->join("tb_comandlal", function($query){
+                    $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                })
+                ->join("tb_unit", function($query){
+                    $query->on("all_users.unitID", "=", "tb_unit.id");
+                })
+            ->select(
+                "pko_officer_language.*",
+                "pko_missions.missionName",
+                "pko_mission_eelj.eeljName",
+                "all_users.firstName",
+                "all_users.lastName",
+                "tb_comandlal.comandlalShortName",
+                "tb_unit.unitShortName"
+            )->get();
+            }
+            if($req->_typeID == ""){
+                $getLanguage = OfficerLanguage::query()
+                ->where("pko_officer_language.missionID", "=", $req->_missionID)
+                ->where("pko_officer_language.eeljID", "=", $req->_eeljID)
+                // ->where("pko_officer_language.totalScore", "=", 0)
+                ->join("pko_missions", "pko_officer_language.missionID", "=", "pko_missions.id")
+                ->join("pko_mission_eelj", "pko_officer_language.eeljID", "=", "pko_mission_eelj.id")
+                ->join("pko_users", "pko_officer_language.pkoUserID", "=", "pko_users.id")
+                // ->join("all_users", "pko_users.allUsersID", "=", "all_users.id")
+                ->join("all_users", function($query)use($req){
+                    $query->on("pko_users.allUsersID", "=", "all_users.id");
+                    if($req->_comandlalID != ""){
+                        $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                        if($req->_unitID != ""){
+                        $query->where("all_users.unitID", "=", $req->_unitID);
+                    }
+                    }
+                })
+                ->join("tb_comandlal", function($query){
+                    $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                })
+                ->join("tb_unit", function($query){
+                    $query->on("all_users.unitID", "=", "tb_unit.id");
+                })
+            ->select(
+                "pko_officer_language.*",
+                "pko_missions.missionName",
+                "pko_mission_eelj.eeljName",
+                "all_users.firstName",
+                "all_users.lastName",
+                "tb_comandlal.comandlalShortName",
+                "tb_unit.unitShortName"
+            )->get();
+            }
+
 
 
             // $GetScore = OfficerSkill::query()
@@ -61,14 +130,19 @@ class OfficerLanguage extends Model
             // $count = count($GetScore);
             // $true = $GetScore->where("pko_officer_skill.TotalScore", ">=", 0)->count();
             // $false = $count - $true;
-            $language = $getLanguage->get();
+            // $language = $getLanguage->get();
+
+            // $originalCount = $getLanguage->count();
+
+            // $originalTrueCount = $getLanguage->where("pko_officer_language.totalScore", ">=", 0)->count();
+            // $originalFalseCount = $originalCount - $originalTrueCount;
 
             return response()->json([
                 'status' => 'success',
-                'count' => $originalCount,
-                'score_true_count' => $originalTrueCount,
-                'score_false_count' => $originalFalseCount,
-                'data' => $language,
+                'count' => count($getLanguage),
+                'score_true_count' => 10,
+                'score_false_count' => 10,
+                'data' => $getLanguage,
             ]);
 
 
@@ -81,6 +155,14 @@ class OfficerLanguage extends Model
                 ),
                 500
             );
+        }
+    }
+
+    public function getAllRow(){
+        try {
+
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 }
