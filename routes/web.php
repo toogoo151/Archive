@@ -109,6 +109,9 @@ use App\Models\UuregGuitsetgelt;
 use App\Models\YearWish;
 use App\Models\BT_recommendation;
 use App\Models\OfficerSkill;
+use App\Models\OfficerLanguage;
+use App\Models\OfficerDriver;
+
 
 use App\Models\DocumentOfficer;
 use App\Models\DocumentOfficerItem;
@@ -1076,6 +1079,19 @@ Route::post("/get/skill", function (Request $req) {
 
 Route::post("/edit/officer/skill", [SkillOfficerController::class, "editSkill"]);
 Route::post("/skill/count", [SkillOfficerController::class, "count"]);
+
+//Language start
+Route::post("/get/officer/language", function (Request $req) {
+    $getLanguage = new OfficerLanguage();
+    return $getLanguage->getLanguage($req);
+});
+Route::post("/edit/officer/language", [SkillOfficerController::class, "editLanguage"]);
+
+//Driver start
+Route::post("/get/officer/driver", function (Request $req) {
+    $getDriver = new OfficerDriver();
+    return $getDriver->getDriver($req);
+});
 
 
 // биеийн тамирийн оноо оруулах

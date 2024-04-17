@@ -5,11 +5,46 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\OfficerSkill;
+use App\Models\OfficerLanguage;
 use Illuminate\Support\Facades\DB;
 use App\Models\OfficerMainHistory;
 
 class SkillOfficerController extends Controller
 {
+    public function editLanguage(Request $req)
+    {
+        try {
+            $edit = OfficerLanguage::find($req->id);
+            $edit->missionID = $req->missionID;
+            $edit->eeljID = $req->eeljID;
+            $edit->readCol = $req->readCol;
+            $edit->writeCol = $req->writeCol;
+            $edit->listenCol = $req->listenCol;
+            $edit->speakCol = $req->speakCol;
+            $edit->totalScore = ($req->readCol + $req->writeCol + $req->listenCol + $req->speakCol  ) / 4;
+            $edit->alcpt = $req->alcpt;
+            $edit->save();
+
+            $editlanguage = OfficerMainHistory::find($edit->MainTableID);
+            $editlanguage->languageScore = $edit->totalScore;
+            $editlanguage->alcpt_score = $edit->alcpt;
+            $editlanguage->save();
+
+            return response(
+                array(
+                    "status" => "success",
+                    "msg" => "Амжилттай нэмлээ."
+                ),
+                200
+            );
+        } catch (\Throwable $th) {
+            return response([
+                "status" => "error",
+                "msg" => "Алдаа гарлаа.",
+                "error" => $th->getMessage() // Include the error message in the response
+            ], 500);
+        }
+    }
     public function editSkill(Request $req)
     {
         try {

@@ -151,6 +151,10 @@ import OfficerMainHistory from "../../../../Pages/OfficerBack/MainHistory/Office
 import HealthOfficer from "../../../../Pages/OfficerBack/HealtApprove/Health";
 import SportApproveOfficer from "../../../../Pages/OfficerBack/SportApprove/SportApprove";
 import SkillApproveOfficer from "../../../../Pages/OfficerBack/SkillApprove/SkillApproveOfficer";
+import SkillLanguageApproveOfficer from "../../../../Pages/OfficerBack/LanguageApprove/LanguageApproveOfficer";
+import DriverApproveOfficer from "../../../../Pages/OfficerBack/DriverApprove/DriverApproveOfficer";
+
+
 
 
 // import OffResearch from "../../../../Pages/OptionFund/Officer/Question/OffResearch";
@@ -200,7 +204,7 @@ const MyRoutes = (props) => {
             <Route path="/unit/covot" element={<UnitCovot />} />
             <Route path="/main/history" element={<MainHistory />} />
             <Route path="/wish/info" element={<WishInfo />} />
-            <Route path="/admin/control" element={<Control />} />   
+            <Route path="/admin/control" element={<Control />} />
             <Route path="/com/main/history" element={<ComMainHistory />} />
             <Route path="/document/unit" element={<DocumentUnit />} />
             <Route path="/health/department" element={<HealthApprove />} />
@@ -303,6 +307,17 @@ const MyRoutes = (props) => {
                 path="/officer/back/skill/approve"
                 element={<SkillApproveOfficer />} // officerBack/SkillApproveOfficer/SkillApproveOfficer
             />
+                <Route
+                path="/officer/back/language/approve"
+                element={<SkillLanguageApproveOfficer />} // officerBack/SkillLanguageApproveOfficer/SkillLanguageApproveOfficer
+            />
+                <Route
+                path="/officer/back/driver/approve"
+                element={<DriverApproveOfficer />} // officerBack/DriverApproveOfficer/DriverApproveOfficer
+            />
+
+
+
 
 
             {/* <Route path="/Officer/Process" element={<OffResearch />} /> */}
