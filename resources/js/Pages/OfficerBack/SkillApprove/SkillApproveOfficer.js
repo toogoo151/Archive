@@ -17,13 +17,30 @@ const SkillApproveOfficer = () => {
     const [getComandlalID, setComandlalID] = useState("");
     const [getUnitID, setUnitID] = useState("");
 
-   const [skillTotal, setSkillTotal] = useState(0);
+    const [skillTotal, setSkillTotal] = useState(0);
+    const [scoretrueTotal, setScoretrueTotal] = useState(0);
+    const [scorefalseTotal, setScorefalseTotal] = useState(0);
+
+
 
 
 
 
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
     const [showModal, setShowModal] = useState("modal");
+
+
+    //    useEffect(() => {
+    //  axios
+    //         .post("skill/count")
+    //         .then((res) => {
+    //             // console.log(res.data);
+    //             setSkillTotal(res.data);
+    //         })
+    //         .catch((err) => {
+    //             console.log(err);
+    //         });
+    //   }, []);
 
 //     useEffect(() => {
 //           axios
@@ -84,9 +101,15 @@ const SkillApproveOfficer = () => {
             getComandlalID,
             e.target.value,
         );
-    };
+      };
 
-
+     const changeType = (e) => {
+        refreshSkill(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            e.target.value,
+        );
+      };
 
 
 
@@ -133,8 +156,15 @@ const SkillApproveOfficer = () => {
                 _unitID: unitID,
                 })
                 .then((res) => {
-                    setSkill(res.data);
+                    setSkill(res.data.data);
                     setRowsSelected([]);
+                    setSkillTotal(res.data.count);
+                    setScoretrueTotal(res.data.score_true_count);
+                    setScorefalseTotal(res.data.score_false_count);
+
+
+
+
                 //   if (res.data.complete != undefined) {
                 //         setSkillTotal(res.data.complete);
                 //     }
@@ -159,7 +189,7 @@ const SkillApproveOfficer = () => {
                             id: getSkill[getRowsSelected[0]].id,
                         })
                         .then((res) => {
-                            Swal.fire(res.data.msg);
+                            Swal.fire(res.data.data.msg);
                             refreshSkill(
                                 state.getMissionRowID,
                                 state.getEeljRowID,
@@ -190,6 +220,20 @@ const SkillApproveOfficer = () => {
                     paddingBottom: "0px",
                 }}
             >
+                 <div className="col-md-3">
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">Төлөв:</span>
+                        </div>
+
+                        <select className="form-control" onChange={changeType}>
+                            <option value="">Сонгоно уу</option>
+                            <option value="1">Өгсөн ЦАХ</option>
+                            <option value="0">Өгөөгүй ЦАХ</option>
+
+                        </select>
+                    </div>
+                </div>
                 <div className="col-md-3">
                     <div className="input-group mb-3">
                         <div className="input-group-prepend">
@@ -259,11 +303,33 @@ const SkillApproveOfficer = () => {
                 <div className="col-md-3">
                     <div className="small-box bg-info">
                         <div className="inner">
-                            {/* <h3>{skillTotal}</h3> */}
+                            <h3>{skillTotal}</h3>
                             <p>Нийт ЦАХ</p>
                         </div>
                         <div className="icon">
                             <i className="fas fa-calculator" />
+                        </div>
+                    </div>
+                </div>
+                    <div className="col-md-3">
+                    <div className="small-box bg-success">
+                        <div className="inner">
+                            <h3>{scoretrueTotal}</h3>
+                            <p>Шалгалт өгсөн ЦАХ</p>
+                        </div>
+                        <div className="icon">
+                            <i className="fas fa-check" />
+                        </div>
+                    </div>
+                </div>
+                    <div className="col-md-3">
+                    <div className="small-box bg-danger">
+                        <div className="inner">
+                            <h3>{scorefalseTotal}</h3>
+                            <p>Шалгалт өгөөгүй ЦАХ</p>
+                        </div>
+                        <div className="icon">
+                            <i className="fas fa-close" />
                         </div>
                     </div>
                 </div>
@@ -295,10 +361,10 @@ const SkillApproveOfficer = () => {
                 btnDelete={btnDelete}
                 avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
                 avgColumnName={"email"} //
-                avgName={"Дундаж: "}
+                avgName={"Дундаж:"}
                 getRowsSelected={getRowsSelected}
                 setRowsSelected={setRowsSelected}
-                isHideDelete={true}
+                isHideDelete={false}
                 isHideEdit={true}
             />
             {/* {state.getMissionRowID != "" && state.getEeljRowID != "" && (

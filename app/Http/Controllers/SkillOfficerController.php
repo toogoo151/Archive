@@ -43,7 +43,7 @@ class SkillOfficerController extends Controller
 
     public function count(Request $req){
         $counts = DB::table("pko_officer_skill")
-            ->get();
+            ->count();
         return $counts;
 
     }

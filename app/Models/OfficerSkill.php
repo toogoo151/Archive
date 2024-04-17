@@ -69,6 +69,13 @@ class OfficerSkill extends Model
                 ->join("pko_mission_eelj", "pko_officer_skill.eeljID", "=", "pko_mission_eelj.id")
                 ->join("pko_users", "pko_officer_skill.pkoUserID", "=", "pko_users.id")
                 ->join("all_users", "pko_users.allUsersID", "=", "all_users.id");
+            $originalCount = $getSkill->count();
+            $originalTrueCount = $getSkill->where("pko_officer_skill.TotalScore", ">=", 0)->count();
+            $originalFalseCount = $originalCount - $originalTrueCount;
+
+            if ($req->typeID != "") {
+                $getSkill->where("pko_officer_skill.TotalScore", "=", $req->typeID);
+            }
 
             if ($req->_comandlalID != "") {
                 $getSkill->where("all_users.comandlalID", "=", $req->_comandlalID);
@@ -89,20 +96,31 @@ class OfficerSkill extends Model
                 "tb_comandlal.comandlalShortName",
                 "tb_unit.unitShortName"
             );
-            // $getSkill->update([
-            //     'SignalScore' => DB::raw('SignalScore + 2'),
-            //     'LocationScore' => DB::raw('LocationScore + 2')
-            // ]);
-
-            // // Calculate TotalScore
-            // $getSkill->selectRaw('SignalScore + LocationScore as TotalScore');
 
 
+            // $GetScore = OfficerSkill::query()
+            // ->where("pko_officer_skill.missionID", "=", $req->_missionID)
+            // ->where("pko_officer_skill.eeljID", "=", $req->_eeljID)
+            //     ->join("pko_missions", "pko_officer_skill.missionID", "=", "pko_missions.id")
+            //     ->join("pko_mission_eelj", "pko_officer_skill.eeljID", "=", "pko_mission_eelj.id")
+            //     ->join("pko_users", "pko_officer_skill.pkoUserID", "=", "pko_users.id")
+            //     ->join("all_users", "pko_users.allUsersID", "=", "all_users.id");
 
-            // Execute the query and get the results
+            // $count = count($GetScore);
+            // $true = $GetScore->where("pko_officer_skill.TotalScore", ">=", 0)->count();
+            // $false = $count - $true;
             $skills = $getSkill->get();
 
-            return $skills;
+            return response()->json([
+                'status' => 'success',
+                'count' => $originalCount,
+                'score_true_count' => $originalTrueCount,
+                'score_false_count' => $originalFalseCount,
+                'data' => $skills,
+            ]);
+
+
+            // return $skills;
         } catch (\Throwable $th) {
             return response(
                 array(
