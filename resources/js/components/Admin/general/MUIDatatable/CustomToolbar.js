@@ -13,8 +13,44 @@ class CustomToolbar extends React.Component {
     constructor(props, ref) {
         super(props);
     }
+
+    renderCsvDataDriver() {
+        if (this.props.isOfficerDriverExcelHeaders) {
+             return this.props.excelDownloadDriverData.map((item) => ({
+            missionName: item.missionName,
+                 eeljName: item.eeljName,
+                comandlalShortName: item.comandlalShortName,
+
+            unitShortName: item.unitShortName,
+            lastName: item.lastName,
+            firstName: item.firstName,
+            score: item.score,
+            scoreApprove:
+                item.scoreApprove === 0
+                    ? "Хоосон"
+                    : item.scoreApprove === 1
+                    ? "Тэнцсэн"
+                        : "Тэнцээгүй",
+             practice:
+                item.practice === 0
+                    ? "Хоосон"
+                    : item.practice === 1
+                    ? "Тэнцсэн"
+                        : "Тэнцээгүй",
+              Finally:
+                item.Finally === 0
+                    ? "Хоосон"
+                    : item.Finally === 1
+                    ? "Тэнцсэн"
+                    : "Тэнцээгүй",
+
+        }));
+        }
+
+    }
     renderCsvData() {
-        return this.props.excelDownloadData.map((item) => ({
+        if (this.props.isOfficerMainExcelHeaders) {
+            return this.props.excelDownloadData.map((item) => ({
             missionName: item.missionName,
             eeljName: item.eeljName,
             comandlalShortName: item.comandlalShortName,
@@ -52,10 +88,14 @@ class CustomToolbar extends React.Component {
 
             skillScore: item.skillScore === 0 ? "Өгөөгүй" : item.skillScore,
         }));
+        }
+
     }
 
     render() {
         const csvData = this.renderCsvData();
+        const csvData2 = this.renderCsvDataDriver();
+
         return (
             <div className="row">
                 {this.props.isHideInsert && (
@@ -88,11 +128,12 @@ class CustomToolbar extends React.Component {
                         alignItems: "center",
                     }}
                 >
+
                     <CSVLink
                         data={
                             this.props.isOfficerMainExcelHeaders
                                 ? csvData
-                                : this.props.excelDownloadData
+                                : this.props.isOfficerDriverExcelHeaders ? csvData2 : this.props.excelDownloadData
                         }
                         headers={this.props.excelHeaders}
                         title="Excel файл татах"
@@ -105,6 +146,7 @@ class CustomToolbar extends React.Component {
                             }}
                         ></ExcelIcon>
                     </CSVLink>
+
                 </div>
                 {/* Header title shuuu */}
                 <div
