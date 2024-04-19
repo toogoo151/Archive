@@ -355,8 +355,14 @@ const DriverApproveOfficer = () => {
                             // spanIconClassName={"fas fa-solid fa-plus"}
                             // buttonName={"НЭМЭХ"}
                             // btnInsert={btnInsert}
-                            excelDownloadData={getdriver}
+                            excelDownloadDriverData={getdriver}
                             excelHeaders={excelHeaders}
+                            isOfficerDriverExcelHeaders={true} // value өөрчлөж Excel болгохын тулд true өгөөд цаад талдаа punction ажиллаж байгаа
+                            isHideInsert={false}
+
+                            // excelDownloadData={[]}
+                            // isOfficerMainExcelHeaders={false}
+
                             // isHideInsert={true}
                         />
                     </>
@@ -638,7 +644,8 @@ const excelHeaders = [
     { label: "Анги", key: "unitShortName" },
     { label: "Овог нэр", key: "firstName" },
     { label: "Нэр", key: "lastName" },
-     { label: "Тест оноо", key: "score" },
+    { label: "Тест оноо", key: "score" },
+    { label: "Тест", key: "scoreApprove" },
     { label: "Дадлага", key: "practice" },
     { label: "Дүн", key: "Finally" },
 
