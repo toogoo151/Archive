@@ -386,6 +386,14 @@ const SkillApproveOfficer = () => {
 };
 
 export default SkillApproveOfficer;
+const documentPdf = (record) => {
+    const newWindow = window.open(
+        "https://psod.maf.gov.mn/storage" + record,
+        "_blank",
+        "noopener,noreferrer,resizable"
+    );
+    if (newWindow) newWindow.opener = null;
+};
 
 const columns = [
     {
@@ -445,7 +453,7 @@ const columns = [
         },
     },
       {
-        name: "firstName",
+        name: "lastName",
         label: "Овог",
         options: {
             filter: true,
@@ -461,7 +469,7 @@ const columns = [
         },
     },
         {
-        name: "lastName",
+        name: "firstName",
         label: "Нэр",
         options: {
             filter: true,
@@ -489,6 +497,42 @@ const columns = [
                         color: "white",
                     },
                 };
+            },
+        },
+    },
+       {
+        name: "documentPdf",
+        label: "PDF",
+        options: {
+            filter: true,
+            sort: false,
+            setCellProps: () => {
+                return { align: "center" };
+            },
+            setCellHeaderProps: (value) => {
+                return {
+                    style: {
+                        backgroundColor: "#5DADE2",
+                        color: "white",
+                        // width: 130,
+                    },
+                };
+            },
+            customBodyRender: (record, tableMeta, updateValue) => {
+                if (record != "") {
+                    return (
+                        <button
+                            className="btn btn-primary btn-sm"
+                            style={{ marginRight: "5px" }}
+                            // onClick={() => documentPdf(value)}
+                            onClick={() => documentPdf(record)}
+                        >
+                            PDF Харах
+                        </button>
+                    );
+                } else {
+                    return <text>Хоосон</text>;
+                }
             },
         },
     },
@@ -530,8 +574,8 @@ const columns = [
 const excelHeaders = [
     { label: "Командлалын нэр", key: "comandlalShortName" },
     { label: "Анги", key: "unitShortName" },
-    { label: "Овог нэр", key: "firstName" },
-    { label: "Нэр", key: "lastName" },
+    { label: "Овог нэр", key: "lastName" },
+    { label: "Нэр", key: "firstName" },
      { label: "Холбоо", key: "SignalScore" },
     { label: "Байрзүй", key: "LocationScore" },
     { label: "Дүн", key: "TotalScore" },

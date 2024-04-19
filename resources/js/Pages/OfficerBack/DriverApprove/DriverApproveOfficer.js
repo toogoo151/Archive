@@ -453,7 +453,7 @@ const columns = [
         },
     },
       {
-        name: "firstName",
+        name: "lastName",
         label: "Овог",
         options: {
             filter: true,
@@ -469,7 +469,7 @@ const columns = [
         },
     },
         {
-        name: "lastName",
+        name: "firstName",
         label: "Нэр",
         options: {
             filter: true,
@@ -642,8 +642,8 @@ const columns = [
 const excelHeaders = [
     { label: "Командлалын нэр", key: "comandlalShortName" },
     { label: "Анги", key: "unitShortName" },
-    { label: "Овог нэр", key: "firstName" },
-    { label: "Нэр", key: "lastName" },
+    { label: "Овог нэр", key: "lastName" },
+    { label: "Нэр", key: "firstName" },
     { label: "Тест оноо", key: "score" },
     { label: "Тест", key: "scoreApprove" },
     { label: "Дадлага", key: "practice" },

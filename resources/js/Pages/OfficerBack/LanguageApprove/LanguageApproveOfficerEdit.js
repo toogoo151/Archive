@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef} from "react";
 import Swal from "sweetalert2";
 import axios from "../../../AxiosUser";
 import { AppContext } from "../../../Context/MyContext";
@@ -10,6 +10,10 @@ const LanguageApproveOfficerEdit = (props) => {
     const [listenCol, setListencol] = useState("");
     const [speakCol, setSpeakCol] = useState("");
     const [alcpt, setAlcpt] = useState("");
+    const [documentPdf, setDocumentPdf] = useState("");
+
+    const fileInputRef = useRef(null);
+
 
     const [getDataRow, setDataRow] = useState([]);
 
@@ -24,6 +28,8 @@ const LanguageApproveOfficerEdit = (props) => {
             setListencol(props.changeDataRow.listenCol);
             setSpeakCol(props.changeDataRow.speakCol);
             setAlcpt(props.changeDataRow.alcpt);
+            setDocumentPdf(props.changeDataRow.documentPdf);
+
 
         }
     }, [props.isEditBtnClick]);
@@ -58,9 +64,11 @@ const LanguageApproveOfficerEdit = (props) => {
                 listenCol: listenCol,
                 speakCol: speakCol,
                 alcpt: alcpt,
+                documentPdf:documentPdf,
 
             })
             .then((res) => {
+                fileInputRef.current.value = null;
                 Swal.fire(res.data.msg);
                 setReadcol("");
                 setWriteCol("");
@@ -90,6 +98,40 @@ const LanguageApproveOfficerEdit = (props) => {
       };
       const changeALCPT = (e) => {
         setAlcpt(e.target.value);
+      };
+       const changePdf = (e) => {
+        const pdfFile = e.target.files[0];
+        if (pdfFile.name.split(".").pop() === "pdf") {
+            //Хэмжээ шалгах хэсэг
+            const maxSize = 300 * 1024; // 300KB
+            if (pdfFile.size > maxSize) {
+                const mySize = pdfFile.size / 1024;
+                const replaceSize = mySize.toString().replace(/\.\d+/, "");
+                alert(
+                    "Таны оруулсан файлын хэмжээ:" +
+                        replaceSize +
+                        "KБ байна." +
+                        ".Файлын хэмжээ 300KБ-аас хэтэрсэн тул багасгах шаардлагатай."
+                );
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.readAsDataURL(pdfFile);
+            reader.onload = () => {
+                const pdfData = reader.result;
+                setDocumentPdf(pdfData);
+                const replacedName = pdfFile.name.replace(".pdf", "");
+                setPdfName(replacedName);
+            };
+            reader.onerror = (error) => {
+                console.log(error);
+            };
+        } else {
+            alert(
+                "Та зөвхөн Pdf файл сонгоно уу. Алдаа: Pdf файлын өргөтгөл биш байна."
+            );
+        }
     };
 
 
@@ -116,7 +158,7 @@ const LanguageApproveOfficerEdit = (props) => {
                                     <div className="input-group mb-3">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
-                                                    Уншсан оноо:
+                                                    Унших чадвар:
                                             </span>
                                         </div>
                                         <input
@@ -130,22 +172,7 @@ const LanguageApproveOfficerEdit = (props) => {
                                     <div className="input-group mb-3">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
-                                               Бичсэн оноо:
-                                            </span>
-                                        </div>
-                                        <input
-                                            className="form-control"
-                                            onChange={changeLocationScore}
-                                            value={writeCol}
-                                        />
-                                    </div>
-                                </div>
-
-                                  <div className="col-md-6">
-                                    <div className="input-group mb-3">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">
-                                               Сонсгол оноо:
+                                               Сонсох чадвар:
                                             </span>
                                         </div>
                                         <input
@@ -155,11 +182,49 @@ const LanguageApproveOfficerEdit = (props) => {
                                         />
                                     </div>
                                 </div>
+                                <div className="col-md-6">
+                                    <div className="input-group mb-3">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text">
+                                            Бичих чадвар:
+                                            </span>
+                                        </div>
+                                        <input
+                                            className="form-control"
+                                            onChange={changeLocationScore}
+                                            value={writeCol}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="input-group mb-3">
+
+                                        <input
+                                            type="file"
+                                            accept="application/pdf"
+                                            onChange={changePdf}
+                                            ref={fileInputRef}
+                                            className="form-control"
+                                        />
+                                            <input
+                                        type="text"
+                                        value={documentPdf ? documentPdf : ""}
+                                        readOnly
+                                        className="form-control"
+                                    />
+                                    </div>
+
+                                    {/* <p className="alerts">
+                                            {errors.documentPdf?.message}
+                                        </p> */}
+                                </div>
+
+
                                   <div className="col-md-6">
                                     <div className="input-group mb-3">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
-                                               Яриа оноо:
+                                               Ярих чадвар :
                                             </span>
                                         </div>
                                         <input

@@ -365,6 +365,14 @@ const LanguageApproveOfficer = () => {
 };
 
 export default LanguageApproveOfficer;
+const documentPdf = (record) => {
+    const newWindow = window.open(
+        "https://psod.maf.gov.mn/storage" + record,
+        "_blank",
+        "noopener,noreferrer,resizable"
+    );
+    if (newWindow) newWindow.opener = null;
+};
 
 const columns = [
     {
@@ -424,7 +432,7 @@ const columns = [
         },
     },
     {
-        name: "firstName",
+        name: "lastName",
         label: "Овог",
         options: {
             filter: true,
@@ -440,7 +448,7 @@ const columns = [
         },
     },
     {
-        name: "lastName",
+        name: "firstName",
         label: "Нэр",
         options: {
             filter: true,
@@ -457,7 +465,7 @@ const columns = [
     },
     {
         name: "readCol",
-        label: "Уншсан оноо",
+        label: "Унших чадвар",
         options: {
             filter: true,
             sort: false,
@@ -473,7 +481,7 @@ const columns = [
     },
     {
         name: "writeCol",
-        label: "Бичсэн оноо",
+        label: "Бичих чадвар",
         options: {
             filter: true,
             sort: false,
@@ -487,9 +495,45 @@ const columns = [
             },
         },
     },
+        {
+        name: "documentPdf",
+        label: "PDF",
+        options: {
+            filter: true,
+            sort: false,
+            setCellProps: () => {
+                return { align: "center" };
+            },
+            setCellHeaderProps: (value) => {
+                return {
+                    style: {
+                        backgroundColor: "#5DADE2",
+                        color: "white",
+                        // width: 130,
+                    },
+                };
+            },
+            customBodyRender: (record, tableMeta, updateValue) => {
+                if (record != "") {
+                    return (
+                        <button
+                            className="btn btn-primary btn-sm"
+                            style={{ marginRight: "5px" }}
+                            // onClick={() => documentPdf(value)}
+                            onClick={() => documentPdf(record)}
+                        >
+                            PDF Харах
+                        </button>
+                    );
+                } else {
+                    return <text>Хоосон</text>;
+                }
+            },
+        },
+    },
     {
         name: "listenCol",
-        label: "Сонсгол оноо",
+        label: "Сонсгол",
         options: {
             filter: true,
             sort: false,
@@ -505,7 +549,7 @@ const columns = [
     },
     {
         name: "speakCol",
-        label: "Яриа оноо",
+        label: "Ярих чадвар",
         options: {
             filter: true,
             sort: false,
@@ -556,12 +600,12 @@ const columns = [
 const excelHeaders = [
     { label: "Командлалын нэр", key: "comandlalShortName" },
     { label: "Анги", key: "unitShortName" },
-    { label: "Овог нэр", key: "firstName" },
-    { label: "Нэр", key: "lastName" },
-    { label: "Уншсан оноо", key: "readCol" },
-    { label: "Бичсэн оноо", key: "writeCol" },
-    { label: "Сонсгол оноо", key: "listenCol" },
-    { label: "Яриа оноо", key: "speakCol" },
+    { label: "Овог нэр", key: "lastName" },
+    { label: "Нэр", key: "firstName" },
+    { label: "Унших чадвар", key: "readCol" },
+    { label: "Бичих чадвар", key: "writeCol" },
+    { label: "Сонсгол", key: "listenCol" },
+    { label: "Ярих чадвар", key: "speakCol" },
     { label: "Дүн", key: "totalScore" },
     { label: "ALCPT оноо", key: "alcpt" },
 ];

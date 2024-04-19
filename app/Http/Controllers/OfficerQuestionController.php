@@ -1085,6 +1085,8 @@ class OfficerQuestionController extends Controller
             }
             $insert = new PkoMainUnit();
             $insert->MainHistoryID = $req->MainHistoryID;
+            $insert->missionID = $req->missionID;
+            $insert->eeljID = $req->eeljID;
             $insert->lastName = $req->lastName;
             $insert->firstName = $req->firstName;
             $insert->chiefApprove = $req->chiefApprove;

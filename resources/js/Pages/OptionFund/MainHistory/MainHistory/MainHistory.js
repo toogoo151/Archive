@@ -1241,7 +1241,7 @@ const MainHistory = () => {
 
                     <PkoMainUnitEdit
                         setRowsSelected={setRowsSelected}
-                        refreshMainHistory={refreshMainHistory }
+                        refreshMainHistory={refreshMainHistory}
                         changeDataRow={clickedRowData}
                         isEditBtnClick={isEditBtnClick}
                     />

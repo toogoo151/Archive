@@ -69,7 +69,17 @@ class MainHistory extends Model
                         ->where("pko_health.eeljID", "=", $req->_eeljID)
                         ->on("pko_health.pkoMainHistoryID", "=", "pko_officer_main.id");
                 })
-                ->select("pko_officer_main.*", "pko_documents.id as pkoDocID", "pko_doc_description.docDescription", "pko_doc_description.id as pkoDocDescID",  "pko_health.healthPdf")
+                ->leftJoin("pko_officer_language", function ($query) use ($req) {
+                    $query->where("pko_officer_language.missionID", "=", $req->_missionID)
+                        ->where("pko_officer_language.eeljID", "=", $req->_eeljID)
+                        ->on("pko_officer_language.MainTableID", "=", "pko_officer_main.id");
+                })
+                ->leftJoin("pko_officer_skill", function ($query) use ($req) {
+                    $query->where("pko_officer_skill.missionID", "=", $req->_missionID)
+                        ->where("pko_officer_skill.eeljID", "=", $req->_eeljID)
+                        ->on("pko_officer_skill.MainTableID", "=", "pko_officer_main.id");
+                })
+                ->select("pko_officer_main.*", "pko_documents.id as pkoDocID", "pko_doc_description.docDescription", "pko_doc_description.id as pkoDocDescID",  "pko_health.healthPdf", "pko_officer_language.documentPdf", "pko_officer_skill.documentPdf")
 
                 ->get();
             return $getProcess;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import Swal from "sweetalert2";
 import axios from "../../../AxiosUser";
 import { AppContext } from "../../../Context/MyContext";
@@ -7,6 +7,9 @@ const SkillApproveOfficerEdit = (props) => {
     const [showModal, setShowModal] = useState("");
     const [SignalScore, setSignalScore] = useState("");
     const [LocationScore, setLocationScore] = useState("");
+    const [documentPdf, setDocumentPdf] = useState("");
+
+    const fileInputRef = useRef(null);
 
     const [getDataRow, setDataRow] = useState([]);
 
@@ -18,8 +21,44 @@ const SkillApproveOfficerEdit = (props) => {
         if (props.isEditBtnClick) {
             setSignalScore(props.changeDataRow.SignalScore);
             setLocationScore(props.changeDataRow.LocationScore);
+            setDocumentPdf(props.changeDataRow.documentPdf);
+
         }
     }, [props.isEditBtnClick]);
+       const changePdf = (e) => {
+        const pdfFile = e.target.files[0];
+        if (pdfFile.name.split(".").pop() === "pdf") {
+            //Хэмжээ шалгах хэсэг
+            const maxSize = 300 * 1024; // 300KB
+            if (pdfFile.size > maxSize) {
+                const mySize = pdfFile.size / 1024;
+                const replaceSize = mySize.toString().replace(/\.\d+/, "");
+                alert(
+                    "Таны оруулсан файлын хэмжээ:" +
+                        replaceSize +
+                        "KБ байна." +
+                        ".Файлын хэмжээ 300KБ-аас хэтэрсэн тул багасгах шаардлагатай."
+                );
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.readAsDataURL(pdfFile);
+            reader.onload = () => {
+                const pdfData = reader.result;
+                setDocumentPdf(pdfData);
+                const replacedName = pdfFile.name.replace(".pdf", "");
+                setPdfName(replacedName);
+            };
+            reader.onerror = (error) => {
+                console.log(error);
+            };
+        } else {
+            alert(
+                "Та зөвхөн Pdf файл сонгоно уу. Алдаа: Pdf файлын өргөтгөл биш байна."
+            );
+        }
+    };
 
     const saveRot = () => {
         props.setRowsSelected([]);
@@ -40,6 +79,8 @@ const SkillApproveOfficerEdit = (props) => {
                 eeljID: state.getEeljRowID,
                 SignalScore: SignalScore,
                 LocationScore: LocationScore,
+                documentPdf:documentPdf,
+
             })
             .then((res) => {
                 Swal.fire(res.data.msg);
@@ -93,6 +134,27 @@ const SkillApproveOfficerEdit = (props) => {
                                             value={SignalScore}
                                         />
                                     </div>
+                                </div>
+                             <div className="col-md-6">
+                                    <div className="input-group mb-3">
+                                        <input
+                                            type="file"
+                                            accept="application/pdf"
+                                            onChange={changePdf}
+                                            ref={fileInputRef}
+                                            className="form-control"
+                                        />
+                                            <input
+                                        type="text"
+                                        value={documentPdf ? documentPdf : ""}
+                                        readOnly
+                                        className="form-control"
+                                    />
+                                    </div>
+
+                                    {/* <p className="alerts">
+                                            {errors.documentPdf?.message}
+                                        </p> */}
                                 </div>
                                 <div className="col-md-6">
                                     <div className="input-group mb-3">

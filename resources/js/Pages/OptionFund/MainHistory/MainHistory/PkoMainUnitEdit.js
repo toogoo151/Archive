@@ -1,9 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState,useContext, useRef } from "react";
 import Swal from "sweetalert2";
 import axios from "../../../../AxiosUser";
 import InputMask from "react-input-mask";
+import { AppContext } from "../../../../Context/MyContext";
+
 
 const PkoMainUnitEdit = (props) => {
+     const state = useContext(AppContext);
      const [showModal, setShowModal] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -36,6 +39,9 @@ const PkoMainUnitEdit = (props) => {
     // };
 
 
+    //   useEffect(() => {
+    //     fn_docItems(state.getMissionRowID, state.getEeljRowID);
+    // }, []);
 
     useEffect(() => {
     setChiefDescVisible(chiefApprove !== "" && chiefApprove !== '1');
@@ -56,9 +62,9 @@ const PkoMainUnitEdit = (props) => {
                     ? props.changeDataRow.firstName
                     : ""
             );
-
-
         }
+                // fn_docItems(state.getMissionRowID, state.getEeljRowID);
+
     }, [props.isEditBtnClick]);
 
     const saveUser = () => {
@@ -68,6 +74,8 @@ const PkoMainUnitEdit = (props) => {
         axios
             .post("/new/PkoMainUnit", {
                 MainHistoryID: props.changeDataRow.id,
+                missionID: state.getMissionRowID,
+                eeljID: state.getEeljRowID,
                 lastName: lastName,
                 firstName: firstName,
                 chiefApprove: chiefApprove,
@@ -92,7 +100,9 @@ const PkoMainUnitEdit = (props) => {
                 setwaist("");
                 setthigh("");
                 setShowModal("");
-                props.refreshUsers();
+
+        props.refreshMainHistory(state.getMissionRowID, state.getEeljRowID);
+
             })
             .catch((err) => {
                 Swal.fire(err.response.data.msg);

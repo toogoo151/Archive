@@ -277,10 +277,10 @@ const MyRoutes = (props) => {
             <Route path="/officer/requirements" element={<OfficerRequirements />} />
             <Route path="/pko/officer/question" element={<OffQuestion />} />
             <Route path="/pko/officer/research" element={<OffResearch />} />
-            <Route
+            {/* <Route
                 path="/pko/officer/documents"
                 element={<DocumentOfficer />}
-            />
+            /> */}
             <Route path="/OfficerProcess" element={<OfficerProcess />} />
 
             <Route

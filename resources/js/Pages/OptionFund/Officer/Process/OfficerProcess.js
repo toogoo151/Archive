@@ -48,6 +48,11 @@ const OfficerProcess = () => {
 
 
     const [checkPdf, setPdf] = useState("");
+    const [languagecheckPdf, setlanguagePdf] = useState("");
+    const [skillcheckPdf, setskillPdf] = useState("");
+
+
+
 
     const [getDesc, setDesc] = useState([]);
     const [getLastDescription, setLastDescription] = useState([]);
@@ -164,6 +169,58 @@ const OfficerProcess = () => {
             console.error("Алдаа.");
         }
     };
+
+     const documentPdf1 = (languagecheckPdf) => {
+        let pdfUrl = "https://psod.maf.gov.mn/storage/" + languagecheckPdf;
+
+        // If checkPdf is null, use the backup PDF URL
+        if (!languagecheckPdf) {
+            pdfUrl = "https://psod.maf.gov.mn/images/empty.pdf";
+        }
+
+        // Open the PDF in a new window
+        const newWindow = window.open(
+            pdfUrl,
+            "_blank",
+            "noopener,noreferrer,resizable"
+        );
+
+        if (newWindow) {
+            // Avoid potential security issues by clearing the opener property
+            newWindow.opener = null;
+        } else {
+            // Handle the case where the new window was blocked by the browser
+            console.error("Алдаа.");
+        }
+     };
+
+      const documentPdf2 = (skillcheckPdf) => {
+        let pdfUrl = "https://psod.maf.gov.mn/storage/" + skillcheckPdf;
+
+        // If checkPdf is null, use the backup PDF URL
+        if (!skillcheckPdf) {
+            pdfUrl = "https://psod.maf.gov.mn/images/empty.pdf";
+        }
+
+        // Open the PDF in a new window
+        const newWindow = window.open(
+            pdfUrl,
+            "_blank",
+            "noopener,noreferrer,resizable"
+        );
+
+        if (newWindow) {
+            // Avoid potential security issues by clearing the opener property
+            newWindow.opener = null;
+        } else {
+            // Handle the case where the new window was blocked by the browser
+            console.error("Алдаа.");
+        }
+     };
+
+
+
+
     //       const handlePdfButtonClick = () => {
     //     // Assuming you have the PDF file path in the state variable `checkPdf`
     //     documentPdf("http://127.0.0.1:8000/storage/" + checkPdf);
@@ -194,6 +251,10 @@ const OfficerProcess = () => {
                         setdriverApprove(res.data[0].driverApprove);
                         setskillScore(res.data[0].skillScore);
                         setPdf(res.data[0].healthPdf);
+                        setlanguagePdf(res.data[0].documentPdf);
+                        setskillPdf(res.data[0].documentPdf);
+
+
 
                         // setDesc(res.data[0].docDescription);
                         setLastDescription(res.data);
@@ -583,6 +644,22 @@ const OfficerProcess = () => {
                                         Англи хэлний 4 чадвар ( Дундаж оноо:
                                         {getlanguage})
                                     </h3>
+                                    <br></br>
+                                         <button
+                                            className="btn btn-warning btn-sm"
+                                            style={{
+                                                marginRight: "20px",
+                                                width: "140px",
+                                                height: "40px",
+                                                fontSize: "15px",
+                                            }}
+                                            // onClick={() => documentPdf(value)}
+                                            onClick={() =>
+                                                documentPdf1(languagecheckPdf)
+                                            }
+                                        >
+                                            PDF Харах
+                                        </button>
                                 </VerticalTimelineElement>
 
                                 <VerticalTimelineElement
@@ -786,6 +863,23 @@ const OfficerProcess = () => {
                                        Ур чадвар( Дундаж оноо:
                                         {getskillScore})
                                     </h3>
+
+                                         <br></br>
+                                         <button
+                                            className="btn btn-warning btn-sm"
+                                            style={{
+                                                marginRight: "20px",
+                                                width: "140px",
+                                                height: "40px",
+                                                fontSize: "15px",
+                                            }}
+                                            // onClick={() => documentPdf(value)}
+                                            onClick={() =>
+                                                documentPdf2(skillcheckPdf)
+                                            }
+                                        >
+                                            PDF Харах
+                                        </button>
                                 </VerticalTimelineElement>
 
 
