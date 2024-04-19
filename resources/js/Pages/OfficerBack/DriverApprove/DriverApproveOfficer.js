@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIDatatable";
 import axios from "../../../AxiosUser";
 import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
-// import DriverApproveOfficerEdit from "./DriverApproveOfficerEdit";
+import DriverApproveOfficerEdit from "./DriverApproveOfficerEdit";
 import Swal from "sweetalert2";
 import { AppContext } from "../../../Context/MyContext";
+
 const DriverApproveOfficer = () => {
     const state = useContext(AppContext);
     const [getdriver, setDriver] = useState([]);
@@ -107,6 +108,8 @@ const DriverApproveOfficer = () => {
         refreshDriver(
             state.getMissionRowID,
             state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
             e.target.value,
         );
       };
@@ -132,7 +135,7 @@ const DriverApproveOfficer = () => {
             state.getMissionRowID,
             state.getEeljRowID,
             getComandlalID,
-            getUnitID,
+            getUnitID
         );
     }, [state.getMissionRowID, state.getEeljRowID]);
 
@@ -145,6 +148,7 @@ const DriverApproveOfficer = () => {
         eeljID,
         comandlalID,
         unitID,
+        typeID
     ) =>
     {
         if (missionID != undefined && eeljID != undefined) {
@@ -154,6 +158,8 @@ const DriverApproveOfficer = () => {
                 _eeljID: eeljID,
                 _comandlalID: comandlalID,
                 _unitID: unitID,
+                _typeID: typeID,
+
                 })
                 .then((res) => {
                     setDriver(res.data.data);
@@ -349,7 +355,7 @@ const DriverApproveOfficer = () => {
                             // spanIconClassName={"fas fa-solid fa-plus"}
                             // buttonName={"НЭМЭХ"}
                             // btnInsert={btnInsert}
-                            excelDownloadData={getSkill}
+                            excelDownloadData={getdriver}
                             excelHeaders={excelHeaders}
                             // isHideInsert={true}
                         />
@@ -357,7 +363,7 @@ const DriverApproveOfficer = () => {
                 }
                 btnEdit={btnEdit}
                 modelType={showModal}
-                editdataTargetID={"#skillApproveOfficerEdit"}
+                editdataTargetID={"#driverApproveOfficerEdit"}
                 btnDelete={btnDelete}
                 avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
                 avgColumnName={"email"} //
@@ -371,12 +377,12 @@ const DriverApproveOfficer = () => {
                 <RotNew refreshDriver={refreshDriver} />
             )} */}
 
-            {/* <DriverApproveOfficerEdit
+            <DriverApproveOfficerEdit
                 setRowsSelected={setRowsSelected}
                 refreshDriver={refreshDriver}
                 changeDataRow={clickedRowData}
                 isEditBtnClick={isEditBtnClick}
-            /> */}
+            />
         </div>
     );
 };
@@ -473,7 +479,7 @@ const columns = [
         },
     },
     {
-        name: "scoreApprove",
+        name: "score",
         label: "Тест оноо",
         options: {
             filter: true,
@@ -488,33 +494,137 @@ const columns = [
             },
         },
     },
-                {
-        name: "practice",
-        label: "Дадлага",
-        options: {
+     {
+        name: "scoreApprove",
+         label: "Тест",
+           options: {
             filter: true,
             sort: false,
+         customBodyRender: (value) => {
+    console.log("Value:", value);
+             if (value === 1) {
+        // return "Тэнцсэн"
+                 return <i className="fas fa-check" style={{ color: 'green', display: 'block', margin: 'auto', alignItems: "center", textAlign:"center" }}></i>;
+             }
+             else if (value === 2) {
+        // return "Тэнцээгүй"
+        return <i className="fas fa-close" style={{ color: 'red', display: 'block', margin: 'auto', alignItems: "center", textAlign:"center" }}></i>;
+    } else {
+        return "Хоосон";
+    }
+},
             setCellHeaderProps: (value) => {
                 return {
                     style: {
                         backgroundColor: "#5DADE2",
                         color: "white",
+                        textAlign: "center"
+                    },
+                };
+            },
+        },
+        //  options: {
+        //     filter: true,
+        //     sort: false,
+        //     setCellHeaderProps: (value) => {
+        //         return {
+        //             style: {
+        //                 backgroundColor: "#5DADE2",
+        //                 color: "white",
+        //             },
+        //         };
+        //     },
+        // },
+    },
+
+    //  {
+    //     name: "scoreApprove",
+    //     label: "Тест төлөв",
+    //     options: {
+    //         filter: true,
+    //         sort: false,
+    //         setCellHeaderProps: (value) => {
+    //             return {
+    //                 style: {
+    //                     backgroundColor: "#5DADE2",
+    //                     color: "white",
+    //                 },
+    //             };
+    //         },
+    //     },
+    // },
+
+      {
+        name: "practice",
+        label: "Дадлага",
+        options: {
+            filter: true,
+            sort: false,
+         customBodyRender: (value) => {
+    console.log("Value:", value);
+             if (value === 1) {
+        // return "Тэнцсэн"
+                 return <i className="fas fa-check" style={{ color: 'green', display: 'block', margin: 'auto', alignItems: "center", textAlign:"center" }}></i>;
+             }
+             else if (value === 2) {
+        // return "Тэнцээгүй"
+        return <i className="fas fa-close" style={{ color: 'red', display: 'block', margin: 'auto', alignItems: "center", textAlign:"center" }}></i>;
+    } else {
+        return "Хоосон";
+    }
+},
+            setCellHeaderProps: (value) => {
+                return {
+                    style: {
+                        backgroundColor: "#5DADE2",
+                        color: "white",
+                        textAlign: "center"
                     },
                 };
             },
         },
     },
+    //             {
+    //     name: "practice",
+    //     label: "Дадлага",
+    //     options: {
+    //         filter: true,
+    //         sort: false,
+    //         setCellHeaderProps: (value) => {
+    //             return {
+    //                 style: {
+    //                     backgroundColor: "#5DADE2",
+    //                     color: "white",
+    //                 },
+    //             };
+    //         },
+    //     },
+    // },
                         {
         name: "Finally",
         label: "Дүн",
         options: {
             filter: true,
             sort: false,
+         customBodyRender: (value) => {
+    console.log("Value:", value);
+             if (value === 1) {
+        // return "Тэнцсэн"
+                 return <i className="fas fa-check" style={{ color: 'green', display: 'block', margin: 'auto', alignItems: "center", textAlign:"center" }}></i>;
+             }
+             else if (value === 2) {
+        // return "Тэнцээгүй"
+        return <i className="fas fa-close" style={{ color: 'red', display: 'block', margin: 'auto', alignItems: "center", textAlign:"center" }}></i>;
+    } else {
+        return "Хоосон";
+    }
+},
             setCellHeaderProps: (value) => {
                 return {
                     style: {
                         backgroundColor: "#5DADE2",
                         color: "white",
+                        textAlign: "center"
                     },
                 };
             },
@@ -528,7 +638,7 @@ const excelHeaders = [
     { label: "Анги", key: "unitShortName" },
     { label: "Овог нэр", key: "firstName" },
     { label: "Нэр", key: "lastName" },
-     { label: "Тест оноо", key: "scoreApprove" },
+     { label: "Тест оноо", key: "score" },
     { label: "Дадлага", key: "practice" },
     { label: "Дүн", key: "Finally" },
 

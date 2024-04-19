@@ -794,6 +794,12 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 icon="nav-icon fa fa-newspaper-o"
                                                 menuName="Англи хэлний шалгалт"
                                             />
+                                              <MenuItem
+                                                url="/officer/back/driver/approve"
+                                                icon="nav-icon fa fa-newspaper-o"
+                                                menuName="Жолооны шалгалт"
+                                            />
+
                                             <MenuItem
                                                 url="/officer/back/skill/approve"
                                                 icon="nav-icon fa fa-newspaper-o"

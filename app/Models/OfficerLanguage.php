@@ -137,11 +137,15 @@ class OfficerLanguage extends Model
             // $originalTrueCount = $getLanguage->where("pko_officer_language.totalScore", ">=", 0)->count();
             // $originalFalseCount = $originalCount - $originalTrueCount;
 
+            $trueScoreCount = $this->getTrueScore123($req);
+            $falseScoreCount = $this->getFalseScore123($req);
+
+
             return response()->json([
                 'status' => 'success',
                 'count' => count($getLanguage),
-                'score_true_count' => 10,
-                'score_false_count' => 10,
+                'score_true_count' =>  $trueScoreCount,
+                'score_false_count' => $falseScoreCount,
                 'data' => $getLanguage,
             ]);
 
@@ -158,9 +162,27 @@ class OfficerLanguage extends Model
         }
     }
 
-    public function getAllRow(){
+    public function getTrueScore123($req){
         try {
-
+               $getTrueScore = OfficerLanguage::query()
+                ->where("pko_officer_language.missionID", "=", $req->_missionID)
+                ->where("pko_officer_language.eeljID", "=", $req->_eeljID)
+                ->where("totalScore", ">", 0)
+                ->count();
+            return $getTrueScore;
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+    public function getFalseScore123($req)
+    {
+        try {
+            $getFalseScore = OfficerLanguage::query()
+                ->where("pko_officer_language.missionID", "=", $req->_missionID)
+                ->where("pko_officer_language.eeljID", "=", $req->_eeljID)
+                ->where("totalScore", "=", 0)
+                ->count();
+            return $getFalseScore;
         } catch (\Throwable $th) {
             //throw $th;
         }
