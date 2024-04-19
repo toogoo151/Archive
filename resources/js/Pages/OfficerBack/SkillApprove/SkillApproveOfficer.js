@@ -107,7 +107,9 @@ const SkillApproveOfficer = () => {
         refreshSkill(
             state.getMissionRowID,
             state.getEeljRowID,
-            e.target.value,
+            getComandlalID,
+            getUnitID,
+            e.target.value
         );
       };
 
@@ -145,6 +147,7 @@ const SkillApproveOfficer = () => {
         eeljID,
         comandlalID,
         unitID,
+        typeID
     ) =>
     {
         if (missionID != undefined && eeljID != undefined) {
@@ -154,6 +157,7 @@ const SkillApproveOfficer = () => {
                 _eeljID: eeljID,
                 _comandlalID: comandlalID,
                 _unitID: unitID,
+                 _typeID: typeID,
                 })
                 .then((res) => {
                     setSkill(res.data.data);

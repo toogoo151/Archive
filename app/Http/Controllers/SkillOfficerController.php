@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\OfficerSkill;
 use App\Models\OfficerLanguage;
+use App\Models\OfficerDriver;
+
 use Illuminate\Support\Facades\DB;
 use App\Models\OfficerMainHistory;
 
@@ -59,6 +61,47 @@ class SkillOfficerController extends Controller
             $editskill = OfficerMainHistory::find($edit->MainTableID);
             $editskill->skillScore = $edit->TotalScore;
             $editskill->save();
+
+            return response(
+                array(
+                    "status" => "success",
+                    "msg" => "Амжилттай нэмлээ."
+                ),
+                200
+            );
+        } catch (\Throwable $th) {
+            return response([
+                "status" => "error",
+                "msg" => "Алдаа гарлаа.",
+                "error" => $th->getMessage() // Include the error message in the response
+            ], 500);
+        }
+    }
+
+    public function editDriver(Request $req)
+    {
+        try {
+            $edit = OfficerDriver::find($req->id);
+            $edit->missionID = $req->missionID;
+            $edit->eeljID = $req->eeljID;
+            $edit->score = $req->score;
+            $edit->scoreApprove = $req->scoreApprove;
+            $edit->practice = $req->practice;
+            if ($req->scoreApprove == 1 && $req->practice == 1) {
+                $edit->finally = 1;
+            } else {
+                $edit->finally = 2;
+            }
+
+            $edit->save();
+
+            $editdriver = OfficerMainHistory::find($edit->MainTableID);
+            if ($req->scoreApprove == 1 && $req->practice == 1) {
+                $editdriver->driverApprove = 1;
+            } else {
+                $editdriver->driverApprove = 2;
+            }
+            $editdriver->save();
 
             return response(
                 array(

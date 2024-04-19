@@ -62,31 +62,32 @@ class OfficerSkill extends Model
     public function getSkill($req)
     {
         try {
+            if ($req->_typeID == "1") {
+
             $getSkill = OfficerSkill::query()
             ->where("pko_officer_skill.missionID", "=", $req->_missionID)
             ->where("pko_officer_skill.eeljID", "=", $req->_eeljID)
+            ->where("pko_officer_skill.TotalScore", ">", 1)
                 ->join("pko_missions", "pko_officer_skill.missionID", "=", "pko_missions.id")
                 ->join("pko_mission_eelj", "pko_officer_skill.eeljID", "=", "pko_mission_eelj.id")
                 ->join("pko_users", "pko_officer_skill.pkoUserID", "=", "pko_users.id")
-                ->join("all_users", "pko_users.allUsersID", "=", "all_users.id");
-            $originalCount = $getSkill->count();
-            $originalTrueCount = $getSkill->where("pko_officer_skill.TotalScore", ">=", 0)->count();
-            $originalFalseCount = $originalCount - $originalTrueCount;
+                    // ->join("all_users", "pko_users.allUsersID", "=", "all_users.id");
+                    ->join("all_users", function ($query) use ($req) {
+                        $query->on("pko_users.allUsersID", "=", "all_users.id");
+                        if ($req->_comandlalID != "") {
+                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                            if ($req->_unitID != "") {
+                                $query->where("all_users.unitID", "=", $req->_unitID);
+                            }
+                        }
+                    })
+                    ->join("tb_comandlal", function ($query) {
+                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                    })
+                    ->join("tb_unit", function ($query) {
+                        $query->on("all_users.unitID", "=", "tb_unit.id");
+                    })
 
-            if ($req->typeID != "") {
-                $getSkill->where("pko_officer_skill.TotalScore", "=", $req->typeID);
-            }
-
-            if ($req->_comandlalID != "") {
-                $getSkill->where("all_users.comandlalID", "=", $req->_comandlalID);
-            }
-            if ($req->_unitID != "") {
-                $getSkill->where("all_users.unitID", "=", $req->_unitID);
-            }
-
-
-            $getSkill->leftJoin("tb_comandlal", "tb_comandlal.id", "=", "all_users.comandlalID")
-            ->leftJoin("tb_unit", "tb_unit.id", "=", "all_users.unitID")
             ->select(
                 "pko_officer_skill.*",
                 "pko_missions.missionName",
@@ -95,28 +96,94 @@ class OfficerSkill extends Model
                 "all_users.lastName",
                 "tb_comandlal.comandlalShortName",
                 "tb_unit.unitShortName"
-            );
+            )->get();
+            }
 
 
-            // $GetScore = OfficerSkill::query()
-            // ->where("pko_officer_skill.missionID", "=", $req->_missionID)
-            // ->where("pko_officer_skill.eeljID", "=", $req->_eeljID)
-            //     ->join("pko_missions", "pko_officer_skill.missionID", "=", "pko_missions.id")
-            //     ->join("pko_mission_eelj", "pko_officer_skill.eeljID", "=", "pko_mission_eelj.id")
-            //     ->join("pko_users", "pko_officer_skill.pkoUserID", "=", "pko_users.id")
-            //     ->join("all_users", "pko_users.allUsersID", "=", "all_users.id");
+            if ($req->_typeID == "0") {
+                $getSkill = OfficerSkill::query()
+                ->where("pko_officer_skill.missionID", "=", $req->_missionID)
+                ->where("pko_officer_skill.eeljID", "=", $req->_eeljID)
+                ->where("pko_officer_skill.TotalScore", "=", 0)
+                    ->join("pko_missions", "pko_officer_skill.missionID", "=", "pko_missions.id")
+                    ->join("pko_mission_eelj", "pko_officer_skill.eeljID", "=", "pko_mission_eelj.id")
+                    ->join("pko_users", "pko_officer_skill.pkoUserID", "=", "pko_users.id")
+                    // ->join("all_users", "pko_users.allUsersID", "=", "all_users.id");
+                    ->join("all_users", function ($query) use ($req) {
+                        $query->on("pko_users.allUsersID", "=", "all_users.id");
+                        if ($req->_comandlalID != "") {
+                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                            if ($req->_unitID != "") {
+                                $query->where("all_users.unitID", "=", $req->_unitID);
+                            }
+                        }
+                    })
+                    ->join("tb_comandlal", function ($query) {
+                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                    })
+                    ->join("tb_unit", function ($query) {
+                        $query->on("all_users.unitID", "=", "tb_unit.id");
+                    })
 
-            // $count = count($GetScore);
-            // $true = $GetScore->where("pko_officer_skill.TotalScore", ">=", 0)->count();
-            // $false = $count - $true;
-            $skills = $getSkill->get();
+                    ->select(
+                        "pko_officer_skill.*",
+                        "pko_missions.missionName",
+                        "pko_mission_eelj.eeljName",
+                        "all_users.firstName",
+                        "all_users.lastName",
+                        "tb_comandlal.comandlalShortName",
+                        "tb_unit.unitShortName"
+                    )
+                    ->get();
+            }
+
+            if ($req->_typeID == "") {
+
+                $getSkill = OfficerSkill::query()
+                    ->where("pko_officer_skill.missionID", "=", $req->_missionID)
+                    ->where("pko_officer_skill.eeljID", "=", $req->_eeljID)
+                    ->join("pko_missions", "pko_officer_skill.missionID", "=", "pko_missions.id")
+                    ->join("pko_mission_eelj", "pko_officer_skill.eeljID", "=", "pko_mission_eelj.id")
+                    ->join("pko_users", "pko_officer_skill.pkoUserID", "=", "pko_users.id")
+                    // ->join("all_users", "pko_users.allUsersID", "=", "all_users.id");
+                    ->join("all_users", function ($query) use ($req) {
+                        $query->on("pko_users.allUsersID", "=", "all_users.id");
+                        if ($req->_comandlalID != "") {
+                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                            if ($req->_unitID != "") {
+                                $query->where("all_users.unitID", "=", $req->_unitID);
+                            }
+                        }
+                    })
+                    ->join("tb_comandlal", function ($query) {
+                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                    })
+                    ->join("tb_unit", function ($query) {
+                        $query->on("all_users.unitID", "=", "tb_unit.id");
+                    })
+
+                    ->select(
+                        "pko_officer_skill.*",
+                        "pko_missions.missionName",
+                        "pko_mission_eelj.eeljName",
+                        "all_users.firstName",
+                        "all_users.lastName",
+                        "tb_comandlal.comandlalShortName",
+                        "tb_unit.unitShortName"
+                    )->get();
+            }
+
+
+
+            $trueScoreCount = $this->getTrueScore123($req);
+            $falseScoreCount = $this->getFalseScore123($req);
 
             return response()->json([
                 'status' => 'success',
-                'count' => $originalCount,
-                'score_true_count' => $originalTrueCount,
-                'score_false_count' => $originalFalseCount,
-                'data' => $skills,
+                'count' => count($getSkill),
+                'score_true_count' => $trueScoreCount,
+                'score_false_count' => $falseScoreCount,
+                'data' => $getSkill,
             ]);
 
 
@@ -129,6 +196,32 @@ class OfficerSkill extends Model
                 ),
                 500
             );
+        }
+    }
+    public function getTrueScore123($req)
+    {
+        try {
+            $getTrueScore = OfficerSkill::query()
+                ->where("pko_officer_skill.missionID", "=", $req->_missionID)
+                ->where("pko_officer_skill.eeljID", "=", $req->_eeljID)
+                ->where("TotalScore", ">", 0)
+                ->count();
+            return $getTrueScore;
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+    public function getFalseScore123($req)
+    {
+        try {
+            $getFalseScore = OfficerSkill::query()
+                ->where("pko_officer_skill.missionID", "=", $req->_missionID)
+                ->where("pko_officer_skill.eeljID", "=", $req->_eeljID)
+                ->where("TotalScore", "=", 0)
+                ->count();
+            return $getFalseScore;
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 }

@@ -1092,6 +1092,8 @@ Route::post("/get/officer/driver", function (Request $req) {
     $getDriver = new OfficerDriver();
     return $getDriver->getDriver($req);
 });
+Route::post("/edit/officer/driver", [SkillOfficerController::class, "editDriver"]);
+
 
 
 // биеийн тамирийн оноо оруулах
