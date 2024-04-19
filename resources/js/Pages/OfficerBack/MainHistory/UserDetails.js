@@ -26,6 +26,8 @@ const UserDetails = (props) => {
     const [getUuregGuitsetgelt, setUuregGuitsetgelt] = useState([]);
 
     useEffect(() => {
+        console.log(props.getUserDetails);
+        console.log("above");
         setUsers(props.getUserDetails);
         setMissions(props.getMissionHistory);
     }, [props]);
@@ -255,7 +257,8 @@ const UserDetails = (props) => {
                                                                     ? // ? "http://172.16.10.78:8000/storage" +
                                                                       "https://psod.maf.gov.mn/storage" +
                                                                       getUsers.image
-                                                                    : "https://psod.maf.gov.mn/storage/profile/No-photo.jpg"
+                                                                    : // : "https://psod.maf.gov.mn/storage/profile/No-photo.jpg"
+                                                                      "http://172.16.10.73:8000/storage/profile/No-photo.jpg"
                                                             }
                                                             alt="Generic placeholder image"
                                                             fluid

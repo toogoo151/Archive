@@ -16,6 +16,68 @@ class MainHistoryController extends Controller
 
     public function getUserDetails(Request $req){
         try {
+
+            if($req->_isAjiglagch){
+
+                $getUserDetail = DB::table("pko_officer_main")
+                ->where("pko_officer_main.id", "=", $req->_id)
+                ->where("pko_officer_main.missionID", "=", $req->_missionID)
+                ->where("pko_officer_main.eeljID", "=", $req->_eeljID)
+                ->join("pko_users", function($query){
+                    $query->on("pko_officer_main.pkoUserID", "=", "pko_users.id");
+                })
+                ->join("all_users", function($query){
+                    $query->on("pko_users.allUsersID", "=", "all_users.id");
+                })
+                ->join("tb_ranks", function($query){
+                    $query->on("all_users.rankID", "=", "tb_ranks.id");
+                })
+                ->join("tb_comandlal", function($query){
+                    $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                })
+                ->join("tb_unit", function($query){
+                    $query->on("all_users.unitID", "=", "tb_unit.id");
+                })
+                ->join("tb_gender", function($query){
+                    $query->on("all_users.gender", "=", "tb_gender.id");
+                })
+                ->select("pko_officer_main.pkoUserID", "all_users.rd", "all_users.image", "all_users.firstName", "all_users.lastName", "all_users.age", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "tb_gender.genderName")
+                ->first();
+                // return $getUserDetail;
+
+                $getMissionHistory = DB::table("pko_officer_main")
+                ->where("pko_officer_main.id", "=", $req->_id)
+                ->where("pko_officer_main.missionID", "=", $req->_missionID)
+                ->where("pko_officer_main.eeljID", "=", $req->_eeljID)
+                ->join("pko_users", function($query){
+                    $query->on("pko_officer_main.pkoUserID", "=", "pko_users.id");
+                })
+                ->join("all_users", function($query){
+                    $query->on("pko_users.allUsersID", "=", "all_users.id");
+                })
+                ->join("pko_mission_history", function($query){
+                    $query->on("all_users.id", "=", "pko_mission_history.allUserID");
+                })
+                ->join("pko_missions", function($query){
+                    $query->on("pko_mission_history.missionID", "=", "pko_missions.id");
+                })
+                ->join("pko_mission_eelj", function($query){
+                    $query->on("pko_mission_history.eeljID", "=", "pko_mission_eelj.id");
+                })
+                ->join("pko_position", function($query){
+                    $query->on("pko_mission_history.missionPosition", "=", "pko_position.id");
+                })
+                ->select("pko_mission_history.*", "pko_position.positionName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                ->get();
+
+                $row = array(
+                    "getUserDetails" => $getUserDetail,
+                    "getMissionHistory" => $getMissionHistory,
+                );
+            return $row;
+            }
+
+
             $getUserDetail = DB::table("pko_main_history")
                 ->where("pko_main_history.id", "=", $req->_id)
                 ->where("pko_main_history.missionID", "=", $req->_missionID)

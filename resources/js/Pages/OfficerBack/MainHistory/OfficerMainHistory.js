@@ -18,6 +18,7 @@ const OfficerMainHistory = () => {
     const [getUnits, setUnits] = useState([]);
 
     const [getUserDetails, setUserDetails] = useState([]);
+    const [getUserDetailsIsGet, setUserDetailsIsGet] = useState(false);
     const [getMissionHistory, setMissionHistory] = useState([]);
 
     const [getComandlalID, setComandlalID] = useState("");
@@ -51,6 +52,12 @@ const OfficerMainHistory = () => {
             setclickedRowData([getRowsSelected[0]]);
         }
     }, [getRowsSelected]);
+
+    useEffect(() => {
+        if (getUserDetails.length > 0) {
+            setUserDetailsIsGet(true);
+        }
+    }, [getUserDetails]);
 
     useEffect(() => {
         axios
@@ -1033,21 +1040,31 @@ const OfficerMainHistory = () => {
         },
     ];
     const fn_details_btn = (value, tableMeta, updateValue) => {
-        return;
+        // return;
+        console.log("darlaa");
         axios
             .post("/get/user/details", {
                 _missionID: state.getMissionRowID,
                 _eeljID: state.getEeljRowID,
                 _id: value,
+                _isAjiglagch: true,
             })
             .then((res) => {
+                console.log("harui huleeh");
+                console.log(res.data);
+                console.log(res.data.getUserDetails);
                 setUserDetails(res.data.getUserDetails);
+                // setUserDetailsIsGet(true);
                 setMissionHistory(res.data.getMissionHistory);
+                // <UserDetails
+                //     clickedRowData={clickedRowData}
+                //     getUserDetails={res.data.getUserDetails}
+                //     getMissionHistory={getMissionHistory}
+                // />;
             })
             .catch((err) => {
                 console.log(err);
             });
-        // <UserDetails />;
     };
 
     return (
@@ -1530,7 +1547,7 @@ const OfficerMainHistory = () => {
                     editdataTargetID={"#userEdit"}
                     isHideHuman={false}
                     isHideDelete={false}
-                    isHideEdit={true}
+                    isHideEdit={false}
                     avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
                     avgColumnName={"email"}
                     avgName={"Дундаж: "}
