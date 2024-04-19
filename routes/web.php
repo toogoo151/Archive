@@ -1061,6 +1061,10 @@ Route::post("get/officer/back/main/historys", function(Request $req){
     $getMainHistorys = new OfficerMainHistory();
         return $getMainHistorys->getMainHistorys($req);
 });
+Route::post("/get/officer/count/main", function(Request $req){
+    $getCountTsah = new OfficerMainHistory();
+     return $getCountTsah->getTsahSum($req);
+});
 Route::post("/get/users/officer/main/history", [HealthOfficerController::class, "getUsersFromOfficerMainHistory"]);
 
 Route::post("/officer/get/health/child", [HealthOfficerController::class, "getHealthChild"]);

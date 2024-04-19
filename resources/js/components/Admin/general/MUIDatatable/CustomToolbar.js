@@ -13,7 +13,49 @@ class CustomToolbar extends React.Component {
     constructor(props, ref) {
         super(props);
     }
+    renderCsvData() {
+        return this.props.excelDownloadData.map((item) => ({
+            missionName: item.missionName,
+            eeljName: item.eeljName,
+            comandlalShortName: item.comandlalShortName,
+
+            unitShortName: item.unitShortName,
+            shortRank: item.shortRank,
+            rd: item.rd,
+            lastName: item.lastName,
+            firstName: item.firstName,
+            age: item.age,
+            genderName: item.genderName,
+            documentsMainApprove:
+                item.documentsMainApprove === 0
+                    ? "Шийдвэрлээгүй"
+                    : item.documentsMainApprove === 1
+                    ? "Зөвшөөрөгдсөн"
+                    : "Татгалзсан",
+            healthApprove:
+                item.healthApprove === 0
+                    ? "Ороогүй"
+                    : item.healthApprove === 1
+                    ? "Тэнцсэн"
+                    : "Тэнцээгүй",
+            alcpt_score: item.alcpt_score === 0 ? "Өгөөгүй" : item.alcpt_score,
+            sportScore:
+                item.languageScore === 0.0 ? "Өгөөгүй" : item.languageScore,
+            sportScore: item.sportScore === 0 ? "Өгөөгүй" : item.sportScore,
+
+            driverApprove:
+                item.driverApprove === 0
+                    ? "Өгөөгүй"
+                    : item.driverApprove === 1
+                    ? "Тэнцсэн"
+                    : "Тэнцээгүй",
+
+            skillScore: item.skillScore === 0 ? "Өгөөгүй" : item.skillScore,
+        }));
+    }
+
     render() {
+        const csvData = this.renderCsvData();
         return (
             <div className="row">
                 {this.props.isHideInsert && (
@@ -47,7 +89,11 @@ class CustomToolbar extends React.Component {
                     }}
                 >
                     <CSVLink
-                        data={this.props.excelDownloadData}
+                        data={
+                            this.props.isOfficerMainExcelHeaders
+                                ? csvData
+                                : this.props.excelDownloadData
+                        }
                         headers={this.props.excelHeaders}
                         title="Excel файл татах"
                     >

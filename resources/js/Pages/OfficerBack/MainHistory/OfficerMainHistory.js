@@ -29,12 +29,17 @@ const OfficerMainHistory = () => {
     const [getIsPhysic, setIsPhysic] = useState("");
     const [getGender, setGender] = useState("");
 
+    const [getALCPT, setALCPT] = useState("");
+    const [getEnglish4Skills, setEnglish4Skills] = useState("");
+    const [getDrive, setDrive] = useState("");
+    const [getMilitarySkills, setMilitarySkills] = useState("");
+
     const [getAllTotal, setAllTotal] = useState(0);
     const [getMaleTotal, setMaleTotal] = useState(0);
     const [getFemaleTotal, setFemaleTotal] = useState(0);
     const [getFlightTotal, setFlightTotal] = useState(0);
     const [getDocTotal, setDocTotal] = useState(0);
-    const [getHeltesTotal, setHeltesTotal] = useState(0);
+    const [getALCPTTotal, setALCPTTotal] = useState(0);
     const [getHealthTotal, setHealthTotal] = useState(0);
     const [getSportTotal, setSportTotal] = useState(0);
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
@@ -72,7 +77,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             getIsPhysic,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
         getTsahSum(
             state.getMissionRowID,
@@ -83,7 +92,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             getIsPhysic,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
     }, []);
 
@@ -124,7 +137,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             getIsPhysic,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
         getTsahSum(
             state.getMissionRowID,
@@ -135,7 +152,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             getIsPhysic,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
     };
 
@@ -155,7 +176,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             getIsPhysic,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
         getTsahSum(
             state.getMissionRowID,
@@ -166,7 +191,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             getIsPhysic,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
         setclickedRowData([]);
     }, [state.getMissionRowID, state.getEeljRowID]);
@@ -180,7 +209,11 @@ const OfficerMainHistory = () => {
         eruulMendHeltesApprove,
         healthApprove,
         sportScore,
-        genderID
+        genderID,
+        ALCPTID,
+        English4SkillsID,
+        DriveID,
+        MilitarySkillsID
     ) => {
         axios
             .post("get/officer/back/main/historys", {
@@ -193,6 +226,10 @@ const OfficerMainHistory = () => {
                 _healthApprove: healthApprove,
                 _sportScore: sportScore,
                 _gender: genderID,
+                _ALCPT: ALCPTID, // "",1,0
+                _English4SkillsID: English4SkillsID,
+                _DriveID: DriveID,
+                _MilitarySkillsID: MilitarySkillsID,
             })
             .then((res) => {
                 setRowsSelected([]);
@@ -212,20 +249,28 @@ const OfficerMainHistory = () => {
         eruulMendHeltesApprove,
         healthApprove,
         sportScore,
-        genderID
+        genderID,
+        ALCPTID,
+        English4SkillsID,
+        DriveID,
+        MilitarySkillsID
     ) => {
         if (missionID != undefined && eeljID != undefined) {
             axios
-                .post("/get/count/main", {
+                .post("/get/officer/count/main", {
                     _missionID: missionID,
                     _eeljID: eeljID,
                     _comandlalID: comandlalID,
                     _unitID: unitID,
                     _documentsMainApprove: documentsMainApprove,
-                    _eruulMendHeltesApprove: eruulMendHeltesApprove,
+                    // _eruulMendHeltesApprove: eruulMendHeltesApprove,
                     _healthApprove: healthApprove,
                     _sportScore: sportScore,
                     _gender: genderID,
+                    _ALCPT: ALCPTID, // "",1,0
+                    _English4SkillsID: English4SkillsID,
+                    _DriveID: DriveID,
+                    _MilitarySkillsID: MilitarySkillsID,
                 })
                 .then((res) => {
                     if (res.data.sum != undefined) {
@@ -246,8 +291,8 @@ const OfficerMainHistory = () => {
                     if (res.data.docTotal != undefined) {
                         setDocTotal(res.data.docTotal);
                     }
-                    if (res.data.heltesTotal != undefined) {
-                        setHeltesTotal(res.data.heltesTotal);
+                    if (res.data.ALCPTTotal != undefined) {
+                        setALCPTTotal(res.data.ALCPTTotal);
                     }
                     if (res.data.healthTotal != undefined) {
                         setHealthTotal(res.data.healthTotal);
@@ -273,7 +318,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             getIsPhysic,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
         getTsahSum(
             state.getMissionRowID,
@@ -284,7 +333,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             getIsPhysic,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
     };
 
@@ -299,7 +352,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             e.target.value,
             getIsPhysic,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
         getTsahSum(
             state.getMissionRowID,
@@ -310,33 +367,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             e.target.value,
             getIsPhysic,
-            getGender
-        );
-    };
-
-    const changeHeltes = (e) => {
-        setIsHeltes(e.target.value);
-        refreshMainHistory(
-            state.getMissionRowID,
-            state.getEeljRowID,
-            getComandlalID,
-            getUnitID,
-            getIsWord,
-            e.target.value,
-            getIsHealth,
-            getIsPhysic,
-            getGender
-        );
-        getTsahSum(
-            state.getMissionRowID,
-            state.getEeljRowID,
-            getComandlalID,
-            getUnitID,
-            getIsWord,
-            e.target.value,
-            getIsHealth,
-            getIsPhysic,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
     };
 
@@ -351,7 +386,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             e.target.value,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
         getTsahSum(
             state.getMissionRowID,
@@ -362,7 +401,11 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             e.target.value,
-            getGender
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
         );
     };
 
@@ -377,6 +420,146 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             getIsPhysic,
+            e.target.value,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
+        );
+        getTsahSum(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
+            getIsWord,
+            getIsHeltes,
+            getIsHealth,
+            getIsPhysic,
+            e.target.value,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
+        );
+    };
+
+    const changeALCPT = (e) => {
+        setALCPT(e.target.value);
+        refreshMainHistory(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
+            getIsWord,
+            getIsHeltes,
+            getIsHealth,
+            getIsPhysic,
+            getGender,
+            e.target.value,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
+        );
+        getTsahSum(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
+            getIsWord,
+            getIsHeltes,
+            getIsHealth,
+            getIsPhysic,
+            getGender,
+            e.target.value,
+            getEnglish4Skills,
+            getDrive,
+            getMilitarySkills
+        );
+    };
+
+    const changeEnglish4Skills = (e) => {
+        setEnglish4Skills(e.target.value);
+        refreshMainHistory(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
+            getIsWord,
+            getIsHeltes,
+            getIsHealth,
+            getIsPhysic,
+            getGender,
+            getALCPT,
+            e.target.value,
+            getDrive,
+            getMilitarySkills
+        );
+        getTsahSum(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
+            getIsWord,
+            getIsHeltes,
+            getIsHealth,
+            getIsPhysic,
+            getGender,
+            getALCPT,
+            e.target.value,
+            getDrive,
+            getMilitarySkills
+        );
+    };
+
+    const changeDrive = (e) => {
+        setDrive(e.target.value);
+        refreshMainHistory(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
+            getIsWord,
+            getIsHeltes,
+            getIsHealth,
+            getIsPhysic,
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            e.target.value,
+            getMilitarySkills
+        );
+        getTsahSum(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
+            getIsWord,
+            getIsHeltes,
+            getIsHealth,
+            getIsPhysic,
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            e.target.value,
+            getMilitarySkills
+        );
+    };
+
+    const changeMilitarySkills = (e) => {
+        setMilitarySkills(e.target.value);
+        refreshMainHistory(
+            state.getMissionRowID,
+            state.getEeljRowID,
+            getComandlalID,
+            getUnitID,
+            getIsWord,
+            getIsHeltes,
+            getIsHealth,
+            getIsPhysic,
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
             e.target.value
         );
         getTsahSum(
@@ -388,6 +571,10 @@ const OfficerMainHistory = () => {
             getIsHeltes,
             getIsHealth,
             getIsPhysic,
+            getGender,
+            getALCPT,
+            getEnglish4Skills,
+            getDrive,
             e.target.value
         );
     };
@@ -630,7 +817,7 @@ const OfficerMainHistory = () => {
             },
         },
         {
-            name: "",
+            name: "alcpt_score",
             label: "ALCPT",
             options: {
                 filter: true,
@@ -650,7 +837,7 @@ const OfficerMainHistory = () => {
             },
         },
         {
-            name: "",
+            name: "languageScore",
             label: "Англи хэлний 4 чадвар",
             options: {
                 filter: true,
@@ -690,7 +877,7 @@ const OfficerMainHistory = () => {
             },
         },
         {
-            name: "",
+            name: "driverApprove",
             label: "Жолооны шалгалт",
             options: {
                 filter: true,
@@ -710,7 +897,7 @@ const OfficerMainHistory = () => {
                             <DangerousButton color={"error"}></DangerousButton>
                         );
                     } else if (value == 0) {
-                        return "Ороогүй";
+                        return "Өгөөгүй";
                     } else if (value == 1) {
                         return <CheckButton color={"success"}></CheckButton>;
                     }
@@ -764,7 +951,7 @@ const OfficerMainHistory = () => {
 
                 setCellProps: (value, rowIndex) => {
                     const el = getMainHistory[rowIndex];
-                    if (el.sportScore >= 80) {
+                    if (el.alcpt_score >= 80) {
                         return {
                             align: "center",
                             style: {
@@ -772,7 +959,7 @@ const OfficerMainHistory = () => {
                                 color: "black",
                             },
                         };
-                    } else if (el.sportScore >= 50) {
+                    } else if (el.alcpt_score >= 50) {
                         return {
                             align: "center",
                             style: {
@@ -846,6 +1033,7 @@ const OfficerMainHistory = () => {
         },
     ];
     const fn_details_btn = (value, tableMeta, updateValue) => {
+        return;
         axios
             .post("/get/user/details", {
                 _missionID: state.getMissionRowID,
@@ -959,13 +1147,13 @@ const OfficerMainHistory = () => {
                                 style={{ height: "80%" }}
                             >
                                 <div className="inner">
-                                    <h3>{getHeltesTotal}</h3>
+                                    <h3>{getALCPTTotal}</h3>
 
                                     <div className="">
                                         <p>
-                                            Эрүүл мэндийн хэлтсээс
+                                            ALCPT
                                             <br className="d-lg-block d-none" />{" "}
-                                            зөвшөөрөгдсөн
+                                            Өгсөн
                                         </p>
                                     </div>
                                 </div>
@@ -1054,7 +1242,11 @@ const OfficerMainHistory = () => {
                                                 getIsHeltes,
                                                 getIsHealth,
                                                 getIsPhysic,
-                                                getGender
+                                                getGender,
+                                                getALCPT,
+                                                getEnglish4Skills,
+                                                getDrive,
+                                                getMilitarySkills
                                             );
                                             getTsahSum(
                                                 state.getMissionRowID,
@@ -1065,7 +1257,11 @@ const OfficerMainHistory = () => {
                                                 getIsHeltes,
                                                 getIsHealth,
                                                 getIsPhysic,
-                                                getGender
+                                                getGender,
+                                                getALCPT,
+                                                getEnglish4Skills,
+                                                getDrive,
+                                                getMilitarySkills
                                             );
                                             changeComandlal(e.target.value);
                                         }}
@@ -1199,11 +1395,11 @@ const OfficerMainHistory = () => {
                                 </div>
                                 <select
                                     className="form-control"
-                                    // onChange={changeHeltes}
+                                    onChange={changeALCPT}
                                 >
                                     <option value="">Сонгоно уу</option>
-                                    <option value="0">Өгөөгүй</option>
                                     <option value="1">Өгсөн</option>
+                                    <option value="0">Өгөөгүй</option>
                                 </select>
                             </div>
                         </div>
@@ -1249,11 +1445,11 @@ const OfficerMainHistory = () => {
                                 </div>
                                 <select
                                     className="form-control"
-                                    // onChange={changeHeltes}
+                                    onChange={changeEnglish4Skills}
                                 >
                                     <option value="">Сонгоно уу</option>
-                                    <option value="0">Өгөөгүй</option>
                                     <option value="1">Өгсөн</option>
+                                    <option value="0">Өгөөгүй</option>
                                 </select>
                             </div>
                         </div>
@@ -1283,7 +1479,7 @@ const OfficerMainHistory = () => {
                                 </div>
                                 <select
                                     className="form-control"
-                                    // onChange={changePhysic}
+                                    onChange={changeDrive}
                                 >
                                     <option value="">Сонгоно уу</option>
                                     <option value="0">Өгөөгүй</option>
@@ -1301,12 +1497,11 @@ const OfficerMainHistory = () => {
                                 </div>
                                 <select
                                     className="form-control"
-                                    // onChange={changePhysic}
+                                    onChange={changeMilitarySkills}
                                 >
                                     <option value="">Сонгоно уу</option>
+                                    <option value="1">Өгсөн</option>
                                     <option value="0">Өгөөгүй</option>
-                                    <option value="1">Тэнцсэн</option>
-                                    <option value="2">Тэнцээгүй</option>
                                 </select>
                             </div>
                         </div>
@@ -1325,6 +1520,7 @@ const OfficerMainHistory = () => {
                                 title={"ЦАХ-ДЫН ҮНДСЭН МЭДЭЭЛЭЛ"}
                                 excelDownloadData={getMainHistory}
                                 excelHeaders={excelHeaders}
+                                isOfficerMainExcelHeaders={true} // value өөрчлөж Excel болгохын тулд true өгөөд цаад талдаа punction ажиллаж байгаа
                                 isHideInsert={false}
                             />
                         </>
@@ -1359,7 +1555,7 @@ const OfficerMainHistory = () => {
                 <br />
                 <UserDetails
                     onClick={fn_details_btn}
-                    refreshMainHistory={refreshMainHistory}
+                    // refreshMainHistory={refreshMainHistory}
                     clickedRowData={clickedRowData}
                     getUserDetails={getUserDetails}
                     getMissionHistory={getMissionHistory}
@@ -1382,13 +1578,15 @@ const excelHeaders = [
     { label: "Нэр", key: "firstName" },
     { label: "Нас", key: "age" },
     { label: "Хүйс", key: "genderName" },
-    // { label: "Бичиг баримтын бүрдэл", key: "documentsMainApprove" },
-    // { label: "Эрүүл мэндийн хэлтэс", key: "eruulMendHeltesApprove" },
-    // { label: "Эрүүл мэндийн үзлэг", key: "healthApprove" },
+    {
+        label: "Бичиг баримтын бүрдэл",
+        key: "documentsMainApprove",
+    },
+    { label: "Эрүүл мэндийн үзлэг", key: "healthApprove" },
+    { label: "ALCPT", key: "alcpt_score" },
+    { label: "Англи хэлний 4 чадвар", key: "languageScore" },
     { label: "Биеийн тамирын оноо", key: "sportScore" },
-    // { label: "Тагнуулын тодорхойлолт", key: "isCrime" },
-    // { label: "Хасагдсан эсэх", key: "isCanceled" },
-    // { label: "Ниссэн эсэх", key: "isFlight" },
-    // { label: "Огноо 1", key: "created_at" },
+    { label: "Жолооны шалгалт", key: "driverApprove" },
+    { label: "Ур чадвар", key: "skillScore" },
     // { label: "Огноо 2", key: "updated_at" },
 ];
