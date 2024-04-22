@@ -3,12 +3,7 @@ import ReactDOM from "react";
 import MyRoutes from "../Routes/MyRoutes";
 
 export default function Content(props) {
-     const {
-        showFirstMenu,
-        showSecondMenu,
-        handleFirstMenuClick,
-        handleSecondMenuClick,
-    } = props;
+    const { handleFirstMenuClick, getMissionType } = props;
     return (
         <>
             {/* Content Wrapper. Contains page content */}
@@ -17,10 +12,8 @@ export default function Content(props) {
                     <br />
                     <div className="container-fluid">
                         <MyRoutes
-                          showFirstMenu={showFirstMenu}
-                            showSecondMenu={showSecondMenu}
-                             handleFirstMenuClick={handleFirstMenuClick}
-                            handleSecondMenuClick={handleSecondMenuClick}
+                            handleFirstMenuClick={handleFirstMenuClick}
+                            getMissionType={getMissionType}
                         />
                     </div>
                     {/* /.container-fluid */}

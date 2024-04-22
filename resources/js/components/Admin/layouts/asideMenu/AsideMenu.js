@@ -1,5 +1,5 @@
 import axios from "../../../../AxiosUser";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
 import { useLocation, useParams, Link } from "react-router-dom";
 // import logo from "../../../../../dist/img/psychology_logo.png";
@@ -12,7 +12,7 @@ import GsmafLogo from "../../../../../dist/img/GsmafLogo.png";
 import Swal from "sweetalert2";
 import AshiglahZaavar from "../../MenuItem/AshiglahZaavar";
 
-export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
+export default function AsideMenu({ getMissionType, setMissionType }) {
     const [getRankName, setRankName] = useState("");
     const [getFirstName, setFirstName] = useState("");
     const [getImage, setImage] = useState("");
@@ -85,6 +85,11 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                 console.log(err);
             });
     }, []);
+
+    const resetContextIsMission = () => {
+        localStorage.removeItem("whatIsMission");
+        setMissionType("");
+    };
     return (
         <aside
             className="main-sidebar sidebar-dark-primary elevation-4"
@@ -92,12 +97,14 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
         >
             {/* Brand Logo */}
             <a
-                href="/home"
+                // href="/home"
                 className="brand-link"
                 style={{
                     textDecoration: "none",
                     borderBottom: "1px solid #FFFFFF",
+                    cursor: "pointer",
                 }}
+                onClick={resetContextIsMission}
             >
                 {/* <div className="image">
                     <img
@@ -789,12 +796,12 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 icon="nav-icon fa fa-dumbbell"
                                                 menuName="Биеийн тамирын шалгалт"
                                             />
-                                              <MenuItem
+                                            <MenuItem
                                                 url="/officer/back/language/approve"
                                                 icon="nav-icon fa fa-newspaper-o"
                                                 menuName="Англи хэлний шалгалт"
                                             />
-                                              <MenuItem
+                                            <MenuItem
                                                 url="/officer/back/driver/approve"
                                                 icon="nav-icon fa fa-newspaper-o"
                                                 menuName="Жолооны шалгалт"
@@ -2499,7 +2506,7 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
 
                             {userType === "unitUser" && (
                                 <>
-                                    {showFirstMenu && (
+                                    {getMissionType == "contingent" ? (
                                         <div>
                                             <li className="nav-item">
                                                 <a
@@ -2509,7 +2516,8 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 >
                                                     <i className="nav-icon fa fa-home" />
                                                     <p>
-                                                        ҮНДСЭН
+                                                        ҮНДСЭН{"123132 "}{" "}
+                                                        {getMissionType}
                                                         <i className="fas fa-angle-left right" />
                                                     </p>
                                                 </a>
@@ -2637,18 +2645,22 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 </ul>
                                             </li>
                                         </div>
+                                    ) : (
+                                        ""
                                     )}
-                                    {showSecondMenu && (
+                                    {getMissionType == "observe" ? (
                                         <div>
                                             <li className="nav-item">
                                                 <a
                                                     href="#"
                                                     className="nav-link"
-                                                    style={{ color: "#FFFFFF" }}
+                                                    style={{
+                                                        color: "#FFFFFF",
+                                                    }}
                                                 >
                                                     <i className="nav-icon fa fa-home" />
                                                     <p>
-                                                        ҮНДСЭН
+                                                        ҮНДСЭН {getMissionType}
                                                         <i className="fas fa-angle-left right" />
                                                     </p>
                                                 </a>
@@ -2715,7 +2727,9 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 <a
                                                     href="#"
                                                     className="nav-link"
-                                                    style={{ color: "#FFFFFF" }}
+                                                    style={{
+                                                        color: "#FFFFFF",
+                                                    }}
                                                 >
                                                     <i className="nav-icon fa fa-bullhorn" />
                                                     <p>
@@ -2740,7 +2754,9 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 <a
                                                     href="#"
                                                     className="nav-link"
-                                                    style={{ color: "#FFFFFF" }}
+                                                    style={{
+                                                        color: "#FFFFFF",
+                                                    }}
                                                 >
                                                     <i className="nav-icon fa fa-book-open" />
                                                     <p>
@@ -2765,7 +2781,9 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 <a
                                                     href="#"
                                                     className="nav-link"
-                                                    style={{ color: "#FFFFFF" }}
+                                                    style={{
+                                                        color: "#FFFFFF",
+                                                    }}
                                                 >
                                                     <i className="nav-icon far fa-user" />
                                                     <p>
@@ -2792,6 +2810,8 @@ export default function AsideMenu({ showFirstMenu, showSecondMenu }) {
                                                 </ul>
                                             </li>
                                         </div>
+                                    ) : (
+                                        ""
                                     )}
                                 </>
                             )}

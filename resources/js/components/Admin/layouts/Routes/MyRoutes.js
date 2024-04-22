@@ -154,21 +154,13 @@ import SkillApproveOfficer from "../../../../Pages/OfficerBack/SkillApprove/Skil
 import SkillLanguageApproveOfficer from "../../../../Pages/OfficerBack/LanguageApprove/LanguageApproveOfficer";
 import DriverApproveOfficer from "../../../../Pages/OfficerBack/DriverApprove/DriverApproveOfficer";
 
-
-
-
 // import OffResearch from "../../../../Pages/OptionFund/Officer/Question/OffResearch";
 
 //Login tsag
 // import UserProfile from "../../../../Pages/OptionFund/UserProfile/UserProfile";
 
 const MyRoutes = (props) => {
-    const {
-        showFirstMenu,
-        showSecondMenu,
-        handleFirstMenuClick,
-        handleSecondMenuClick,
-    } = props;
+    const { handleFirstMenuClick, getMissionType } = props;
     return (
         <Routes>
             <Route path="/comandlal" element={<Comandlal />} />
@@ -255,10 +247,8 @@ const MyRoutes = (props) => {
                 path="/Home"
                 element={
                     <Home
-                        showFirstMenu={showFirstMenu}
-                        showSecondMenu={showSecondMenu}
                         handleFirstMenuClick={handleFirstMenuClick}
-                        handleSecondMenuClick={handleSecondMenuClick}
+                        getMissionType={getMissionType}
                     />
                 }
             />
@@ -274,7 +264,10 @@ const MyRoutes = (props) => {
             <Route path="/sport/gereet" element={<SportGereet />} />
             <Route path="/sport/other" element={<SportOther />} />
             {/* Officer */}
-            <Route path="/officer/requirements" element={<OfficerRequirements />} />
+            <Route
+                path="/officer/requirements"
+                element={<OfficerRequirements />}
+            />
             <Route path="/pko/officer/question" element={<OffQuestion />} />
             <Route path="/pko/officer/research" element={<OffResearch />} />
             {/* <Route
@@ -303,22 +296,18 @@ const MyRoutes = (props) => {
                 path="/officer/back/sport/approve"
                 element={<SportApproveOfficer />} // officerBack/SportApprove/SportApprove
             />
-                <Route
+            <Route
                 path="/officer/back/skill/approve"
                 element={<SkillApproveOfficer />} // officerBack/SkillApproveOfficer/SkillApproveOfficer
             />
-                <Route
+            <Route
                 path="/officer/back/language/approve"
                 element={<SkillLanguageApproveOfficer />} // officerBack/SkillLanguageApproveOfficer/SkillLanguageApproveOfficer
             />
-                <Route
+            <Route
                 path="/officer/back/driver/approve"
                 element={<DriverApproveOfficer />} // officerBack/DriverApproveOfficer/DriverApproveOfficer
             />
-
-
-
-
 
             {/* <Route path="/Officer/Process" element={<OffResearch />} /> */}
 

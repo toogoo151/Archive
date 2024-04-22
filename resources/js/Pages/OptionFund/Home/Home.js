@@ -5,21 +5,7 @@ import GsmafLogo from "../../../../dist/img/GsmafLogo.png";
 
 import "./Home.css";
 
-const Home = ({ showFirstMenu, showSecondMenu, handleFirstMenuClick, handleSecondMenuClick }) => {
-    // const [isChooseMainVisible, setIsChooseMainVisible] = useState(true);
-    const [isAnyButtonClicked, setIsAnyButtonClicked] = useState(false);
-     const handleFirstMenuClickAndHide = () => {
-    handleFirstMenuClick();
-    setIsAnyButtonClicked(true);
-  };
-
-  const handleSecondMenuClickAndHide = () => {
-    handleSecondMenuClick();
-    setIsAnyButtonClicked(true);
-  };
-
-
-
+const Home = ({ handleFirstMenuClick, getMissionType }) => {
     return (
         <>
             <>
@@ -741,7 +727,7 @@ const Home = ({ showFirstMenu, showSecondMenu, handleFirstMenuClick, handleSecon
                     <div className="row">
                         <div className="info-box">
                             <div className="container mt-5">
-                                     {/* <h1
+                                {/* <h1
                                     className="text-center"
                                     style={{
                                         fontSize: "27px",
@@ -752,49 +738,75 @@ const Home = ({ showFirstMenu, showSecondMenu, handleFirstMenuClick, handleSecon
                                     Та Энхийг дэмжих ажиллагааны веб программд
                                     амжилттай нэвтэрлээ.
                                 </h1> */}
-    <div>
-      {!isAnyButtonClicked && (
+                                <div>
+                                    {localStorage.getItem("whatIsMission") ===
+                                        null &&
+                                        getMissionType == "" && (
+                                            <div className="Choosemain">
+                                                <b>
+                                                    <h1>
+                                                        АЖИЛЛАГАА СОНГОХ ХЭСЭГ
+                                                    </h1>
+                                                </b>
+                                                <ul className="chosers">
+                                                    <li className="choser_item">
+                                                        <div className="choser">
+                                                            <div className="choser_image">
+                                                                <img src="images/энх1.jpg" />
+                                                            </div>
+                                                            <div className="choser_content">
+                                                                <h2 className="choser_title">
+                                                                    Цэргийн баг
+                                                                    ажиллагаанд
+                                                                    явах хүмүүс{" "}
+                                                                </h2>
+                                                                <p className="choser_text"></p>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        handleFirstMenuClick(
+                                                                            "contingent"
+                                                                        );
+                                                                    }}
+                                                                    className="btn12 card_btn"
+                                                                >
+                                                                    Цааш нэвтрэх
+                                                                </button>
 
+                                                                {/* <a href="/AnotherHome"> <button onClick={handleFirstMenuClick} className="btn12 card_btn">Цааш нэвтрэх</button></a> */}
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li className="choser_item">
+                                                        <div className="choser">
+                                                            <div className="choser_image">
+                                                                <img src="images/энх2.jpg" />
+                                                            </div>
+                                                            <div className="choser_content">
+                                                                <h2 className="choser_title">
+                                                                    Ажиглагч
+                                                                    офицер болон
+                                                                    штабын
+                                                                    офицер
+                                                                </h2>
 
-  <div className="Choosemain">
-   <b><h1>АЖИЛЛАГАА СОНГОХ ХЭСЭГ</h1></b>
-    <ul className="chosers">
-      <li className="choser_item">
-        <div className="choser">
-          <div className="choser_image"><img src="images/энх1.jpg" /></div>
-          <div className="choser_content">
-            <h2 className="choser_title">Цэргийн баг ажиллагаанд явах хүмүүс </h2>
-                                                        <p className="choser_text"></p>
-                                                              <button onClick={handleFirstMenuClickAndHide} className="btn12 card_btn">Цааш нэвтрэх</button>
-
-               {/* <a href="/AnotherHome"> <button onClick={handleFirstMenuClick} className="btn12 card_btn">Цааш нэвтрэх</button></a> */}
-          </div>
-        </div>
-      </li>
-      <li className="choser_item">
-        <div className="choser">
-          <div className="choser_image"><img src="images/энх2.jpg" /></div>
-          <div className="choser_content">
-            <h2 className="choser_title">Ажиглагч офицер болон штабын офицер</h2>
-
-            <p className="choser_text"></p>
-        <button onClick={handleSecondMenuClickAndHide} className="btn12 card_btn">Цааш нэвтрэх</button>
-          </div>
-        </div>
-      </li>
-
-
-    </ul>
-                                        </div>
-                                              )}
-
-</div>
-
-
-
-
-
-
+                                                                <p className="choser_text"></p>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        handleFirstMenuClick(
+                                                                            "observe"
+                                                                        );
+                                                                    }}
+                                                                    className="btn12 card_btn"
+                                                                >
+                                                                    Цааш нэвтрэх
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        )}
+                                </div>
                                 {/* <img
                                     src={GsmafLogo}
                                     alt="Зэвсэгт хүчний Жанжин штаб"

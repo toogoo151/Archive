@@ -13,7 +13,6 @@ import Content from "../../../components/Admin/layouts/content/Content";
 import HeaderMenu from "../../../components/Admin/layouts/headerMenu/HeaderMenu";
 import Footer from "../../../components/Admin/layouts/footer/Footer";
 
-
 // reducers
 import SideMenuReducer from "../../../redux/admin/reducers/SideMenuReducers";
 import SubMenuReducer from "../../../redux/admin/reducers/SubMenuReducer";
@@ -22,8 +21,6 @@ import AdminReducer from "../../../redux/admin/reducers/AdminReducer";
 import RequestReducer from "../../../redux/admin/reducers/RequestReducer";
 import { AppContext } from "../../../Context/MyContext";
 import Home from "../../../Pages/OptionFund/Home/Home"; // Import the Home component
-
-
 
 // reducers
 const loggerMiddlaware = (store) => {
@@ -61,18 +58,14 @@ const store = createStore(
 function App() {
     const [getMissionRowID, setMissionRowID] = useState("");
     const [getEeljRowID, setEeljRowID] = useState("");
-    const [showFirstMenu, setShowFirstMenu] = useState(false);
-    const [showSecondMenu, setShowSecondMenu] = useState(false);
+    const [getMissionType, setMissionType] = useState("");
 
-    const handleFirstMenuClick = () => {
-        setShowFirstMenu(true);
-        setShowSecondMenu(false);
+    const handleFirstMenuClick = (whatIsMissionType) => {
+        localStorage.setItem("whatIsMission", whatIsMissionType);
+        setMissionType(whatIsMissionType);
+        console.log("mission сонголоо");
     };
 
-    const handleSecondMenuClick = () => {
-        setShowFirstMenu(false);
-        setShowSecondMenu(true);
-    };
     useEffect(() => {
         axios
             .get("/get/auth")
@@ -87,15 +80,12 @@ function App() {
                     window.location.href = "/login";
                 }
             });
-    }, []);
-
-    useEffect(() => {
-        const isPageReloaded = localStorage.getItem('isPageReloaded');
-        if (!isPageReloaded) {
-            localStorage.setItem('isPageReloaded', 'true');
-            window.location.pathname = '/home';
+        if (localStorage.getItem("whatIsMission") !== null) {
+            // олдсон үед
+            setMissionType(localStorage.getItem("whatIsMission"));
         } else {
-            localStorage.removeItem('isPageReloaded');
+            setMissionType("");
+            // устгасан үед
         }
     }, []);
 
@@ -112,15 +102,13 @@ function App() {
                         }}
                     >
                         <AsideMenu
-                            showFirstMenu={showFirstMenu}
-                            showSecondMenu={showSecondMenu}
+                            getMissionType={getMissionType}
+                            setMissionType={setMissionType}
                         />
                         <HeaderMenu />
                         <Content
-                            showFirstMenu={showFirstMenu}
-                            showSecondMenu={showSecondMenu}
                             handleFirstMenuClick={handleFirstMenuClick}
-                            handleSecondMenuClick={handleSecondMenuClick}
+                            getMissionType={getMissionType}
                         />
 
                         {/* <Home
