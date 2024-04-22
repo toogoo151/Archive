@@ -1,7 +1,7 @@
 import axios from "../../../../AxiosUser";
 import React, { useState, useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
-import { useLocation, useParams, Link } from "react-router-dom";
+import { useLocation, useParams, Link, useNavigate } from "react-router-dom";
 // import logo from "../../../../../dist/img/psychology_logo.png";
 import user2 from "../../../../../dist/img/userIcon.png";
 import MenuItem from "../../MenuItem/MenuItem";
@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import AshiglahZaavar from "../../MenuItem/AshiglahZaavar";
 
 export default function AsideMenu({ getMissionType, setMissionType }) {
+    const navigate = useNavigate();
     const [getRankName, setRankName] = useState("");
     const [getFirstName, setFirstName] = useState("");
     const [getImage, setImage] = useState("");
@@ -89,6 +90,9 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
     const resetContextIsMission = () => {
         localStorage.removeItem("whatIsMission");
         setMissionType("");
+        // window.location.href = "/home";
+
+        navigate("/home");
     };
     return (
         <aside
