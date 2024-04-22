@@ -287,7 +287,6 @@ const OfficerProcess = () => {
     // console.log(res.data);
 
     useEffect(() => {
-        // refreshProcess(state.getMissionRowID, state.getEeljRowID);
         refreshProcess(missionID, eeljID);
     }, []);
     useEffect(() => {
