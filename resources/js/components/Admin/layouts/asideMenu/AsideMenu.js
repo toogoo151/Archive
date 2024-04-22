@@ -2516,8 +2516,7 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                                 >
                                                     <i className="nav-icon fa fa-home" />
                                                     <p>
-                                                        ҮНДСЭН{"123132 "}{" "}
-                                                        {getMissionType}
+                                                        ҮНДСЭН
                                                         <i className="fas fa-angle-left right" />
                                                     </p>
                                                 </a>
@@ -2660,7 +2659,7 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                                 >
                                                     <i className="nav-icon fa fa-home" />
                                                     <p>
-                                                        ҮНДСЭН {getMissionType}
+                                                        ҮНДСЭН
                                                         <i className="fas fa-angle-left right" />
                                                     </p>
                                                 </a>
