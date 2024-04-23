@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "../../../../AxiosUser";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { AppContext } from "../../../../Context/MyContext";
+
 const OffResearch = () => {
     const [getUserID, setUserID2] = useState(-1);
     const [getFisrtDelyTime, setFisrtDelyTime] = useState(0);
@@ -13,6 +15,7 @@ const OffResearch = () => {
     const [getRanks, setRanks] = useState([]);
 
 
+
    const [getRolePlayed, setRolePlayed] = useState("");
    const [getRoleStudy, setRoleStudy] = useState("");
 
@@ -20,6 +23,8 @@ const OffResearch = () => {
 
     const [showCard, setShowCard] = useState(false);
     const [showCard2, setShowCard2] = useState(false);
+  const state = useContext(AppContext);
+
 
 
 
@@ -129,6 +134,8 @@ const OffResearch = () => {
         // Swal.fire("asdf");
         axios
             .post("/new/officer/research", {
+                missionID: state.getMissionRowID,
+                eeljID: state.getEeljRowID,
                 rankTypeID: data.rankTypeID,
                 rankID: data.rankID,
                 positions: data.positions,
@@ -145,6 +152,7 @@ const OffResearch = () => {
                 // setUserID2(res.data.pkoUserID);
                 setFisrtDelyTime(5000);
                 Swal.fire(res.data.msg);
+
             })
             .catch((err) => {
                 Swal.fire(err.response.data.msg).then(() => {

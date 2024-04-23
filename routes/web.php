@@ -308,6 +308,12 @@ Route::get("/get/missions", function(){
     $missions = new Mission();
         return $missions->getMissions();
 });
+
+Route::get("/get/missions3", function () {
+    $missions = new Mission();
+    return $missions->getMissions3();
+});
+
 Route::post("/new/mission", [MissionController::class, "newMission"]);
 Route::post("/edit/mission", [MissionController::class, "editMission"]);
 Route::post("/delete/mission", [MissionController::class, "deleteMission"]);

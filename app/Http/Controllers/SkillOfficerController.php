@@ -6,9 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\OfficerSkill;
 use App\Models\OfficerLanguage;
+use App\Models\PkoOfficerLanguagesec;
+
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\OfficerDriver;
+use App\Models\all_users;
+
 
 use Illuminate\Support\Facades\DB;
 use App\Models\OfficerMainHistory;
@@ -18,13 +23,14 @@ class SkillOfficerController extends Controller
     public function editLanguage(Request $req)
     {
         try {
-            if ($req->documentPdf != "" && strlen($req->documentPdf) > 50) {
-                //pdf delete
+            if ($req->has('documentPdf') && strlen($req->documentPdf) > 50) {
+                // PDF delete
                 $deletePdf = OfficerLanguage::find($req->id);
                 if ($deletePdf->documentPdf != "0") {
                     Storage::delete('public' . $deletePdf->documentPdf);
                 }
-                //pdf delete
+                // PDF delete
+
                 $userID = Auth::user()->id;
                 $userFolder = 'public/documents/' . $req->missionID . '/' . $req->eeljID . '/' . $userID;
 
@@ -42,6 +48,9 @@ class SkillOfficerController extends Controller
 
                 $getPDFUrl = '/documents' . '/' . $req->missionID . '/' . $req->eeljID . '/' . $userID . '/' . $setPDFPathID . "." . $extension;
             }
+
+
+
             $edit = OfficerLanguage::find($req->id);
             $edit->missionID = $req->missionID;
             $edit->eeljID = $req->eeljID;
@@ -49,10 +58,48 @@ class SkillOfficerController extends Controller
             $edit->writeCol = $req->writeCol;
             $edit->listenCol = $req->listenCol;
             $edit->speakCol = $req->speakCol;
-            $edit->totalScore = ($req->readCol + $req->writeCol + $req->listenCol + $req->speakCol  ) / 4;
+            $edit->totalScore = ($req->readCol + $req->writeCol + $req->listenCol + $req->speakCol) / 4;
             $edit->alcpt = $req->alcpt;
-            $edit->documentPdf = $getPDFUrl;
+            $edit->documentPdf = isset($getPDFUrl) ? $getPDFUrl : $edit->documentPdf;
             $edit->save();
+
+            $lognew = new PkoOfficerLanguagesec();
+            $lognew->missionID = $edit->missionID;
+            $lognew->eeljID = $edit->eeljID;
+            $lognew->MainTableID = $edit->MainTableID;
+            $lognew->readCol = $edit->readCol;
+            $lognew->writeCol = $edit->writeCol;
+            $lognew->listenCol = $edit->listenCol;
+            $lognew->speakCol = $edit->speakCol;
+            $lognew->totalScore = $edit->totalScore;
+            $lognew->alcpt = $req->alcpt;
+            $lognew->successful = "Нэмсэн";
+            $lognew->admin_id = Auth::user()->id;
+            $lognew->admin_email = Auth::user()->email;
+            $lognew->admin_name = all_users::find(Auth::user()->allUsersID)->getUserName();
+            $editorRD = DB::table("all_users")->where("id", Auth::user()->allUsersID)->first();
+            $lognew->adminRD = $editorRD->rd;
+            $objectRD = DB::table("pko_officer_main")->where("id", $edit->MainTableID)->first();
+            $objectRD = DB::table("pko_officer_main")->where("id", $edit->MainTableID)->first();
+            if ($objectRD) {
+                $objectRD2 = DB::table("pko_users")->where("id", $objectRD->pkoUserID)->first();
+                // dd($objectRD2);
+                if ($objectRD2) {
+                    $objectRD3 = DB::table("all_users")->where("id", $objectRD2->allUsersID)->first();
+                    if ($objectRD3) {
+                        $lognew->objectName = $objectRD3->firstName;
+                        $lognew->objectmail = $objectRD2->email;
+                        $lognew->objectRD = $objectRD3->rd;
+                    } else {
+                        $lognew->objectName = 'DefaultName';
+                        $lognew->objectmail = null;
+                        $lognew->objectRD = null;
+                    }
+                }
+            }
+            $lognew->user_ip = $req->ip();
+            $lognew->save();
+
 
             $editlanguage = OfficerMainHistory::find($edit->MainTableID);
             $editlanguage->languageScore = $edit->totalScore;
@@ -70,7 +117,7 @@ class SkillOfficerController extends Controller
             return response([
                 "status" => "error",
                 "msg" => "Алдаа гарлаа.",
-                "error" => $th->getMessage() // Include the error message in the response
+                "error" => $th->getMessage()
             ], 500);
         }
     }
@@ -125,7 +172,7 @@ class SkillOfficerController extends Controller
             return response([
                 "status" => "error",
                 "msg" => "Алдаа гарлаа.",
-                "error" => $th->getMessage() // Include the error message in the response
+                "error" => $th->getMessage()
             ], 500);
         }
     }

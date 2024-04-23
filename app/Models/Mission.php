@@ -44,4 +44,24 @@ class Mission extends Model
             );
         }
     }
+    public function getMissions3()
+    {
+        try {
+            $missions = DB::table("pko_missions")
+            ->where("pko_missions.missionFinishDate", "=", null)
+                ->whereNotIn('missionName', ['UN MILITARY OFFICER', 'UN STAFF OFFICER'])
+                ->get();
+            return $missions;
+        } catch (\Throwable $th) {
+            return response(
+                array(
+                    "status" => "error",
+                    "msg" => "Ажиллагаа татаж чадсангүй."
+                ),
+                500
+            );
+        }
+    }
+
+
 }

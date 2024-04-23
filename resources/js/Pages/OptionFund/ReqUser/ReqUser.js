@@ -19,7 +19,7 @@ const ReqUser = () => {
 
     useEffect(() => {
         axios
-            .get("/get/missions")
+            .get("/get/missions3")
             .then((res) => {
                 setMission(res.data);
             })

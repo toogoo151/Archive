@@ -1142,6 +1142,8 @@ class OffResearchController extends Controller
             $lastN = all_users::find(Auth::user()->allUsersID)->lastName;
             $gend = all_users::find(Auth::user()->allUsersID)->gender;
             $newResearch = new OfficerResearch();
+            $newResearch->missionID = $this->checkMission();
+            $newResearch->eeljID = $this->checkEelj();
             $newResearch->pkoUserID = Auth::user()->id;
             $newResearch->angiID = $unitID;
             $newResearch->firstName = $firstN;
@@ -1172,6 +1174,23 @@ class OffResearchController extends Controller
                 500
             );
         }
+    }
+
+    public function checkMission()
+    {
+        $users = DB::table('pko_officer_main')
+        ->where("pko_officer_main.pkoUserID", "=", Auth::user()->id)
+            ->value("pko_officer_main.missionID");
+        // ->get();
+        return $users;
+    }
+    public function checkEelj()
+    {
+        $users = DB::table('pko_officer_main')
+        ->where("pko_officer_main.pkoUserID", "=", Auth::user()->id)
+            ->value("pko_officer_main.eeljID");
+        // ->get();
+        return $users;
     }
 
     public function RankType(Request $req)
