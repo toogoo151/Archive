@@ -120,6 +120,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\OfficerMainHistory;
+use App\Models\OfficerResearch;
 
 Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/logout',[App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
@@ -1107,6 +1108,11 @@ Route::post("/new/sport/officer/changed", [SportOfficerController::class, "newSp
 Route::post("/edit/sport/officer/changed", [SportOfficerController::class, "editSportChanged"]);
 Route::post("/get/officer/sportTotal", [SportOfficerController::class, "getSportTotal"]);
 
+// ЦАХ-аас авах судалгаа
+Route::post("/get/all/users/researchs", function (Request $req) {
+    $getResearchs = new OfficerResearch();
+    return $getResearchs->getResearchs($req);
+});
 
 
 

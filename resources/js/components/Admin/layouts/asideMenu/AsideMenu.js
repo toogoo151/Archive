@@ -856,6 +856,11 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                                 icon="nav-icon fa fa-archive"
                                                 menuName="Тавигдах шаардлага"
                                             />
+                                            <MenuItem
+                                                url="/officer/research/download"
+                                                icon="nav-icon fa fa-download"
+                                                menuName="Судалгаа татах"
+                                            />
                                         </ul>
                                     </li>
                                 </>

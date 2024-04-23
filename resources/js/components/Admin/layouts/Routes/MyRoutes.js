@@ -153,6 +153,7 @@ import SportApproveOfficer from "../../../../Pages/OfficerBack/SportApprove/Spor
 import SkillApproveOfficer from "../../../../Pages/OfficerBack/SkillApprove/SkillApproveOfficer";
 import SkillLanguageApproveOfficer from "../../../../Pages/OfficerBack/LanguageApprove/LanguageApproveOfficer";
 import DriverApproveOfficer from "../../../../Pages/OfficerBack/DriverApprove/DriverApproveOfficer";
+import ReasearchDownload from "../../../../Pages/OfficerBack/Reasearch/ReasearchDownload";
 
 // import OffResearch from "../../../../Pages/OptionFund/Officer/Question/OffResearch";
 
@@ -307,6 +308,10 @@ const MyRoutes = (props) => {
             <Route
                 path="/officer/back/driver/approve"
                 element={<DriverApproveOfficer />} // officerBack/DriverApproveOfficer/DriverApproveOfficer
+            />
+            <Route
+                path="/officer/research/download"
+                element={<ReasearchDownload />} // Ажиглагчдын судалгаа татах
             />
 
             {/* <Route path="/Officer/Process" element={<OffResearch />} /> */}
