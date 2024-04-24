@@ -235,7 +235,6 @@ const PkoSuperAdminEdit = (props) => {
         axios
             .post("/edit/super/users", {
                 id: props.changeDataRow.id,
-
                 rankParentID: rankParentID,
                 rankTypeID: rankTypeID,
                 rankID: rankID,
@@ -252,6 +251,8 @@ const PkoSuperAdminEdit = (props) => {
                 email: email,
                 comandlal: comandlal,
                 unit: unit,
+                missionID: props.getMission,
+                eeljID: props.getEelj,
             })
             .then((res) => {
                 fileInputRef.current.value = null;

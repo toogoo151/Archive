@@ -13,40 +13,42 @@ class Airplane extends Model
     public $timestamps = false;
 
 
-    public function getEeljHiigdeeguiIDs($req){
+    public function getEeljHiigdeeguiIDs($req)
+    {
         $getTomilogdooguiID = DB::table("pko_batalion_oron_too")
-                ->where("pko_batalion_oron_too.missionID", "=", $req->_missionID)
-                ->where("pko_batalion_oron_too.eeljID", "=", $req->_eeljID)
-                ->join("pko_airplane_shift", function($query){
-                    $query->on("pko_batalion_oron_too.pkoMainHistoryID", "=", "pko_airplane_shift.pkoMainHistoryID");
-                })
-                ->select("pko_airplane_shift.pkoMainHistoryID")
-                ->get();
-                $array = array();
-                foreach ($getTomilogdooguiID as $value) {
-                    array_push($array, $value->pkoMainHistoryID);
-                }
-            return $array;
+            ->where("pko_batalion_oron_too.missionID", "=", $req->_missionID)
+            ->where("pko_batalion_oron_too.eeljID", "=", $req->_eeljID)
+            ->join("pko_airplane_shift", function ($query) {
+                $query->on("pko_batalion_oron_too.pkoMainHistoryID", "=", "pko_airplane_shift.pkoMainHistoryID");
+            })
+            ->select("pko_airplane_shift.pkoMainHistoryID")
+            ->get();
+        $array = array();
+        foreach ($getTomilogdooguiID as $value) {
+            array_push($array, $value->pkoMainHistoryID);
+        }
+        return $array;
     }
 
-    public function getAirplaneEeljHiigdeegui($req){
+    public function getAirplaneEeljHiigdeegui($req)
+    {
         try {
-                $getTomilogdson = DB::table("pko_batalion_oron_too")
+            $getTomilogdson = DB::table("pko_batalion_oron_too")
                 ->where("pko_batalion_oron_too.missionID", "=", $req->_missionID)
                 ->where("pko_batalion_oron_too.eeljID", "=", $req->_eeljID)
-                ->join("pko_missions", function($query){
+                ->join("pko_missions", function ($query) {
                     $query->on("pko_batalion_oron_too.missionID", "=", "pko_missions.id");
                 })
-                ->join("pko_mission_eelj", function($query){
+                ->join("pko_mission_eelj", function ($query) {
                     $query->on("pko_batalion_oron_too.eeljID", "=", "pko_mission_eelj.id");
                 })
                 ->whereNotIn("pko_batalion_oron_too.pkoMainHistoryID", $this->getEeljHiigdeeguiIDs($req))
-                ->where(function($query)use($req){
-                    if($req->_rotID != ""){
+                ->where(function ($query) use ($req) {
+                    if ($req->_rotID != "") {
                         $query->where("pko_batalion_oron_too.rotID", "=", $req->_rotID);
-                        if($req->_salaaID != ""){
+                        if ($req->_salaaID != "") {
                             $query->where("pko_batalion_oron_too.salaaID", "=", $req->_salaaID);
-                            if($req->_tasagID != ""){
+                            if ($req->_tasagID != "") {
                                 $query->where("pko_batalion_oron_too.tasagID", "=", $req->_tasagID);
                             }
                         }
@@ -56,97 +58,127 @@ class Airplane extends Model
                 //     $query->on("pko_batalion_oron_too.pkoMainHistoryID", "=", "pko_airplane_shift.pkoMainHistoryID")
                 //             ->where("pko_airplane_shift.airplaneDeparturedID", "=", $req->_airplaneState);
                 // })
-                ->join("pko_main_history", function($query){
+                ->join("pko_main_history", function ($query) {
                     $query->on("pko_batalion_oron_too.pkoMainHistoryID", "=", "pko_main_history.id")
-                    ->where("pko_main_history.isCrime", "=", 0)
-                    ->where("pko_main_history.isCanceled", "=", 0);
+                        ->where("pko_main_history.isCrime", "=", 0)
+                        ->where("pko_main_history.isCanceled", "=", 0);
                 })
-                ->join("pko_users", function($query){
+                ->join("pko_users", function ($query) {
                     $query->on("pko_main_history.pkoUserID", "=", "pko_users.id");
                 })
-                ->join("all_users", function($query){
+                ->join("all_users", function ($query) {
                     $query->on("pko_users.allUsersID", "=", "all_users.id");
                 })
-                ->join("tb_ranks", function($query){
+                ->join("tb_ranks", function ($query) {
                     $query->on("all_users.rankID", "=", "tb_ranks.id");
                 })
-                ->leftJoin("pko_rot", function($query){
+                ->leftJoin("pko_rot", function ($query) {
                     $query->on("pko_batalion_oron_too.rotID", "=", "pko_rot.id");
                 })
-                ->leftJoin("pko_salaa", function($query){
+                ->leftJoin("pko_salaa", function ($query) {
                     $query->on("pko_batalion_oron_too.salaaID", "=", "pko_salaa.id");
                 })
-                ->leftJoin("pko_tasag", function($query){
+                ->leftJoin("pko_tasag", function ($query) {
                     $query->on("pko_batalion_oron_too.tasagID", "=", "pko_tasag.id");
                 })
-                ->leftJoin("pko_position", function($query){
+                ->leftJoin("pko_position", function ($query) {
                     $query->on("pko_batalion_oron_too.positionID", "=", "pko_position.id");
                 })
-                ->select("pko_batalion_oron_too.*", "all_users.lastName", "all_users.firstName","all_users.rd", "tb_ranks.shortRank", "pko_rot.rotName", "pko_salaa.salaaName", "pko_tasag.tasagName", "pko_position.positionName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                ->select("pko_batalion_oron_too.*", "all_users.lastName", "all_users.firstName", "all_users.rd", "tb_ranks.shortRank", "pko_rot.rotName", "pko_salaa.salaaName", "pko_tasag.tasagName", "pko_position.positionName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
                 ->orderBy("pko_batalion_oron_too.rotID", "ASC")
                 ->orderBy("pko_batalion_oron_too.salaaID", "ASC")
                 ->orderBy("pko_batalion_oron_too.tasagID", "ASC")
                 ->orderBy("pko_batalion_oron_too.positionID", "ASC")
                 ->get();
             return $getTomilogdson;
-
         } catch (\Throwable $th) {
             return response(
                 array(
                     "status" => "error",
                     "msg" => "Алдаа гарлаа."
-                ), 500
+                ),
+                500
             );
         }
     }
 
-    public function getAirplaneTotal($req){
+    public function getAirplaneTotal($req)
+    {
         try {
+            // $getEelj1 = DB::table("pko_airplane_shift")
+            // ->where("pko_airplane_shift.missionID", "=", $req->_missionID)
+            // ->where("pko_airplane_shift.eeljID", "=", $req->_eeljID)
+            // ->join("pko_batalion_oron_too", function($query)use($req){
+            //     $query->on("pko_airplane_shift.pkoMainHistoryID", "=", "pko_batalion_oron_too.pkoMainHistoryID");
+            //     if($req->_rotID != ""){
+            //         $query->where("pko_batalion_oron_too.rotID", "=", $req->_rotID);
+            //         if($req->_salaaID != ""){
+            //             $query->where("pko_batalion_oron_too.salaaID", "=", $req->_salaaID);
+            //             if($req->_tasagID != ""){
+            //                 $query->where("pko_batalion_oron_too.tasagID", "=", $req->_tasagID);
+            //             }
+            //         }
+            //     }
+            // })
+            // ->join("pko_airplane_shift_item", "pko_airplane_shift_item.id", "=", "pko_airplane_shift.airplaneDeparturedID")
+            // ->select("pko_airplane_shift_item.airplaneShiftItemName as eeljName", DB::raw("COUNT(pko_airplane_shift.airplaneDeparturedID) as eelj"))
+            // ->groupBy("pko_airplane_shift.airplaneDeparturedID")
+            // ->get();
+            // return $getEelj1;
+
+            //suuld hiisen ajillaj baigaa hesgiin code shuuu
             $getEelj1 = DB::table("pko_airplane_shift")
-            ->where("pko_airplane_shift.missionID", "=", $req->_missionID)
-            ->where("pko_airplane_shift.eeljID", "=", $req->_eeljID)
-            ->join("pko_batalion_oron_too", function($query)use($req){
-                $query->on("pko_airplane_shift.pkoMainHistoryID", "=", "pko_batalion_oron_too.pkoMainHistoryID");
-                if($req->_rotID != ""){
-                    $query->where("pko_batalion_oron_too.rotID", "=", $req->_rotID);
-                    if($req->_salaaID != ""){
-                        $query->where("pko_batalion_oron_too.salaaID", "=", $req->_salaaID);
-                        if($req->_tasagID != ""){
-                            $query->where("pko_batalion_oron_too.tasagID", "=", $req->_tasagID);
+                ->where("pko_airplane_shift.missionID", "=", $req->_missionID)
+                ->where("pko_airplane_shift.eeljID", "=", $req->_eeljID)
+                ->join("pko_batalion_oron_too", function ($query) use ($req) {
+                    $query->on("pko_airplane_shift.pkoMainHistoryID", "=", "pko_batalion_oron_too.pkoMainHistoryID");
+                    if ($req->_rotID != "") {
+                        $query->where("pko_batalion_oron_too.rotID", "=", $req->_rotID);
+                        if ($req->_salaaID != "") {
+                            $query->where("pko_batalion_oron_too.salaaID", "=", $req->_salaaID);
+                            if ($req->_tasagID != "") {
+                                $query->where("pko_batalion_oron_too.tasagID", "=", $req->_tasagID);
+                            }
                         }
                     }
-                }
-            })
-            ->join("pko_airplane_shift_item", "pko_airplane_shift_item.id", "=", "pko_airplane_shift.airplaneDeparturedID")
-            ->select("pko_airplane_shift_item.airplaneShiftItemName as eeljName", "pko_airplane_shift.airplaneDeparturedID as eelj")
-            ->get();
+                })
+                ->join("pko_airplane_shift_item", "pko_airplane_shift_item.id", "=", "pko_airplane_shift.airplaneDeparturedID")
+                ->select(
+                    "pko_airplane_shift_item.airplaneShiftItemName as eeljName",
+                    DB::raw("COUNT(pko_airplane_shift.airplaneDeparturedID) as eelj")
+                )
+                ->groupBy("pko_airplane_shift_item.airplaneShiftItemName", "pko_airplane_shift.airplaneDeparturedID")
+                ->orderBy("pko_airplane_shift.airplaneDeparturedID", "asc")
+                ->get();
+
             return $getEelj1;
         } catch (\Throwable $th) {
             return response(
                 array(
                     "status" => "error",
                     "msg" => "Алдаа гарлаа."
-                ), 500
+                ),
+                500
             );
         }
     }
 
-    public function test($req){
+    public function test($req)
+    {
         try {
             $getEeljs = DB::table("pko_airplane_shift")
-            ->where("pko_airplane_shift.missionID", "=", 1)
-            ->where("pko_airplane_shift.eeljID", "=", 13)
-            ->join("pko_batalion_oron_too", function($query)use($req){
-                $query->on("pko_airplane_shift.pkoMainHistoryID", "=", "pko_batalion_oron_too.pkoMainHistoryID");
-
-            })
-            ->join("pko_airplane_shift_item", "pko_airplane_shift_item.id", "=", "pko_airplane_shift.airplaneDeparturedID")
-            ->select("pko_airplane_shift.airplaneDeparturedID as eelj", "pko_airplane_shift_item.airplaneShiftItemName as eeljName")
-            ->get();
+                ->where("pko_airplane_shift.missionID", "=", 1)
+                ->where("pko_airplane_shift.eeljID", "=", 13)
+                ->join("pko_batalion_oron_too", function ($query) use ($req) {
+                    $query->on("pko_airplane_shift.pkoMainHistoryID", "=", "pko_batalion_oron_too.pkoMainHistoryID");
+                })
+                ->join("pko_airplane_shift_item", "pko_airplane_shift_item.id", "=", "pko_airplane_shift.airplaneDeparturedID")
+                ->select("pko_airplane_shift.airplaneDeparturedID as eelj", "pko_airplane_shift_item.airplaneShiftItemName as eeljName")
+                ->get();
 
             $eeljsArray = array();
             $eeljCount = 0;
-            foreach ($getEeljs as $getEelj){
+            foreach ($getEeljs as $getEelj) {
                 $eeljCount = $eeljCount + $getEelj->eelj;
                 $row = array(
                     "eelj" => [$getEelj->eelj],
@@ -163,7 +195,8 @@ class Airplane extends Model
                 array(
                     "status" => "error",
                     "msg" => "Алдаа гарлаа."
-                ), 500
+                ),
+                500
             );
         }
     }

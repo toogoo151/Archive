@@ -117,6 +117,40 @@ const Tomilogdson = () => {
         }
     };
 
+    const btnDelete = () => {
+        setRowsSelected([]);
+        if (getTomilogdson[getRowsSelected[0]].id != "") {
+            Swal.fire({
+                title: "Та устгахдаа итгэлтэй байна уу?",
+                showCancelButton: true,
+                confirmButtonText: `Тийм`,
+                cancelButtonText: `Үгүй`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios
+                        .post("/delete/tomilogdson", {
+                            id: getTomilogdson[getRowsSelected[0]].id,
+                        })
+                        .then((res) => {
+                            Swal.fire(res.data.msg);
+                            refreshTomilogdson(
+                                state.getMissionRowID,
+                                state.getEeljRowID,
+                                getRotID,
+                                getSalaaID,
+                                getTasagID
+                            );
+                        })
+                        .catch((err) => {
+                            Swal.fire(err.response.data.msg);
+                        });
+                } else if (result.isDenied) {
+                    // Swal.fire("Changes are not saved", "", "info");
+                }
+            });
+        }
+    };
+
     const tomilogdson = [
         {
             name: "id",
@@ -434,8 +468,9 @@ const Tomilogdson = () => {
                 }
                 btnEdit={btnEdit}
                 editdataTargetID={"#oronTooEdit"}
+                btnDelete={btnDelete}
                 modelType={showModal}
-                isHideDelete={false}
+                isHideDelete={true}
                 isHideEdit={true}
                 avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
                 avgColumnName={"email"}
@@ -448,7 +483,7 @@ const Tomilogdson = () => {
                 refreshTomilogdson={refreshTomilogdson}
                 changeDataRow={clickedRowData}
                 isEditBtnClick={isEditBtnClick}
-                clickParentRowID={clickedRowData.id}
+                clickParentRowID={clickedRowData.pkoMainHistoryID}
                 // onClick={fn_tomilgoo_btn}
             />
         </div>
