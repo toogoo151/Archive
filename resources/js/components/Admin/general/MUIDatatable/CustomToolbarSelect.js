@@ -93,6 +93,32 @@ class CustomToolbarSelect extends React.Component {
                         </>
                     </Tooltip>
                 )}
+                {this.props.isUnitApproveButton && (
+                    <Tooltip title={"Засах"}>
+                        <>
+                            {/* <IconButton
+                    className={classes.iconButton}
+                    onClick={this.insideBtnEdit}
+                >
+                    <EditButton
+                        className={classes.icon}
+                        style={{ color: "#1F618D" }}
+                    />
+                </IconButton> */}
+                            <MUIButtonShowModel
+                                style={{ marginRight: 10 }}
+                                dataTargetID={this.props.dataTargetID}
+                                btnClassName={"btn btn-warning"}
+                                modelType={this.props.modelType}
+                                spanIconClassName={"fas fa-solid fa-pen"}
+                                buttonName={
+                                    "Ангийн захирагчийн шийдвэр, биеийн зохистой харьцаа оруулах"
+                                }
+                                clickHeaderOpenModal={this.props.btnEditClick}
+                            />
+                        </>
+                    </Tooltip>
+                )}
             </div>
         );
     }

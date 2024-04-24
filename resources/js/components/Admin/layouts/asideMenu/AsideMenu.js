@@ -14,9 +14,10 @@ import AshiglahZaavar from "../../MenuItem/AshiglahZaavar";
 
 export default function AsideMenu({ getMissionType, setMissionType }) {
     const navigate = useNavigate();
+
     const [getRankName, setRankName] = useState("");
     const [getFirstName, setFirstName] = useState("");
-    const [getImage, setImage] = useState("");
+    const [getImage, setImage] = useState(0);
 
     const [getUserCheck, setUserCheck] = useState(-1);
     const [getWishID, setWishID] = useState(-1);
@@ -26,30 +27,30 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
     const url = location.pathname;
 
     useEffect(() => {
-        axios
-            .get("/get/auth/rank")
-            .then((res) => {
-                setRankName(res.data.shortRank);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-        axios
-            .get("/get/auth/name")
-            .then((res) => {
-                setFirstName(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-        axios
-            .get("/get/auth/image")
-            .then((res) => {
-                setImage(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        // axios
+        //     .get("/get/auth/rank")
+        //     .then((res) => {
+        //         setRankName(res.data.shortRank);
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
+        // axios
+        //     .get("/get/auth/name")
+        //     .then((res) => {
+        //         setFirstName(res.data);
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
+        // axios
+        //     .get("/get/auth/image")
+        //     .then((res) => {
+        //         setImage(res.data);
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
 
         //officer asuumj shalgah
         axios
@@ -85,13 +86,14 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
             .catch((err) => {
                 console.log(err);
             });
+        setRankName(localStorage.getItem("rank"));
+        setFirstName(localStorage.getItem("name"));
+        setImage(localStorage.getItem("userImage"));
     }, []);
 
     const resetContextIsMission = () => {
         localStorage.removeItem("whatIsMission");
         setMissionType("");
-        // window.location.href = "/home";
-
         navigate("/home");
     };
     return (

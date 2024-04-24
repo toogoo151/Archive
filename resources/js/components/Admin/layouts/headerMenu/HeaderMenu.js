@@ -30,9 +30,9 @@ export default function HeaderMenu(props) {
     const state = useContext(AppContext);
     const [getRows, setRows] = useState([]);
     const [loadData, setData] = useState([]);
-    const [getRankName, setRankName] = useState("");
-    const [getFirstName, setFirstName] = useState("");
-    const [getUserId, setUserId] = useState("");
+    const [getRankName, setRankName] = useState(localStorage.getItem("rank"));
+    const [getFirstName, setFirstName] = useState(localStorage.getItem("name"));
+    const [getUserId, setUserId] = useState(localStorage.getItem("userID"));
 
     // const [getnotify, setNotify] = useState("");
 
@@ -47,7 +47,7 @@ export default function HeaderMenu(props) {
 
     const loadList = async () => {
         try {
-            const response = await axios.get("https://psod.maf.gov.mn/list");
+            const response = await axios.get("/list");
             const data = response.data;
             setData(data);
 
@@ -84,7 +84,7 @@ export default function HeaderMenu(props) {
 
     const updateNotification = () => {
         axios
-            .post("https://psod.maf.gov.mn/updateNotification")
+            .post("/updateNotification")
             .then((result) => {
                 setOpen(false);
                 getLatestRowDetails();
@@ -134,7 +134,7 @@ export default function HeaderMenu(props) {
     // };
 
     const getLatestRowDetails = async () => {
-        const results = await axios.get("https://psod.maf.gov.mn/getLatestRow");
+        const results = await axios.get("/getLatestRow");
         setRows(results.data);
     };
 
@@ -155,32 +155,32 @@ export default function HeaderMenu(props) {
         //     .catch((err) => {
         //         console.log(err);
         //     });
-        axios
-            .get("/get/auth/rank")
-            .then((res) => {
-                setRankName(res.data.shortRank);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-        axios
-            .get("/get/auth/name")
-            .then((res) => {
-                setFirstName(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        // axios
+        //     .get("/get/auth/rank")
+        //     .then((res) => {
+        //         setRankName(res.data.shortRank);
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
+        // axios
+        //     .get("/get/auth/name")
+        //     .then((res) => {
+        //         setFirstName(res.data);
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
 
-        axios
-            .get("/get/auth/id")
-            .then((res) => {
-                setUserId(res.data.id);
-            })
-            .catch((err) => {
-                window.location.href = "/login";
-                console.log(err);
-            });
+        // axios
+        //     .get("/get/auth/id")
+        //     .then((res) => {
+        //         setUserId(res.data.id);
+        //     })
+        //     .catch((err) => {
+        //         window.location.href = "/login";
+        //         console.log(err);
+        //     });
 
         axios
             .get("/get/missions")
@@ -355,23 +355,23 @@ export default function HeaderMenu(props) {
                     <Box
                         sx={{
                             width: "100%",
-            height: "100%",
-            padding: "16px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+                            height: "100%",
+                            padding: "16px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                         }}
                     >
                         <Box
                             sx={{
-                              width: "100%", // Set the width to 100% for mobile style
-                maxWidth: "80%", // Set the maximum width for PC style
-                maxHeight: "100%",
-                overflow: "auto",
-                bgcolor: "background.paper",
-                border: "2px solid #000",
-                boxShadow: 24,
-                p: 4,
+                                width: "100%", // Set the width to 100% for mobile style
+                                maxWidth: "80%", // Set the maximum width for PC style
+                                maxHeight: "100%",
+                                overflow: "auto",
+                                bgcolor: "background.paper",
+                                border: "2px solid #000",
+                                boxShadow: 24,
+                                p: 4,
                                 "@media (min-width: 600px)": {
                                     // Media query for PC style
                                     maxWidth: "50%",
@@ -430,6 +430,7 @@ export default function HeaderMenu(props) {
                                             <TableBody>
                                                 {loadData.map((row) => (
                                                     <TableRow
+                                                        key={row.id}
                                                         style={{
                                                             backgroundColor:
                                                                 row.status.includes(
@@ -447,19 +448,19 @@ export default function HeaderMenu(props) {
                                                             {row.RecommendationName.replace(
                                                                 /<[^>]+>/g,
                                                                 ""
-                                                            ).replace(
-                                                                /&nbsp;/g,
-                                                                ""
-                                                            ).replace(
-                                                               /&ldquo;/g,
-                                                                ""
-                                                            ).
-                                                                replace(
-                                                               /&rdquo;/g,
-                                                                ""
                                                             )
-
-                                                            }
+                                                                .replace(
+                                                                    /&nbsp;/g,
+                                                                    ""
+                                                                )
+                                                                .replace(
+                                                                    /&ldquo;/g,
+                                                                    ""
+                                                                )
+                                                                .replace(
+                                                                    /&rdquo;/g,
+                                                                    ""
+                                                                )}
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}

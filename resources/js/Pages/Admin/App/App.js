@@ -14,46 +14,46 @@ import HeaderMenu from "../../../components/Admin/layouts/headerMenu/HeaderMenu"
 import Footer from "../../../components/Admin/layouts/footer/Footer";
 
 // reducers
-import SideMenuReducer from "../../../redux/admin/reducers/SideMenuReducers";
-import SubMenuReducer from "../../../redux/admin/reducers/SubMenuReducer";
-import LegalReducer from "../../../redux/admin/reducers/LegalReducer";
-import AdminReducer from "../../../redux/admin/reducers/AdminReducer";
-import RequestReducer from "../../../redux/admin/reducers/RequestReducer";
+// import SideMenuReducer from "../../../redux/admin/reducers/SideMenuReducers";
+// import SubMenuReducer from "../../../redux/admin/reducers/SubMenuReducer";
+// import LegalReducer from "../../../redux/admin/reducers/LegalReducer";
+// import AdminReducer from "../../../redux/admin/reducers/AdminReducer";
+// import RequestReducer from "../../../redux/admin/reducers/RequestReducer";
 import { AppContext } from "../../../Context/MyContext";
 import Home from "../../../Pages/OptionFund/Home/Home"; // Import the Home component
 
-// reducers
-const loggerMiddlaware = (store) => {
-    return (next) => {
-        return (action) => {
-            console.log("MyLoggerMiddleware: Dispatching ==> ", action);
-            console.log(
-                "MyLoggerMiddleware: State BEFORE : ",
-                store.getState()
-            );
-            const result = next(action);
-            console.log("MyLoggerMiddleware: State AFTER : ", store.getState());
-            return result;
-        };
-    };
-};
+// // reducers
+// const loggerMiddlaware = (store) => {
+//     return (next) => {
+//         return (action) => {
+//             console.log("MyLoggerMiddleware: Dispatching ==> ", action);
+//             console.log(
+//                 "MyLoggerMiddleware: State BEFORE : ",
+//                 store.getState()
+//             );
+//             const result = next(action);
+//             console.log("MyLoggerMiddleware: State AFTER : ", store.getState());
+//             return result;
+//         };
+//     };
+// };
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const reducers = combineReducers({
-    SideMenuReducer,
-    SubMenuReducer,
-    LegalReducer,
-    AdminReducer,
-    RequestReducer,
-});
+// const reducers = combineReducers({
+//     SideMenuReducer,
+//     SubMenuReducer,
+//     LegalReducer,
+//     AdminReducer,
+//     RequestReducer,
+// });
 
-const middlewares = [loggerMiddlaware, thunk];
+// const middlewares = [loggerMiddlaware, thunk];
 
-const store = createStore(
-    reducers,
-    composeEnhancers(applyMiddleware(...middlewares))
-);
+// const store = createStore(
+//     reducers,
+//     composeEnhancers(applyMiddleware(...middlewares))
+// );
 
 function App() {
     const [getMissionRowID, setMissionRowID] = useState("");
@@ -70,7 +70,10 @@ function App() {
         axios
             .get("/get/auth")
             .then((res) => {
+                localStorage.setItem("userImage", res.data.userImage);
+                localStorage.setItem("userID", res.data.userID);
                 localStorage.setItem("admin", res.data.permission);
+                localStorage.setItem("rank", res.data.rank);
                 localStorage.setItem("name", res.data.name);
                 localStorage.setItem("userType", res.data.user_type);
             })
@@ -91,33 +94,33 @@ function App() {
 
     return (
         <div>
-            <Provider Provider store={store}>
-                <BrowserRouter>
-                    <AppContext.Provider
-                        value={{
-                            getMissionRowID,
-                            setMissionRowID,
-                            getEeljRowID,
-                            setEeljRowID,
-                        }}
-                    >
-                        <AsideMenu
-                            getMissionType={getMissionType}
-                            setMissionType={setMissionType}
-                        />
-                        <HeaderMenu />
-                        <Content
-                            handleFirstMenuClick={handleFirstMenuClick}
-                            getMissionType={getMissionType}
-                        />
+            {/* <Provider Provider store={store}> */}
+            <BrowserRouter>
+                <AppContext.Provider
+                    value={{
+                        getMissionRowID,
+                        setMissionRowID,
+                        getEeljRowID,
+                        setEeljRowID,
+                    }}
+                >
+                    <AsideMenu
+                        getMissionType={getMissionType}
+                        setMissionType={setMissionType}
+                    />
+                    <HeaderMenu />
+                    <Content
+                        handleFirstMenuClick={handleFirstMenuClick}
+                        getMissionType={getMissionType}
+                    />
 
-                        {/* <Home
+                    {/* <Home
 
                              /> */}
-                        <Footer />
-                    </AppContext.Provider>
-                </BrowserRouter>
-            </Provider>
+                    <Footer />
+                </AppContext.Provider>
+            </BrowserRouter>
+            {/* </Provider> */}
         </div>
     );
 }

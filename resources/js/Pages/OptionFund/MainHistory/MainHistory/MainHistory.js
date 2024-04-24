@@ -8,7 +8,6 @@ import DangerousButton from "@mui/icons-material/DangerousSharp";
 import UserDetails from "./UserDetails";
 import PkoMainUnitEdit from "./PkoMainUnitEdit";
 
-
 const MainHistory = () => {
     const state = useContext(AppContext);
     const [getMainHistory, setMainHistory] = useState([]);
@@ -20,6 +19,7 @@ const MainHistory = () => {
 
     const [getUserDetails, setUserDetails] = useState([]);
     const [getMissionHistory, setMissionHistory] = useState([]);
+    const [getUnitCommanderApprove, setUnitCommanderApprove] = useState([]);
 
     const [getComandlalID, setComandlalID] = useState("");
     const [getUnitID, setUnitID] = useState("");
@@ -39,17 +39,14 @@ const MainHistory = () => {
     const [getHealthTotal, setHealthTotal] = useState(0);
     const [getSportTotal, setSportTotal] = useState(0);
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
-        const [showModal, setShowModal] = useState("modal");
+    const [showModal, setShowModal] = useState("modal");
 
-
-
-
-        useEffect(() => {
+    useEffect(() => {
         if (getRowsSelected[0] != undefined) {
             setIsEditBtnClick(false);
             setclickedRowData([getRowsSelected[0]]);
         }
-        }, [getRowsSelected]);
+    }, [getRowsSelected]);
 
     useEffect(() => {
         axios
@@ -113,7 +110,7 @@ const MainHistory = () => {
                 console.log(err);
             });
     };
-     const btnEdit = () => {
+    const btnEdit = () => {
         setIsEditBtnClick(true);
     };
 
@@ -788,6 +785,39 @@ const MainHistory = () => {
                 },
             },
         },
+        {
+            name: "unitCommanderApprove",
+            label: "Захирагчийн шийдвэр",
+            options: {
+                filter: true,
+                sort: false,
+                setCellHeaderProps: (value) => {
+                    return {
+                        style: {
+                            backgroundColor: "#5DADE2",
+                            color: "white",
+                            width: 50,
+                        },
+                    };
+                },
+                customBodyRender: (value) => {
+                    if (value == 1) {
+                        return <CheckButton color={"success"}></CheckButton>;
+                    }
+                    if (value == 0) {
+                        return <p></p>;
+                    }
+                    if (value == 2) {
+                        return (
+                            <DangerousButton color={"error"}></DangerousButton>
+                        );
+                    }
+                },
+                setCellProps: () => {
+                    return { align: "center" };
+                },
+            },
+        },
     ];
     const fn_details_btn = (value, tableMeta, updateValue) => {
         axios
@@ -799,6 +829,9 @@ const MainHistory = () => {
             .then((res) => {
                 setUserDetails(res.data.getUserDetails);
                 setMissionHistory(res.data.getMissionHistory);
+                if (res.data.unitCommanderApprove != null) {
+                    setUnitCommanderApprove(res.data.unitCommanderApprove);
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -1221,12 +1254,13 @@ const MainHistory = () => {
                             />
                         </>
                     }
-                     btnEdit={btnEdit}
-                      modelType={showModal}
+                    btnEdit={btnEdit}
+                    modelType={showModal}
                     editdataTargetID={"#userEdit"}
-                       isHideHuman={false}
+                    isHideHuman={false}
                     isHideDelete={false}
-                    isHideEdit={true}
+                    isHideEdit={false}
+                    isUnitApproveButton={userType == "unitAdmin" ? true : false}
                     avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
                     avgColumnName={"email"}
                     avgName={"Дундаж: "}
@@ -1235,22 +1269,18 @@ const MainHistory = () => {
                 />
 
                 <>
-                          {userType == "unitAdmin" ? (
-                <>
-
-
-                    <PkoMainUnitEdit
-                        setRowsSelected={setRowsSelected}
-                        refreshMainHistory={refreshMainHistory}
-                        changeDataRow={clickedRowData}
-                        isEditBtnClick={isEditBtnClick}
-                    />
-                </>
-            ) : (
-                <>
-
-                </>
-            )}
+                    {userType == "unitAdmin" ? (
+                        <>
+                            <PkoMainUnitEdit
+                                setRowsSelected={setRowsSelected}
+                                refreshMainHistory={refreshMainHistory}
+                                changeDataRow={clickedRowData}
+                                isEditBtnClick={isEditBtnClick}
+                            />
+                        </>
+                    ) : (
+                        <></>
+                    )}
                 </>
                 <br />
                 <UserDetails
@@ -1259,6 +1289,7 @@ const MainHistory = () => {
                     clickedRowData={clickedRowData}
                     getUserDetails={getUserDetails}
                     getMissionHistory={getMissionHistory}
+                    getUnitCommanderApprove={getUnitCommanderApprove}
                 />
             </div>
         </>

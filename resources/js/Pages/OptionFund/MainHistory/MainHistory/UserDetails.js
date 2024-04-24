@@ -15,11 +15,14 @@ import {
     MDBBtn,
 } from "mdb-react-ui-kit";
 import UserMissionHistory from "./UserMissionHistory";
+import CheckButton from "@mui/icons-material/CheckCircleOutlineOutlined";
+import DangerousButton from "@mui/icons-material/DangerousSharp";
 
 const UserDetails = (props) => {
     const state = useContext(AppContext);
     const [getUserDetails, setUserDetails] = useState([]);
     const [getMissions, setMissions] = useState([]);
+    const [getUnitCommanderAppr, setUnitCommanderAppr] = useState([]);
     const [getRowsSelected, setRowsSelected] = useState([]); // row clear хийж байгаа
     const [clickedRowData, setclickedRowData] = useState([]);
     const [getUsers, setUsers] = useState([]);
@@ -28,6 +31,7 @@ const UserDetails = (props) => {
     useEffect(() => {
         setUsers(props.getUserDetails);
         setMissions(props.getMissionHistory);
+        setUnitCommanderAppr(props.getUnitCommanderApprove);
     }, [props]);
 
     const columns = [
@@ -359,6 +363,155 @@ const UserDetails = (props) => {
                                                             }
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </MDBCardBody>
+                                        </MDBCard>
+                                    </MDBCol>
+                                </MDBRow>
+                            </MDBContainer>
+                            <MDBContainer>
+                                <MDBRow className="justify-content-left">
+                                    <MDBCol
+                                        md="12"
+                                        lg="7"
+                                        xl="12"
+                                        className="mt-12"
+                                    >
+                                        <MDBCard
+                                            style={{ borderRadius: "15px" }}
+                                        >
+                                            <MDBCardBody className="p-12">
+                                                <div className="d-flex text-black">
+                                                    <div className="flex-shrink-0">
+                                                        <h1>
+                                                            Ангийн захирагчийн{" "}
+                                                            <br />
+                                                            шийдвэр
+                                                        </h1>
+                                                        <div
+                                                            className="center"
+                                                            style={{
+                                                                display: "flex",
+                                                                justifyContent:
+                                                                    "center",
+                                                                alignItems:
+                                                                    "center",
+                                                                // height: "100%",
+                                                            }}
+                                                        >
+                                                            {getUnitCommanderAppr.chiefApprove ===
+                                                            0 ? (
+                                                                ""
+                                                            ) : getUnitCommanderAppr.chiefApprove ===
+                                                              1 ? (
+                                                                <CheckButton
+                                                                    color={
+                                                                        "success"
+                                                                    }
+                                                                    fontSize={
+                                                                        "large"
+                                                                    }
+                                                                ></CheckButton>
+                                                            ) : (
+                                                                <DangerousButton
+                                                                    color={
+                                                                        "error"
+                                                                    }
+                                                                    fontSize={
+                                                                        "large"
+                                                                    }
+                                                                ></DangerousButton>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex-grow-1 ms-3">
+                                                        <div
+                                                            className="d-flex justify-content-start rounded-3 p-2 mb-2"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    "#efefef",
+                                                            }}
+                                                        >
+                                                            Биеийн тамирын оноо:
+                                                            &nbsp;&nbsp;&nbsp;
+                                                            {
+                                                                getUnitCommanderAppr.SportScore
+                                                            }
+                                                        </div>
+                                                        <div
+                                                            className="d-flex justify-content-start rounded-3 p-2 mb-2"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    "#efefef",
+                                                            }}
+                                                        >
+                                                            Өндөр:
+                                                            &nbsp;&nbsp;&nbsp;
+                                                            {
+                                                                getUnitCommanderAppr.height
+                                                            }
+                                                        </div>
+                                                        <div
+                                                            className="d-flex justify-content-start rounded-3 p-2 mb-2"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    "#efefef",
+                                                            }}
+                                                        >
+                                                            Жин:
+                                                            &nbsp;&nbsp;&nbsp;
+                                                            {
+                                                                getUnitCommanderAppr.weight
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex-grow-1 ms-3">
+                                                        <div
+                                                            className="d-flex justify-content-start rounded-3 p-2 mb-2"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    "#efefef",
+                                                            }}
+                                                        >
+                                                            Бэлхүүсний тойрог:
+                                                            &nbsp;&nbsp;&nbsp;
+                                                            {
+                                                                getUnitCommanderAppr.waist
+                                                            }
+                                                        </div>
+                                                        <div
+                                                            className="d-flex justify-content-start rounded-3 p-2 mb-2"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    "#efefef",
+                                                            }}
+                                                        >
+                                                            Ташааны тойрог:
+                                                            &nbsp;&nbsp;&nbsp;
+                                                            {
+                                                                getUnitCommanderAppr.thigh
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="row">
+                                                    {getUnitCommanderAppr.chiefDesc !=
+                                                        null && (
+                                                        <div
+                                                            className="d-flex justify-content-start rounded-3 p-2 mb-2"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    "#efefef",
+                                                            }}
+                                                        >
+                                                            Тайлбар:
+                                                            &nbsp;&nbsp;&nbsp;
+                                                            {
+                                                                getUnitCommanderAppr.chiefDesc
+                                                            }
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </MDBCardBody>
                                         </MDBCard>

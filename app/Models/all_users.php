@@ -46,10 +46,15 @@ class all_users extends Model
     public function getUser(){
         $getUserName = DB::table("all_users")
         ->where("all_users.id", "=", Auth::user()->allUsersID)
-        ->select("all_users.firstName as name")
+        ->join("tb_ranks", "all_users.rankID", "tb_ranks.id")
+        ->select("all_users.firstName as name", "tb_ranks.shortRank", "all_users.image")
         ->first();
+
         return response(
                     array(
+                        "userImage"=>$getUserName->image,
+                        "userID"=>Auth::user()->id,
+                        "rank" => $getUserName->shortRank,
                         "name" => $getUserName->name,
                         "permission" =>Auth::user()->permission,
                         "user_type" =>Auth::user()->user_type,

@@ -1075,7 +1075,7 @@ class OfficerQuestionController extends Controller
     public function newPkoMainUnit(Request $req)
     {
         try {
-            $count = $this->checkUnitUser($req->MainHistoryID);
+            $count = $this->checkUnitUser($req);
             if ($count > 0) {
                 $array = array(
                     'status' => 'loginError',
@@ -1098,6 +1098,11 @@ class OfficerQuestionController extends Controller
             $insert->thigh = $req->thigh;
             $insert->userID = Auth::user()->id;
             $insert->save();
+
+            $setPkoMainHistory = MainHistory::find($req->MainHistoryID);
+            $setPkoMainHistory->unitCommanderApprove = $req->chiefApprove;
+            $setPkoMainHistory->save();
+
             return response(
                 array(
                     "status" => "success",
@@ -1117,13 +1122,81 @@ class OfficerQuestionController extends Controller
             );
         }
     }
+    public function editPkoMainUnit(Request $req)
+    {
+        try {
+
+            $insert = PkoMainUnit::find($req->editRowID);
+            $insert->MainHistoryID = $req->MainHistoryID;
+            $insert->chiefApprove = $req->chiefApprove;
+            $insert->chiefDesc = $req->chiefDesc;
+            $insert->SportScore = $req->SportScore;
+            $insert->height = $req->height;
+            $insert->weight = $req->weight;
+            $insert->waist = $req->waist;
+            $insert->thigh = $req->thigh;
+            $insert->userID = Auth::user()->id;
+            $insert->save();
+
+            $setPkoMainHistory = MainHistory::find($req->MainHistoryID);
+            $setPkoMainHistory->unitCommanderApprove = $req->chiefApprove;
+            $setPkoMainHistory->save();
+
+            return response(
+                array(
+                    "status" => "success",
+                    "msg" => "Амжилттай заслаа."
+                ),
+                200
+            );
+        } catch (\Throwable $th) {
+
+            // return $th;
+            return response(
+                array(
+                    "status" => "error",
+                    "msg" => "Алдаа гарлаа"
+                ),
+                500
+            );
+        }
+    }
+
+
+    public function newPkoMainUnitApprove(Request $req){
+        $count = $this->checkUnitUser($req);
+        if($count > 0){
+            $edit = PkoMainUnit::where("MainHistoryID","=",$req->MainHistoryID)
+            ->where("missionID", "=", $req->missionID)
+            ->where("eeljID", "=", $req->eeljID)
+            ->first();
+            return response(
+                array(
+                    "editData" => $edit,
+                    "isInserted" => true,
+                ),
+                200
+            );
+        }else{
+            return response(
+                array(
+                    // "editData" => $edit,
+                    "isInserted" => false,
+                ),
+                200
+            );
+        }
+
+    }
 
 
     public function checkUnitUser($md)
     {
         $users = DB::table('pko_main_unitadmin')
-        ->where("MainHistoryID", "=", $md)
-            ->get();
+        ->where("MainHistoryID", "=", $md->MainHistoryID)
+        ->where("missionID", "=", $md->missionID)
+        ->where("eeljID", "=", $md->eeljID)
+        ->get();
         return count($users);
 
 }

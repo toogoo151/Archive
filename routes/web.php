@@ -1009,6 +1009,9 @@ Route::get("get/checkTomilgoo", [ProcessController::class, "tomilgoo"]);
 
 //UserPlus
 Route::post("/new/PkoMainUnit", [OfficerQuestionController::class, "newPkoMainUnit"]);
+Route::post("/edit/PkoMainUnit", [OfficerQuestionController::class, "editPkoMainUnit"]);
+Route::post("/set/unit/commander/approve", [OfficerQuestionController::class, "newPkoMainUnitApprove"]);
+
 
 //
 

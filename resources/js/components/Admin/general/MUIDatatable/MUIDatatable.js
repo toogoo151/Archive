@@ -225,6 +225,7 @@ const MUIDatatable = (props) => {
                     isHideHuman={props.isHideHuman}
                     isHideDelete={props.isHideDelete}
                     isHideEdit={props.isHideEdit}
+                    isUnitApproveButton={props.isUnitApproveButton}
                 />
             </>
         ),

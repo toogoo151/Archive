@@ -1,13 +1,13 @@
-import React, { useEffect, useState,useContext, useRef } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import Swal from "sweetalert2";
 import axios from "../../../../AxiosUser";
 import InputMask from "react-input-mask";
 import { AppContext } from "../../../../Context/MyContext";
 
-
 const PkoMainUnitEdit = (props) => {
-     const state = useContext(AppContext);
-     const [showModal, setShowModal] = useState("");
+    const state = useContext(AppContext);
+    const [showModal, setShowModal] = useState("");
+    const [getEditRowID, setEditRowID] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [chiefApprove, setchiefApprove] = useState("");
@@ -19,11 +19,9 @@ const PkoMainUnitEdit = (props) => {
     const [thigh, setthigh] = useState("");
     const [chiefDescVisible, setChiefDescVisible] = useState(false);
 
-
-
-
-
     const [getDataRow, setDataRow] = useState([]);
+    const [getIsEdit, setIsEdit] = useState(false);
+
     // const fileInputRef = useRef(null);
 
     // const newWindow = useRef(window);
@@ -38,13 +36,16 @@ const PkoMainUnitEdit = (props) => {
     //     };
     // };
 
-
     //   useEffect(() => {
     //     fn_docItems(state.getMissionRowID, state.getEeljRowID);
     // }, []);
 
     useEffect(() => {
-    setChiefDescVisible(chiefApprove !== "" && chiefApprove !== '1');
+        if (chiefApprove != "" && chiefApprove != "1") {
+            setChiefDescVisible(true);
+        } else {
+            setChiefDescVisible(false);
+        }
     }, [chiefApprove]);
 
     useEffect(() => {
@@ -63,53 +64,157 @@ const PkoMainUnitEdit = (props) => {
                     : ""
             );
         }
-                // fn_docItems(state.getMissionRowID, state.getEeljRowID);
-
+        // fn_docItems(state.getMissionRowID, state.getEeljRowID);
+        getEditData(
+            props.changeDataRow.id,
+            state.getMissionRowID,
+            state.getEeljRowID
+        );
     }, [props.isEditBtnClick]);
+
+    const getEditData = (rowID, mission, eelj) => {
+        axios
+            .post("/set/unit/commander/approve", {
+                MainHistoryID: rowID,
+                missionID: mission,
+                eeljID: eelj,
+            })
+            .then((res) => {
+                if (res.data.isInserted) {
+                    setIsEdit(true);
+                    setEditRowID(res.data.editData.id);
+                    setchiefApprove(res.data.editData.chiefApprove);
+                    setchiefDesc(res.data.editData.chiefDesc);
+
+                    setSportScore(res.data.editData.SportScore);
+                    setheight(res.data.editData.height);
+                    setweight(res.data.editData.weight);
+                    setwaist(res.data.editData.waist);
+                    setthigh(res.data.editData.thigh);
+                } else {
+                    setIsEdit(false);
+                    setEditRowID("");
+                    setchiefApprove("");
+                    setchiefDesc("");
+
+                    setSportScore("");
+                    setheight("");
+                    setweight("");
+                    setwaist("");
+                    setthigh("");
+                }
+            });
+    };
 
     const saveUser = () => {
         props.setRowsSelected([]);
         // const pattern = /^[^.\s]/;
+        if (chiefApprove == "" || chiefApprove == null) {
+            Swal.fire("Захирагчийн шийдвэр оруулан уу");
+            return;
+        }
+        if (chiefApprove == "2" && chiefDesc == "") {
+            Swal.fire("Тайлбар оруулан уу");
+            return;
+        }
 
-        axios
-            .post("/new/PkoMainUnit", {
-                MainHistoryID: props.changeDataRow.id,
-                missionID: state.getMissionRowID,
-                eeljID: state.getEeljRowID,
-                lastName: lastName,
-                firstName: firstName,
-                chiefApprove: chiefApprove,
-                chiefDesc: chiefDesc,
-                SportScore: SportScore,
-                height: height,
-                weight: weight,
-                waist: waist,
-                thigh: thigh,
-            })
-            .then((res) => {
-                // fileInputRef.current.value = null;
-               console.log(res);
-                Swal.fire(res.data.msg);
-                setLastName("");
-                setFirstName("");
-                setchiefApprove("");
-                setchiefDesc("");
-                setSportScore("");
-                setheight("");
-                setweight("");
-                setwaist("");
-                setthigh("");
-                setShowModal("");
+        if (SportScore == "") {
+            Swal.fire("Биеийн тамирын оноо оруулан уу");
+            return;
+        }
+        if (height == "") {
+            Swal.fire("Өндөр оруулан уу");
+            return;
+        }
+        if (weight == "") {
+            Swal.fire("Жин оруулан уу");
+            return;
+        }
+        if (waist == "") {
+            Swal.fire("Бэлхүүсний тойрог оруулан уу");
+            return;
+        }
+        if (thigh == "") {
+            Swal.fire("Ташааны тойрог оруулан уу");
+            return;
+        }
+        if (getIsEdit) {
+            axios
+                .post("/edit/PkoMainUnit", {
+                    editRowID: getEditRowID,
+                    MainHistoryID: props.changeDataRow.id,
+                    chiefApprove: chiefApprove,
+                    chiefDesc: chiefDesc,
+                    SportScore: SportScore,
+                    height: height,
+                    weight: weight,
+                    waist: waist,
+                    thigh: thigh,
+                })
+                .then((res) => {
+                    // fileInputRef.current.value = null;
+                    console.log(res);
+                    Swal.fire(res.data.msg);
+                    setLastName("");
+                    setFirstName("");
+                    setchiefApprove("");
+                    setchiefDesc("");
+                    setSportScore("");
+                    setheight("");
+                    setweight("");
+                    setwaist("");
+                    setthigh("");
+                    setShowModal("");
 
-        props.refreshMainHistory(state.getMissionRowID, state.getEeljRowID);
+                    props.refreshMainHistory(
+                        state.getMissionRowID,
+                        state.getEeljRowID
+                    );
+                })
+                .catch((err) => {
+                    Swal.fire(err.response.data.msg);
+                });
+        } else {
+            axios
+                .post("/new/PkoMainUnit", {
+                    MainHistoryID: props.changeDataRow.id,
+                    missionID: state.getMissionRowID,
+                    eeljID: state.getEeljRowID,
+                    lastName: lastName,
+                    firstName: firstName,
+                    chiefApprove: chiefApprove,
+                    chiefDesc: chiefDesc,
+                    SportScore: SportScore,
+                    height: height,
+                    weight: weight,
+                    waist: waist,
+                    thigh: thigh,
+                })
+                .then((res) => {
+                    // fileInputRef.current.value = null;
+                    console.log(res);
+                    Swal.fire(res.data.msg);
+                    setLastName("");
+                    setFirstName("");
+                    setchiefApprove("");
+                    setchiefDesc("");
+                    setSportScore("");
+                    setheight("");
+                    setweight("");
+                    setwaist("");
+                    setthigh("");
+                    setShowModal("");
 
-            })
-            .catch((err) => {
-                Swal.fire(err.response.data.msg);
-            });
+                    props.refreshMainHistory(
+                        state.getMissionRowID,
+                        state.getEeljRowID
+                    );
+                })
+                .catch((err) => {
+                    Swal.fire(err.response.data.msg);
+                });
+        }
     };
-
-
 
     const changeLastName = (e) => {
         setLastName(e.target.value);
@@ -118,30 +223,27 @@ const PkoMainUnitEdit = (props) => {
         setFirstName(e.target.value);
     };
 
-      const onChangeAnsScore1 = (e) => {
+    const onChangeAnsScore1 = (e) => {
         setchiefApprove(e.target.value);
-      };
-         const onChangeAnsScore2 = (e) => {
+    };
+    const onChangeAnsScore2 = (e) => {
         setchiefDesc(e.target.value);
-         };
-       const onChangeAnsScore3 = (e) => {
+    };
+    const onChangeAnsScore3 = (e) => {
         setSportScore(e.target.value);
-       };
-      const onChangeAnsScore4 = (e) => {
+    };
+    const onChangeAnsScore4 = (e) => {
         setheight(e.target.value);
-      };
-        const onChangeAnsScore5 = (e) => {
+    };
+    const onChangeAnsScore5 = (e) => {
         setweight(e.target.value);
-        };
-     const onChangeAnsScore6 = (e) => {
+    };
+    const onChangeAnsScore6 = (e) => {
         setwaist(e.target.value);
-     };
-     const onChangeAnsScore7 = (e) => {
+    };
+    const onChangeAnsScore7 = (e) => {
         setthigh(e.target.value);
-      };
-
-
-
+    };
 
     return (
         <>
@@ -158,7 +260,10 @@ const PkoMainUnitEdit = (props) => {
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h4 className="modal-title">НЭМЭХ</h4>
+                            <h4 className="modal-title">
+                                Ангийн захирагчийн шийдвэр, биеийн зохистой
+                                харьцаа оруулах
+                            </h4>
 
                             <button
                                 type="button"
@@ -176,7 +281,7 @@ const PkoMainUnitEdit = (props) => {
                                 </h5>
                             </div> */}
 
-                        <div className="row">
+                            <div className="row">
                                 <div className="col-md-6">
                                     <div className="input-group mb-3">
                                         <div className="input-group-prepend">
@@ -188,8 +293,7 @@ const PkoMainUnitEdit = (props) => {
                                             className="form-control"
                                             // onChange={changeLastName}
                                             value={lastName}
-                                           readOnly
-
+                                            readOnly
                                         />
                                     </div>
                                 </div>
@@ -197,7 +301,6 @@ const PkoMainUnitEdit = (props) => {
                                     <div className="input-group mb-3">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
-
                                                 Нэр:
                                             </span>
                                         </div>
@@ -206,7 +309,6 @@ const PkoMainUnitEdit = (props) => {
                                             // onChange={changeFirstName}
                                             value={firstName}
                                             readOnly
-
                                         />
                                     </div>
                                 </div>
@@ -218,62 +320,57 @@ const PkoMainUnitEdit = (props) => {
                                             <span className="input-group-text">
                                                 Захирагчийн шийдвэр
                                             </span>
-
-                                            </div>
-                                          <select
+                                        </div>
+                                        <select
                                             className="form-control"
                                             value={chiefApprove}
                                             onChange={onChangeAnsScore1}
-
-                                                >
-                                                    <option value="">
-                                                        Сонгоно уу
-                                                    </option>
-                                                    <option value="1">
-                                                     Зөвшөөрсөн
-                                                    </option>
-                                                    <option value="2">
-                                                     Зөвшөөрөөгүй
-                                                    </option>
-                                                </select>
+                                        >
+                                            <option value="">Сонгоно уу</option>
+                                            <option value="1">
+                                                Зөвшөөрсөн
+                                            </option>
+                                            <option value="2">
+                                                Зөвшөөрөөгүй
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
-                                  <div className="col-md-6">
+                                <div className="col-md-6">
                                     <div className="input-group mb-3">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
                                                 Биеийн тамирын оноо:
                                             </span>
-
                                         </div>
-                                              <input
+                                        <input
                                             className="form-control"
                                             value={SportScore}
                                             onChange={onChangeAnsScore3}
-                                            />
+                                        />
                                     </div>
                                 </div>
                             </div>
 
-                                        {chiefDescVisible && (
-                            <div className="row">
-                                      <div className="col-md-12">
-                                    <div className="input-group mb-3">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">
-                                                Захирагчийн шийдвэр зөвшөөрөөгүй бол тайлбар:
-                                            </span>
-
+                            {chiefDescVisible && (
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <div className="input-group mb-3">
+                                            <div className="input-group-prepend">
+                                                <span className="input-group-text">
+                                                    Захирагчийн шийдвэр
+                                                    зөвшөөрөөгүй бол тайлбар:
+                                                </span>
+                                            </div>
+                                            <textarea
+                                                className="form-control"
+                                                value={chiefDesc}
+                                                onChange={onChangeAnsScore2}
+                                            />
                                         </div>
-                                              <textarea
-                                            className="form-control"
-                                            value={chiefDesc}
-                                            onChange={onChangeAnsScore2}
-                                            />
                                     </div>
                                 </div>
-                            </div>
-                                )}
+                            )}
 
                             <div className="row">
                                 <div className="col-md-6">
@@ -282,70 +379,62 @@ const PkoMainUnitEdit = (props) => {
                                             <span className="input-group-text">
                                                 Өндөр:
                                             </span>
-
                                         </div>
-                                              <input
+                                        <input
                                             className="form-control"
                                             value={height}
                                             onChange={onChangeAnsScore4}
-                                            />
+                                        />
                                     </div>
                                 </div>
-
-                                    <div className="col-md-6">
-                                    <div className="input-group mb-3">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">
-                                                Жин:
-                                            </span>
-
-                                        </div>
-                                              <input
-                                            className="form-control"
-                                            value={weight}
-                                            onChange={onChangeAnsScore5}
-                                            />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="row">
-
 
                                 <div className="col-md-6">
                                     <div className="input-group mb-3">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
-                                                БТХ:
+                                                Жин:
                                             </span>
-
                                         </div>
-                                              <input
-                                             className="form-control"
-                                            value={waist}
-                                            onChange={onChangeAnsScore6}
-                                            />
-                                    </div>
-                                </div>
-
-                                 <div className="col-md-6">
-                                    <div className="input-group mb-3">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">
-                                                ТТХ:
-                                            </span>
-
-                                        </div>
-                                              <input
-                                                 className="form-control"
-                                            value={thigh}
-                                            onChange={onChangeAnsScore7}
-                                            />
+                                        <input
+                                            className="form-control"
+                                            value={weight}
+                                            onChange={onChangeAnsScore5}
+                                        />
                                     </div>
                                 </div>
                             </div>
 
+                            <div className="row">
+                                <div className="col-md-6">
+                                    <div className="input-group mb-3">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text">
+                                                Бэлхүүсний тойрог:
+                                            </span>
+                                        </div>
+                                        <input
+                                            className="form-control"
+                                            value={waist}
+                                            onChange={onChangeAnsScore6}
+                                        />
+                                    </div>
+                                </div>
 
+                                <div className="col-md-6">
+                                    <div className="input-group mb-3">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text">
+                                                Ташааны тойрог:
+                                            </span>
+                                        </div>
+                                        <input
+                                            className="form-control"
+                                            value={thigh}
+                                            onChange={onChangeAnsScore7}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Modal footer */}
@@ -356,7 +445,7 @@ const PkoMainUnitEdit = (props) => {
                                 data-dismiss=""
                                 onClick={saveUser}
                             >
-                                Нэмэх
+                                {getIsEdit ? "Засах" : "Нэмэх"}
                             </button>
                             <button
                                 type="button"

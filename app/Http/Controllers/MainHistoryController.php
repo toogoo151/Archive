@@ -128,9 +128,17 @@ class MainHistoryController extends Controller
                 ->select("pko_mission_history.*", "pko_position.positionName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
                 ->get();
 
+                $getUnitCommanderApprove = DB::table("pko_main_unitadmin")
+                ->where("pko_main_unitadmin.MainHistoryID", "=", $req->_id)
+                ->where("pko_main_unitadmin.missionID", "=", $req->_missionID)
+                ->where("pko_main_unitadmin.eeljID", "=", $req->_eeljID)
+                ->select("pko_main_unitadmin.*")
+                ->first();
+
                 $row = array(
                     "getUserDetails" => $getUserDetail,
                     "getMissionHistory" => $getMissionHistory,
+                    "unitCommanderApprove" =>$getUnitCommanderApprove,
                 );
             return $row;
         } catch (\Throwable $th) {
