@@ -216,7 +216,7 @@ const Noots = () => {
                 refreshNoots={refreshNoots}
                 changeDataRow={clickedRowData}
                 isEditBtnClick={isEditBtnClick}
-                clickParentRowID={clickedRowData.id}
+                clickParentRowID={clickedRowData.pkoMainHistoryID}
                 // onClick={fn_tomilgoo_btn}
             />
         </div>

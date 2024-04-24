@@ -115,6 +115,8 @@ const PkoSuperAdmin = (props) => {
                     <PkoSuperAdminEdit
                         setRowsSelected={setRowsSelected}
                         refreshSuperUsers={refreshSuperUsers}
+                        getMission={state.getMissionRowID}
+                        getEelj={state.getEeljRowID}
                         changeDataRow={clickedRowData}
                         isEditBtnClick={isEditBtnClick}
                     />

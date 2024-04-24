@@ -15,39 +15,42 @@ class BatalionOronTooController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function getOronTooChild(Request $req){
+    public function getOronTooChild(Request $req)
+    {
         try {
             $getOronTooChild = DB::table("pko_batalion_oron_too")
-            ->where("pko_batalion_oron_too.missionID", "=", $req->_missionID)
-            ->where("pko_batalion_oron_too.eeljID", "=", $req->_eeljID)
-            ->where("pko_batalion_oron_too.pkoMainHistoryID", "=", $req->_rowID)
-            ->join("pko_main_history", function($query){
-                $query->on("pko_batalion_oron_too.pkoMainHistoryID", "=", "pko_main_history.id");
-            })
-            ->join("pko_users", function($query){
-                $query->on("pko_main_history.pkoUserID", "=", "pko_users.id");
-            })
-            ->join("all_users", function($query)use($req){
-                $query->on("pko_users.allUsersID", "=", "all_users.id");
-            })
-            ->join("pko_rot", "pko_rot.id", "=", "pko_batalion_oron_too.rotID")
-            ->join("pko_salaa", "pko_salaa.id", "=", "pko_batalion_oron_too.salaaID")
-            ->join("pko_tasag", "pko_tasag.id", "=", "pko_batalion_oron_too.tasagID")
-            ->join("pko_position", "pko_position.id", "=", "pko_batalion_oron_too.positionID")
-            ->select("pko_batalion_oron_too.*", "pko_rot.rotName", "pko_salaa.salaaName", "pko_tasag.tasagName", "pko_position.positionName", "all_users.firstName")
-            ->get();
+                ->where("pko_batalion_oron_too.missionID", "=", $req->_missionID)
+                ->where("pko_batalion_oron_too.eeljID", "=", $req->_eeljID)
+                ->where("pko_batalion_oron_too.pkoMainHistoryID", "=", $req->_rowID)
+                ->join("pko_main_history", function ($query) {
+                    $query->on("pko_batalion_oron_too.pkoMainHistoryID", "=", "pko_main_history.id");
+                })
+                ->join("pko_users", function ($query) {
+                    $query->on("pko_main_history.pkoUserID", "=", "pko_users.id");
+                })
+                ->join("all_users", function ($query) use ($req) {
+                    $query->on("pko_users.allUsersID", "=", "all_users.id");
+                })
+                ->join("pko_rot", "pko_rot.id", "=", "pko_batalion_oron_too.rotID")
+                ->join("pko_salaa", "pko_salaa.id", "=", "pko_batalion_oron_too.salaaID")
+                ->join("pko_tasag", "pko_tasag.id", "=", "pko_batalion_oron_too.tasagID")
+                ->join("pko_position", "pko_position.id", "=", "pko_batalion_oron_too.positionID")
+                ->select("pko_batalion_oron_too.*", "pko_rot.rotName", "pko_salaa.salaaName", "pko_tasag.tasagName", "pko_position.positionName", "all_users.firstName")
+                ->get();
             return $getOronTooChild;
         } catch (\Throwable $th) {
             return response(
                 array(
                     "status" => "error",
                     "msg" => "Алдаа гарлаа."
-                ), 500
+                ),
+                500
             );
         }
     }
 
-    public function newOronToo(Request $req){
+    public function newOronToo(Request $req)
+    {
         try {
             $insertOronToo = new BatalionOronToo();
             $insertOronToo->missionID = $req->missionID;
@@ -63,19 +66,22 @@ class BatalionOronTooController extends Controller
                 array(
                     "status" => "success",
                     "msg" => "Амжилттай хадгаллаа."
-                ),200
+                ),
+                200
             );
         } catch (\Throwable $th) {
             return response(
                 array(
                     "status" => "error",
                     "msg" => "Алдаа гарлаа."
-                ),500
+                ),
+                500
             );
         }
     }
 
-    public function editOronToo(Request $req){
+    public function editOronToo(Request $req)
+    {
         try {
             $edit =  BatalionOronToo::find($req->id);
             $edit->missionID = $req->missionID;
@@ -91,19 +97,22 @@ class BatalionOronTooController extends Controller
                 array(
                     "status" => "success",
                     "msg" => "Амжилттай заслаа."
-                ),200
+                ),
+                200
             );
         } catch (\Throwable $th) {
             return response(
                 array(
                     "status" => "error",
                     "msg" => "Алдаа гарлаа."
-                ),500
+                ),
+                500
             );
         }
     }
 
-    public function deleteOronToo(Request $req){
+    public function deleteOronToo(Request $req)
+    {
         try {
             $delete =  BatalionOronToo::find($req->id);
             $delete->delete();
@@ -111,14 +120,44 @@ class BatalionOronTooController extends Controller
                 array(
                     "status" => "success",
                     "msg" => "Амжилттай устгалаа."
-                ),200
+                ),
+                200
             );
         } catch (\Throwable $th) {
             return response(
                 array(
                     "status" => "error",
                     "msg" => "Алдаа гарлаа."
-                ),500
+                ),
+                500
+            );
+        }
+    }
+
+    public function deleteTomilogdson(Request $req)
+    {
+        try {
+            $delete = BatalionOronToo::find($req->id);
+            // $delete->rotID = null;
+            // $delete->salaaID = null;
+            // $delete->tasagID = null;
+            // $delete->positionID = null;
+            // $delete->save();
+            $delete->delete();
+            return response(
+                array(
+                    "status" => "success",
+                    "msg" => "Амжилттай устгалаа."
+                ),
+                200
+            );
+        } catch (\Throwable $th) {
+            return response(
+                array(
+                    "status" => "error",
+                    "msg" => "Алдаа гарлаа."
+                ),
+                500
             );
         }
     }

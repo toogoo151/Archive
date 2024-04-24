@@ -744,6 +744,8 @@ Route::post("/get/oron/too/child", [BatalionOronTooController::class, "getOronTo
 Route::post("/new/oron/too/child", [BatalionOronTooController::class, "newOronToo"]);
 Route::post("/edit/oron/too/child", [BatalionOronTooController::class, "editOronToo"]);
 Route::post("/delete/oron/too/child", [BatalionOronTooController::class, "deleteOronToo"]);
+Route::post("/delete/tomilogdson", [BatalionOronTooController::class, "deleteTomilogdson"]);
+
 
 //Batalion oron too end
 

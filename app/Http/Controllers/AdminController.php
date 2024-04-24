@@ -9,6 +9,7 @@ use App\Models\all_users;
 use App\Models\MainHistory;
 use App\Models\UserQuestion;
 use App\Models\Wish;
+use App\Models\log_users;
 use App\Notifications\EmailRegisteredNotification;
 use DateTime;
 use Illuminate\Support\Carbon;
@@ -261,8 +262,6 @@ class AdminController extends Controller
             $all_user->email = $req->email;
             $all_user->save();
 
-
-
             $quickpass = substr( str_shuffle( str_repeat( 'abcdefghijklmnopqrstuvwxyz0123456789', 10 ) ), 0, 10 );
             $user =  new User();
             $user->allUsersID = $all_user->id;
@@ -295,6 +294,27 @@ class AdminController extends Controller
             $store->eeljID = $insertlist->eeljID;
             $store->save();
 
+            $lognew = new log_users();
+            $lognew->missionID = $store->missionID;
+            $lognew->eeljID = $store->eeljID;
+            $lognew->comandlalID = $all_user->comandlalID;
+            $lognew->unitID = $all_user->unitID;
+            $lognew->rankID = $all_user->rankID;
+            $lognew->firstName = $all_user->firstName;
+            $lognew->lastName = $all_user->lastName;
+            $lognew->rd = $all_user->rd;
+            $lognew->email = $user->email;
+            $lognew->successful = "Нэмсэн";
+            $lognew->admin_id = Auth::user()->id;
+            $lognew->admin_email = Auth::user()->email;
+            $lognew->admin_name = all_users::find(Auth::user()->allUsersID)->getUserName();
+            $editorRD = DB::table("all_users")->where("id", Auth::user()->allUsersID)->first();
+            $lognew->adminRD = $editorRD->rd;
+            $lognew->user_ip = $req->ip();
+            $lognew->save();
+
+
+
             Notification::route('mail', $user->email)->notify(new EmailRegisteredNotification());
 
             return response(
@@ -319,6 +339,10 @@ class AdminController extends Controller
             $user->phone = $req->phone;
             $user->email = $req->email;
             $user->save();
+            $missionID = $req->missionID ?? null;
+            $eeljID  = $req->eeljID  ?? null;
+
+
 
             // zuragtai holbootoi heseg
             if($req->pkoImage != "" && strlen($req->pkoImage) >50){
@@ -370,6 +394,25 @@ class AdminController extends Controller
             $all_user->phone= $req->phone;
             $all_user->email= $req->email;
             $all_user->save();
+
+            $lognew = new log_users();
+            $lognew->missionID = $missionID;
+            $lognew->eeljID = $eeljID;
+            $lognew->comandlalID = $all_user->comandlalID;
+            $lognew->unitID = $all_user->unitID;
+            $lognew->rankID = $all_user->rankID;
+            $lognew->firstName = $all_user->firstName;
+            $lognew->lastName = $all_user->lastName;
+            $lognew->rd = $all_user->rd;
+            $lognew->email = $user->email;
+            $lognew->successful = "Зассан";
+            $lognew->admin_id = Auth::user()->id;
+            $lognew->admin_email = Auth::user()->email;
+            $lognew->admin_name = all_users::find(Auth::user()->allUsersID)->getUserName();
+            $editorRD = DB::table("all_users")->where("id", Auth::user()->allUsersID)->first();
+            $lognew->adminRD = $editorRD->rd;
+            $lognew->user_ip = $req->ip();
+            $lognew->save();
 
             return response(
                 array("msg" => "Амжилттай заслаа"), 200

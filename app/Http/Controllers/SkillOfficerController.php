@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\OfficerSkill;
 use App\Models\OfficerLanguage;
 use App\Models\PkoOfficerLanguagesec;
+use App\Models\OfficerSecSkill;
+use App\Models\OfficerDriverSkill;
 
 
 use Illuminate\Support\Facades\Auth;
@@ -124,15 +126,16 @@ class SkillOfficerController extends Controller
     public function editSkill(Request $req)
     {
         try {
-            if ($req->documentPdf != "" && strlen($req->documentPdf) > 50) {
-                //pdf delete
-                $deletePdf = OfficerSkill::find($req->id);
+            if ($req->has('documentPdf') && strlen($req->documentPdf) > 50) {
+                // PDF delete
+                $deletePdf = OfficerLanguage::find($req->id);
                 if ($deletePdf->documentPdf != "0") {
                     Storage::delete('public' . $deletePdf->documentPdf);
                 }
-                //pdf delete
+                // PDF delete
+
                 $userID = Auth::user()->id;
-                $userFolder = 'public/documents/skill/' . $req->missionID . '/' . $req->eeljID . '/' . $userID;
+                $userFolder = 'public/documents/skill' . $req->missionID . '/' . $req->eeljID . '/' . $userID;
 
                 $pdf_64 = $req->documentPdf;
                 $setPDFPathID = $req->pdfName . "_" . $userID;
@@ -153,9 +156,43 @@ class SkillOfficerController extends Controller
             $edit->eeljID = $req->eeljID;
             $edit->SignalScore = $req->SignalScore;
             $edit->LocationScore = $req->LocationScore;
-            $edit->documentPdf = $getPDFUrl;
+            $edit->documentPdf = isset($getPDFUrl) ? $getPDFUrl : $edit->documentPdf;
             $edit->TotalScore = ($req->SignalScore + $req->LocationScore) / 2;
             $edit->save();
+
+            $lognew = new OfficerSecSkill();
+            $lognew->missionID = $edit->missionID;
+            $lognew->eeljID = $edit->eeljID;
+            $lognew->MainTableID = $edit->MainTableID;
+            $lognew->SignalScore = $edit->SignalScore;
+            $lognew->LocationScore = $edit->LocationScore;
+            $lognew->TotalScore = $edit->TotalScore;
+            $lognew->successful = "Нэмсэн";
+            $lognew->admin_id = Auth::user()->id;
+            $lognew->admin_email = Auth::user()->email;
+            $lognew->admin_name = all_users::find(Auth::user()->allUsersID)->getUserName();
+            $editorRD = DB::table("all_users")->where("id", Auth::user()->allUsersID)->first();
+            $lognew->adminRD = $editorRD->rd;
+            $objectRD = DB::table("pko_officer_main")->where("id", $edit->MainTableID)->first();
+            $objectRD = DB::table("pko_officer_main")->where("id", $edit->MainTableID)->first();
+            if ($objectRD) {
+                $objectRD2 = DB::table("pko_users")->where("id", $objectRD->pkoUserID)->first();
+                // dd($objectRD2);
+                if ($objectRD2) {
+                    $objectRD3 = DB::table("all_users")->where("id", $objectRD2->allUsersID)->first();
+                    if ($objectRD3) {
+                        $lognew->objectName = $objectRD3->firstName;
+                        $lognew->objectmail = $objectRD2->email;
+                        $lognew->objectRD = $objectRD3->rd;
+                    } else {
+                        $lognew->objectName = 'DefaultName';
+                        $lognew->objectmail = null;
+                        $lognew->objectRD = null;
+                    }
+                }
+            }
+            $lognew->user_ip = $req->ip();
+            $lognew->save();
 
             $editskill = OfficerMainHistory::find($edit->MainTableID);
             $editskill->skillScore = $edit->TotalScore;
@@ -193,6 +230,46 @@ class SkillOfficerController extends Controller
             }
 
             $edit->save();
+
+            $lognew = new OfficerDriverSkill();
+            $lognew->missionID = $edit->missionID;
+            $lognew->eeljID = $edit->eeljID;
+            $lognew->MainTableID = $edit->MainTableID;
+            $lognew->score = $edit->score;
+            $lognew->scoreApprove = $edit->scoreApprove;
+            $lognew->practice = $edit->practice;
+            if ($req->scoreApprove == 1 && $req->practice == 1) {
+                $lognew->finally = 1;
+            } else {
+                $lognew->finally = 2;
+            }
+
+            $lognew->successful = "Нэмсэн";
+            $lognew->admin_id = Auth::user()->id;
+            $lognew->admin_email = Auth::user()->email;
+            $lognew->admin_name = all_users::find(Auth::user()->allUsersID)->getUserName();
+            $editorRD = DB::table("all_users")->where("id", Auth::user()->allUsersID)->first();
+            $lognew->adminRD = $editorRD->rd;
+            $objectRD = DB::table("pko_officer_main")->where("id", $edit->MainTableID)->first();
+            $objectRD = DB::table("pko_officer_main")->where("id", $edit->MainTableID)->first();
+            if ($objectRD) {
+                $objectRD2 = DB::table("pko_users")->where("id", $objectRD->pkoUserID)->first();
+                // dd($objectRD2);
+                if ($objectRD2) {
+                    $objectRD3 = DB::table("all_users")->where("id", $objectRD2->allUsersID)->first();
+                    if ($objectRD3) {
+                        $lognew->objectName = $objectRD3->firstName;
+                        $lognew->objectmail = $objectRD2->email;
+                        $lognew->objectRD = $objectRD3->rd;
+                    } else {
+                        $lognew->objectName = 'DefaultName';
+                        $lognew->objectmail = null;
+                        $lognew->objectRD = null;
+                    }
+                }
+            }
+            $lognew->user_ip = $req->ip();
+            $lognew->save();
 
             $editdriver = OfficerMainHistory::find($edit->MainTableID);
             if ($req->scoreApprove == 1 && $req->practice == 1) {
