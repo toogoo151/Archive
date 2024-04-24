@@ -17,6 +17,7 @@ const Tomilogdoogui = (props) => {
 
     const [getUserDetails, setUserDetails] = useState([]);
     const [getMissionHistory, setMissionHistory] = useState([]);
+    const [getUnitCommanderApprove, setUnitCommanderApprove] = useState([]);
 
     const [getComandlalID, setComandlalID] = useState("");
     const [getUnitID, setUnitID] = useState("");
@@ -317,6 +318,9 @@ const Tomilogdoogui = (props) => {
             .then((res) => {
                 setUserDetails(res.data.getUserDetails);
                 setMissionHistory(res.data.getMissionHistory);
+                if (res.data.unitCommanderApprove != null) {
+                    setUnitCommanderApprove(res.data.unitCommanderApprove);
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -415,6 +419,7 @@ const Tomilogdoogui = (props) => {
                 clickedRowData={clickedRowData}
                 getUserDetails={getUserDetails}
                 getMissionHistory={getMissionHistory}
+                getUnitCommanderApprove={getUnitCommanderApprove}
             />
             <OronTooNew
                 refreshTomilogdoogui={refreshTomilogdoogui}
