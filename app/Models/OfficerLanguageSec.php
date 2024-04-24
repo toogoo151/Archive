@@ -13,7 +13,7 @@ class OfficerLanguageSec extends Model
 
     protected $fillable = [
 
-        'missionID', 'eeljID', 'genderID', 'readCol', 'writeCol', 'listenCol', 'speakCol', 'totalScore', 'alcpt', 'languageEdit', 'successful', 'admin_id', 'admin_name', 'admin_email', 'adminRD', 'objectName', 'objectmail', 'objectRD', 'user_ip',
+        'missionID', 'eeljID', 'readCol', 'writeCol', 'listenCol', 'speakCol', 'totalScore', 'alcpt', 'languageEdit', 'successful', 'admin_id', 'admin_name', 'admin_email', 'adminRD', 'objectName', 'objectmail', 'objectRD', 'user_ip',
     ];
     protected $guarded = ['id'];
 
