@@ -239,13 +239,9 @@ const DocumentUser = () => {
                                 className="col-md-4"
                                 style={{ textAlign: "left" }}
                             >
-                                <a
-                                    href="https://psod.maf.gov.mn/images/Document.mp4"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                >
-                                    Бичиг баримт оруулах заавар
-                                </a>
+                               <a href="/Video/zaawar" target="_blank" rel="noreferrer">
+        Бичиг баримт оруулах заавар
+    </a>
                             </div>
                             <div
                                 className="col-md-4"
