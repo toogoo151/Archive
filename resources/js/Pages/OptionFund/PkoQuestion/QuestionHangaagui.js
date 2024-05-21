@@ -3,8 +3,10 @@ import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIData
 import axios from "../../../AxiosUser";
 import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
 import EditChild from "./EditChild";
-
+import { parseISO, addMonths, isBefore } from "date-fns";
+import { AppContext } from "../../../Context/MyContext";
 const QuestionHangaagui = () => {
+    const state = useContext(AppContext);
     const [getQuestionEdit, setQuestionEdit] = useState([]);
     const [getRowsSelected, setRowsSelected] = useState([]); // row clear хийж байгаа
     const [clickedRowData, setclickedRowData] = useState([]);
@@ -30,13 +32,21 @@ const QuestionHangaagui = () => {
             .catch((err) => {
                 console.log(err);
             });
+        // refreshQuestionEdit(
+        //     getComandlalID,
+        //     getUnitID,
+        //     getQuestionState,
+        //     getGender
+        // );
+    }, []);
+    useEffect(() => {
         refreshQuestionEdit(
             getComandlalID,
             getUnitID,
             getQuestionState,
             getGender
         );
-    }, []);
+    }, [state.getMissionRowID, state.getEeljRowID]);
 
     const changeComandlal = (inComandlal) => {
         axios
@@ -76,12 +86,16 @@ const QuestionHangaagui = () => {
     ) => {
         axios
             .post("/get/question/hangaagui", {
+                _missionID: state.getMissionRowID,
+                _eeljID: state.getEeljRowID,
                 _comandlalID: comandlalID,
                 _unitID: unitID,
                 _questionState: questionState,
                 _gender: gender,
             })
             .then((res) => {
+                // console.log(res.data);
+                // return;
                 setQuestionEdit(res.data);
                 setRowsSelected([]);
             })
@@ -429,25 +443,6 @@ const QuestionHangaagui = () => {
                         },
                     };
                 },
-                // setCellProps: (value, rowIndex) => {
-                //     const el = getQuestionEdit[rowIndex];
-                //     if (el.updated_at != null) {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 backgroundColor: "#D3CD0F",
-                //                 color: "black",
-                //             },
-                //         };
-                //     } else {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 color: "black",
-                //             },
-                //         };
-                //     }
-                // },
             },
         },
         {
@@ -464,25 +459,56 @@ const QuestionHangaagui = () => {
                         },
                     };
                 },
-                // setCellProps: (value, rowIndex) => {
-                //     const el = getQuestionEdit[rowIndex];
-                //     if (el.updated_at != null) {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 backgroundColor: "#D3CD0F",
-                //                 color: "black",
-                //             },
-                //         };
-                //     } else {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 color: "black",
-                //             },
-                //         };
-                //     }
-                // },
+                customBodyRender: (value, row, index) => {
+                    if (row.rowData[10] != 1) {
+                        const appointedDate = parseISO(row.rowData[9]); // Assuming the date comes in ISO format
+                        const targetDate = addMonths(appointedDate, 12); // Adds 24 months to missionCameDate
+                        const createdAt = parseISO(row.rowData[17]); // Also assuming ISO format
+
+                        if (isBefore(targetDate, createdAt)) {
+                            return <p key={index}>{value}</p>;
+                        } else {
+                            return (
+                                <p
+                                    key={index}
+                                    style={{
+                                        backgroundColor: "#EA6065",
+                                        color: "white",
+                                        borderRadius: 5,
+                                        padding: 5,
+                                    }}
+                                >
+                                    {value}
+                                </p>
+                            );
+                        }
+                    } else {
+                        return <p key={index}>{value}</p>;
+                    }
+                },
+            },
+        },
+        {
+            name: "movement",
+            label: "Одоогийн албан тушаалд томилогдсон байдал",
+            options: {
+                filter: true,
+                sort: false,
+                setCellHeaderProps: (value) => {
+                    return {
+                        style: {
+                            backgroundColor: "#5DADE2",
+                            color: "white",
+                        },
+                    };
+                },
+                customBodyRender: (value, row) => {
+                    if (value == 1) {
+                        return " Анги дотороо томилогдсон";
+                    } else {
+                        return "Анги хооронд шилжин томилогдсон";
+                    }
+                },
             },
         },
         {
@@ -499,32 +525,13 @@ const QuestionHangaagui = () => {
                         },
                     };
                 },
-                customBodyRender: (value) => {
+                customBodyRender: (value, row) => {
                     if (value == 1) {
                         return "Үгүй";
                     } else {
                         return "Тийм";
                     }
                 },
-                // setCellProps: (value, rowIndex) => {
-                //     const el = getQuestionEdit[rowIndex];
-                //     if (el.updated_at != null) {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 backgroundColor: "#D3CD0F",
-                //                 color: "black",
-                //             },
-                //         };
-                //     } else {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 color: "black",
-                //             },
-                //         };
-                //     }
-                // },
             },
         },
         {
@@ -566,25 +573,6 @@ const QuestionHangaagui = () => {
                         return "";
                     }
                 },
-                // setCellProps: (value, rowIndex) => {
-                //     const el = getQuestionEdit[rowIndex];
-                //     if (el.updated_at != null) {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 backgroundColor: "#D3CD0F",
-                //                 color: "black",
-                //             },
-                //         };
-                //     } else {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 color: "black",
-                //             },
-                //         };
-                //     }
-                // },
             },
         },
         {
@@ -593,33 +581,40 @@ const QuestionHangaagui = () => {
             options: {
                 filter: true,
                 sort: false,
-                setCellHeaderProps: (value) => {
-                    return {
-                        style: {
-                            backgroundColor: "#5DADE2",
-                            color: "white",
-                        },
-                    };
+                setCellHeaderProps: (value) => ({
+                    style: {
+                        backgroundColor: "#5DADE2",
+                        color: "white",
+                    },
+                }),
+                customBodyRender: (value, row, index) => {
+                    if (row.rowData[11] != 1) {
+                        const missionCameDate = parseISO(row.rowData[13]); // Assuming the date comes in ISO format
+                        const targetDate = addMonths(missionCameDate, 24); // Adds 24 months to missionCameDate
+                        const createdAt = parseISO(row.rowData[17]); // Also assuming ISO format
+
+                        if (isBefore(targetDate, createdAt)) {
+                            return <p key={index}>{value}</p>;
+                        } else {
+                            return (
+                                <p
+                                    // className="text-center"
+                                    key={index}
+                                    style={{
+                                        backgroundColor: "#EA6065",
+                                        color: "white",
+                                        borderRadius: 5,
+                                        padding: 5,
+                                    }}
+                                >
+                                    {value}
+                                </p>
+                            );
+                        }
+                    } else {
+                        return <p key={index}>{value}</p>;
+                    }
                 },
-                // setCellProps: (value, rowIndex) => {
-                //     const el = getQuestionEdit[rowIndex];
-                //     if (el.updated_at != null) {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 backgroundColor: "#D3CD0F",
-                //                 color: "black",
-                //             },
-                //         };
-                //     } else {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 color: "black",
-                //             },
-                //         };
-                //     }
-                // },
             },
         },
         {
@@ -640,28 +635,20 @@ const QuestionHangaagui = () => {
                     if (value == 1) {
                         return "Үгүй";
                     } else {
-                        return "Тийм";
+                        return (
+                            <p
+                                style={{
+                                    backgroundColor: "#EA6065",
+                                    color: "white",
+                                    borderRadius: 5,
+                                    padding: 5,
+                                }}
+                            >
+                                Тийм
+                            </p>
+                        );
                     }
                 },
-                // setCellProps: (value, rowIndex) => {
-                //     const el = getQuestionEdit[rowIndex];
-                //     if (el.updated_at != null) {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 backgroundColor: "#D3CD0F",
-                //                 color: "black",
-                //             },
-                //         };
-                //     } else {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 color: "black",
-                //             },
-                //         };
-                //     }
-                // },
             },
         },
         {
@@ -678,32 +665,13 @@ const QuestionHangaagui = () => {
                         },
                     };
                 },
-                customBodyRender: (value) => {
+                customBodyRender: (value, row) => {
                     if (value == 1) {
                         return "Үгүй";
                     } else {
                         return "Тийм";
                     }
                 },
-                // setCellProps: (value, rowIndex) => {
-                //     const el = getQuestionEdit[rowIndex];
-                //     if (el.updated_at != null) {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 backgroundColor: "#D3CD0F",
-                //                 color: "black",
-                //             },
-                //         };
-                //     } else {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 color: "black",
-                //             },
-                //         };
-                //     }
-                // },
             },
         },
         {
@@ -720,25 +688,50 @@ const QuestionHangaagui = () => {
                         },
                     };
                 },
-                // setCellProps: (value, rowIndex) => {
-                //     const el = getQuestionEdit[rowIndex];
-                //     if (el.updated_at != null) {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 backgroundColor: "#D3CD0F",
-                //                 color: "black",
-                //             },
-                //         };
-                //     } else {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 color: "black",
-                //             },
-                //         };
-                //     }
-                // },
+                customBodyRender: (value, row, index) => {
+                    if (row.rowData[15] != 1) {
+                        const missionCameDate = parseISO(row.rowData[16]); // Assuming the date comes in ISO format
+                        const targetDate = addMonths(missionCameDate, 24); // Adds 24 months to missionCameDate
+                        const createdAt = parseISO(row.rowData[17]); // Also assuming ISO format
+
+                        if (isBefore(targetDate, createdAt)) {
+                            return <p key={index}>{value}</p>;
+                        } else {
+                            return (
+                                <p
+                                    // className="text-center"
+                                    key={index}
+                                    style={{
+                                        backgroundColor: "#EA6065",
+                                        color: "white",
+                                        borderRadius: 5,
+                                        padding: 5,
+                                    }}
+                                >
+                                    {value}
+                                </p>
+                            );
+                        }
+                    } else {
+                        return <p key={index}>{value}</p>;
+                    }
+                },
+            },
+        },
+        {
+            name: "created_at",
+            label: "Хүсэлт илгээсэн огноо",
+            options: {
+                filter: true,
+                sort: false,
+                setCellHeaderProps: (value) => {
+                    return {
+                        style: {
+                            backgroundColor: "#5DADE2",
+                            color: "white",
+                        },
+                    };
+                },
             },
         },
         {
@@ -755,25 +748,6 @@ const QuestionHangaagui = () => {
                         },
                     };
                 },
-                // setCellProps: (value, rowIndex) => {
-                //     const el = getQuestionEdit[rowIndex];
-                //     if (el.updated_at != null) {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 backgroundColor: "#D3CD0F",
-                //                 color: "black",
-                //             },
-                //         };
-                //     } else {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 color: "black",
-                //             },
-                //         };
-                //     }
-                // },
             },
         },
         {
@@ -790,25 +764,6 @@ const QuestionHangaagui = () => {
                         },
                     };
                 },
-                // setCellProps: (value, rowIndex) => {
-                //     const el = getQuestionEdit[rowIndex];
-                //     if (el.updated_at != null) {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 backgroundColor: "#D3CD0F",
-                //                 color: "black",
-                //             },
-                //         };
-                //     } else {
-                //         return {
-                //             align: "center",
-                //             style: {
-                //                 color: "black",
-                //             },
-                //         };
-                //     }
-                // },
             },
         },
         {
@@ -972,31 +927,41 @@ const QuestionHangaagui = () => {
                     </div>
                 </div>
             </div>
-            <MUIDatatable
-                data={getQuestionEdit}
-                setdata={setQuestionEdit}
-                columns={columns}
-                costumToolbar={
-                    <>
-                        <CustomToolbar
-                            title={"АСУУМЖ ЗАСАХ"}
-                            excelDownloadData={getQuestionEdit}
-                            excelHeaders={excelHeaders}
-                            isHideInsert={false}
-                        />
-                    </>
-                }
-                btnEdit={btnEdit}
-                editdataTargetID={"#questionEdit"}
-                modelType={showModal}
-                isHideDelete={false}
-                isHideEdit={true}
-                avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
-                avgColumnName={"email"}
-                avgName={"Дундаж: "}
-                getRowsSelected={getRowsSelected}
-                setRowsSelected={setRowsSelected}
-            />
+            <div
+                className="info-box"
+                style={{
+                    overflowX: "auto",
+                    whiteSpace: "nowrap",
+                    width: "100%",
+                }}
+            >
+                <MUIDatatable
+                    data={getQuestionEdit}
+                    setdata={setQuestionEdit}
+                    columns={columns}
+                    costumToolbar={
+                        <>
+                            <CustomToolbar
+                                title={"АСУУМЖ ЗАСАХ"}
+                                excelDownloadData={getQuestionEdit}
+                                excelHeaders={excelHeaders}
+                                isHideInsert={false}
+                            />
+                        </>
+                    }
+                    btnEdit={btnEdit}
+                    editdataTargetID={"#questionEdit"}
+                    modelType={showModal}
+                    isHideDelete={false}
+                    isHideEdit={true}
+                    avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
+                    avgColumnName={"email"}
+                    avgName={"Дундаж: "}
+                    getRowsSelected={getRowsSelected}
+                    setRowsSelected={setRowsSelected}
+                />
+            </div>
+
             <EditChild
                 setRowsSelected={setRowsSelected}
                 refreshQuestionEdit={refreshQuestionEdit}

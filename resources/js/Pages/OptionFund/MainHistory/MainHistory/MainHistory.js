@@ -831,6 +831,8 @@ const MainHistory = () => {
                 setMissionHistory(res.data.getMissionHistory);
                 if (res.data.unitCommanderApprove != null) {
                     setUnitCommanderApprove(res.data.unitCommanderApprove);
+                } else {
+                    setUnitCommanderApprove([]);
                 }
             })
             .catch((err) => {

@@ -33,22 +33,22 @@ class SkillOfficerController extends Controller
                 }
                 // PDF delete
 
-                $userID = Auth::user()->id;
-                $userFolder = 'public/documents/' . $req->missionID . '/' . $req->eeljID . '/' . $userID;
+                $userID = $deletePdf->pkoUserID;
+                $userFolder = 'public/documents/officerLanguage/' . $req->missionID . '/' . $req->eeljID . '/' . $userID;
 
                 $pdf_64 = $req->documentPdf;
-                $setPDFPathID = $req->pdfName . "_" . $userID;
+                // $setPDFPathID = $req->pdfName . "_" . $userID;
 
                 $extension = explode('/', explode(':', substr($pdf_64, 0, strpos($pdf_64, ';')))[1])[1];
                 $replace = substr($pdf_64, 0, strpos($pdf_64, ',') + 1);
                 $pdf = str_replace($replace, '', $pdf_64);
                 $pdf = str_replace(' ', '+', $pdf);
 
-                $path = $userFolder . "/" . $setPDFPathID . "." . $extension;
+                $path = $userFolder . "/" . $userID . "." . $extension;
 
                 Storage::disk('local')->put($path, base64_decode($pdf));
 
-                $getPDFUrl = '/documents' . '/' . $req->missionID . '/' . $req->eeljID . '/' . $userID . '/' . $setPDFPathID . "." . $extension;
+                $getPDFUrl = '/documents/officerLanguage' . '/' . $req->missionID . '/' . $req->eeljID . '/' . $userID . '/' . $userID . "." . $extension;
             }
 
 
@@ -128,28 +128,28 @@ class SkillOfficerController extends Controller
         try {
             if ($req->has('documentPdf') && strlen($req->documentPdf) > 50) {
                 // PDF delete
-                $deletePdf = OfficerLanguage::find($req->id);
+                $deletePdf = OfficerSkill::find($req->id);
                 if ($deletePdf->documentPdf != "0") {
                     Storage::delete('public' . $deletePdf->documentPdf);
                 }
                 // PDF delete
 
-                $userID = Auth::user()->id;
-                $userFolder = 'public/documents/skill' . $req->missionID . '/' . $req->eeljID . '/' . $userID;
+                $userID = $deletePdf->pkoUserID;
+                $userFolder = 'public/documents/skill/' . $req->missionID . '/' . $req->eeljID . '/' . $userID;
 
                 $pdf_64 = $req->documentPdf;
-                $setPDFPathID = $req->pdfName . "_" . $userID;
+                // $setPDFPathID = "_" . $userID;
 
                 $extension = explode('/', explode(':', substr($pdf_64, 0, strpos($pdf_64, ';')))[1])[1];
                 $replace = substr($pdf_64, 0, strpos($pdf_64, ',') + 1);
                 $pdf = str_replace($replace, '', $pdf_64);
                 $pdf = str_replace(' ', '+', $pdf);
 
-                $path = $userFolder . "/" . $setPDFPathID . "." . $extension;
+                $path = $userFolder . "/" . $userID  . "." . $extension;
 
                 Storage::disk('local')->put($path, base64_decode($pdf));
 
-                $getPDFUrl = '/documents/skill' . '/' . $req->missionID . '/' . $req->eeljID . '/' . $userID . '/' . $setPDFPathID . "." . $extension;
+                $getPDFUrl = '/documents/skill' . '/' . $req->missionID . '/' . $req->eeljID . '/' . $userID . '/' . $userID . "." . $extension;
             }
             $edit = OfficerSkill::find($req->id);
             $edit->missionID = $req->missionID;

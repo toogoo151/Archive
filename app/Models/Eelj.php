@@ -50,6 +50,31 @@ class Eelj extends Model
             );
         }
     }
+    public function getEeljByMissionIDWithThisYear($req){
+        try {
+            $currentYear = now()->year;
+            // $eeljByMission = DB::table("pko_mission_eelj")
+            // ->where("pko_mission_eelj.eeljFinishDate", "=", null)
+            // ->where("pko_mission_eelj.missionID", "=", $req->_missionID)
+            // ->where("pko_mission_eelj.eeljStartDate", "=", DB::raw("DATE_FORMAT(eeljStartDate, '%Y') eeljStartDate"))
+            // ->select("pko_mission_eelj.*",DB::raw("DATE_FORMAT(eeljStartDate, '%Y') eeljStartDate"))
+            // ->get();
+            $eeljByMission = DB::table("pko_mission_eelj")
+            ->whereNull("pko_mission_eelj.eeljFinishDate")  // Correct way to check for NULL
+            ->where("pko_mission_eelj.missionID", $req->_missionID)
+            ->whereRaw("YEAR(pko_mission_eelj.eeljStartDate) = ?", [$currentYear])
+            ->select("pko_mission_eelj.*", DB::raw("DATE_FORMAT(eeljStartDate, '%Y') as eeljStartDate"))
+            ->get();
+            return $eeljByMission;
+        } catch (\Throwable $th) {
+            return response(
+                array(
+                    "status" => "error",
+                    "msg" => "Ээлж татаж чадсангүй."
+                ), 500
+            );
+        }
+    }
 
     public function getEeljOfficerMissionID($req)
     {

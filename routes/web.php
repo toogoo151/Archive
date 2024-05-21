@@ -167,6 +167,11 @@ Route::get("/get/my/comandlal", function(){
     $user = new all_users;
         return $user->getUserComandlal();
 });
+Route::get("/get/comandlal/ID", function(){
+    $user = new all_users;
+        return $user->getComandlalID();
+});
+
 Route::get("/get/my/unit", function(){
     $user = new all_users;
         return $user->getUserUnit();
@@ -220,13 +225,14 @@ Route::post("/delete/unitSub", [UnitSubController::class, "deleteUnitSub"]);
 // UnitSub end
 
 // Admins start
-Route::get("/get/amdins", [AdminController::class, "getAdmins"]);
+Route::post("/get/amdins", [AdminController::class, "getAdmins"]);
 //ЭДЦХАХ-ээс Төрийн цэргийн байгууллагын хэрэглэгчийг асуумж хүсэлтийг давуулж нэмэнх хэсэг
 Route::get("/get/super/admins", [AdminController::class, "getSuperAdmins"]);
 Route::post("/new/super/admin", [AdminController::class, "newSuperAdmin"]);
 Route::post("/edit/super/users", [AdminController::class, "editSuperAdmin"]);
 // Route::post("/delete/super/admin", [AdminController::class, "deleteSuperAdmin"]);
 //ЭДЦХАХ-ээс Төрийн цэргийн байгууллагын хэрэглэгчийг асуумж хүсэлтийг давуулж нэмэнх хэсэг
+
 Route::post("/new/admin", [AdminController::class, "newAdminStore"]);
 Route::post("/edit/units", [AdminController::class, "editUser"]);
 // Route::post("/delete/admin", [AdminController::class, "deleteAdmin"]);
@@ -248,11 +254,13 @@ Route::get("/my/admin/com/id", [AdminController::class, "myAdminComID"]);
 // Admins end
 
 // All admins start
-Route::get("/get/all/amdins", [AllAdminController::class, "getAllAdmins"]);
+Route::post("/get/all/amdins", [AllAdminController::class, "getAllAdmins"]);
 Route::post("/angiruu/shiljuuleh", [AllAdminController::class, "angiruuShiljuuleh"]);
 Route::get("/get/comandlal/users", [AllAdminController::class, "getComandlalUser"]);
 Route::get("/get/dundiin/tuluv", [AllAdminController::class, "getDundiinTuluv"]);
 Route::post("/user/erh/zasah", [AllAdminController::class, "userErhZasah"]);
+
+Route::post("/user/page/by/ten", [AllAdminController::class, "getAllAdminsByTenServerSide"]); // server side туршиж байна.
 // All admins end
 
 // Ranks start --> negneesee hamaaraltai uchraas neg controller deer hiisen
@@ -332,6 +340,12 @@ Route::post("/get/eelj/by/missionID", function(Request $req){
     $eeljByMission = new Eelj();
         return $eeljByMission->getEeljByMissionID($req);
 });
+Route::post("/get/eelj/by/missionID/this/year", function(Request $req){
+    $eeljByMission = new Eelj();
+        return $eeljByMission->getEeljByMissionIDWithThisYear($req);
+});
+
+
 
 
 //Eelj end
@@ -572,6 +586,7 @@ Route::post("get/main/historys", function(Request $req){
     $getMainHistorys = new MainHistory();
         return $getMainHistorys->getMainHistorys($req);
 });
+
 Route::post("/get/count/main", function(Request $req){
     $getCountTsah = new MainHistory();
      return $getCountTsah->getTsahSum($req);
@@ -824,10 +839,11 @@ Route::post("/comission/sport/decline", [ComissionController::class, "sportDecli
 //Comission health -> end
 
 //Pko user question -> Хүсэлт илгээх ЦАХ-ийн боломжтой эсэхийг тодорхойлох зорилгоор асуумж бөглүүлэх хэсэг
-Route::get("/user/question/check", [UserQuestionController::class, "getQuestionCheck"]);
-Route::get("/user/question/wish", [UserQuestionController::class, "getUserWish"]);
+Route::post("/user/question/check", [UserQuestionController::class, "getQuestionCheck"]);
+Route::post("/user/question/wish", [UserQuestionController::class, "getUserWish"]);
 
 Route::post("/new/user/question", [UserQuestionController::class, "newQuestion"]);
+
 Route::post("/new/user/requirements", [UserQuestionController::class, "newRequirements"]);
 Route::get("/get/requirements", [UserQuestionController::class, "getRequirements"]);
 Route::post("/get/question/edit", [UserQuestionController::class, "getQuestionEdit"]);

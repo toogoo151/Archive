@@ -11,10 +11,10 @@ import psylogo from "../../../../../dist/img/PsyLogo3.png";
 import GsmafLogo from "../../../../../dist/img/GsmafLogo.png";
 import Swal from "sweetalert2";
 import AshiglahZaavar from "../../MenuItem/AshiglahZaavar";
-
+import { AppContext } from "../../../../Context/MyContext";
 export default function AsideMenu({ getMissionType, setMissionType }) {
     const navigate = useNavigate();
-
+    const state = useContext(AppContext);
     const [getRankName, setRankName] = useState("");
     const [getFirstName, setFirstName] = useState("");
     const [getImage, setImage] = useState(0);
@@ -86,9 +86,9 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
             .catch((err) => {
                 console.log(err);
             });
-        setRankName(localStorage.getItem("rank"));
-        setFirstName(localStorage.getItem("name"));
-        setImage(localStorage.getItem("userImage"));
+        // setRankName(localStorage.getItem("rank"));
+        // setFirstName(localStorage.getItem("name"));
+        // setImage(localStorage.getItem("userImage"));
     }, []);
 
     const resetContextIsMission = () => {
@@ -122,21 +122,23 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                         }}
                     />
                 </div> */}
-                <img
+                {/* <img
                     src={GsmafLogo}
                     alt="Зэвсэгт хүчний Жанжин штаб"
                     className="brand-image"
                     style={{
                         borderRadius: "1px",
-                        width: "40px",
+                        width: "30px",
                         height: "50px",
                     }}
-                />
+                /> */}
+                {/* <i className="nav-icon fa fa-home" /> */}
                 <span
-                    className="brand-text font-weight-light"
-                    style={{ color: "#FFFFFF" }}
+                    className="brand-text font-weight-bold"
+                    style={{ color: "#FFFFFF", fontSize: 14, paddingLeft: 5 }}
                 >
-                    ЭДЦХАХ
+                    {/* Энхийг дэмжих ажиллагаа */}
+                    ЭНХИЙГ ДЭМЖИХ АЖИЛЛАГАА
                 </span>
                 {/* <div
                     className="row"
@@ -167,7 +169,7 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                     }}
                 >
                     <div className="image">
-                        {getImage == 0 ? (
+                        {state.getUserDataRow.userImage == 0 ? (
                             <img
                                 src={user2}
                                 className="img-circle elevation-2"
@@ -179,7 +181,8 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                         ) : (
                             <img
                                 src={
-                                    "https://psod.maf.gov.mn/storage" + getImage
+                                    "https://psod.maf.gov.mn/storage" +
+                                    state.getUserDataRow.userImage
                                 }
                                 className="img-circle elevation-2"
                                 alt="User Image"
@@ -201,7 +204,11 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                 color: "#FFFFFF",
                             }}
                         >
-                            {getRankName} &nbsp; {getFirstName}
+                            {/* {getRankName} &nbsp; {getFirstName} */}
+                            {userType != "superAdmin" &&
+                                state.getUserDataRow.rank}
+                            &nbsp;
+                            {state.getUserDataRow.name}
                         </a>
                     </div>
                 </div>
@@ -493,13 +500,9 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                             <MenuItem
                                                 url="/pko/super/admin"
                                                 icon="nav-icon fa fa-user"
-                                                menuName="Хэрэглэгч бүртгэх"
+                                                menuName="ТЦБ || Хэрэглэгч бүртгэх"
                                             />
-                                            {/* <MenuItem
-                                                url="/admins"
-                                                icon="nav-icon fa fa-user"
-                                                menuName="Админы бүртгэл"
-                                            /> */}
+
                                             <MenuItem
                                                 url="/all/admins"
                                                 icon="nav-icon fa fa-user"
@@ -800,23 +803,33 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                             <MenuItem
                                                 url="/officer/back/sport/approve"
                                                 icon="nav-icon fa fa-dumbbell"
-                                                menuName="Биеийн тамирын шалгалт"
+                                                menuName="Биеийн тамирын бэлтгэл"
                                             />
                                             <MenuItem
                                                 url="/officer/back/language/approve"
-                                                icon="nav-icon fa fa-newspaper-o"
-                                                menuName="Англи хэлний шалгалт"
+                                                icon="nav-icon fa fa-language"
+                                                menuName="Гадаад хэлний бэлтгэл"
                                             />
                                             <MenuItem
                                                 url="/officer/back/driver/approve"
-                                                icon="nav-icon fa fa-newspaper-o"
-                                                menuName="Жолооны шалгалт"
+                                                icon="nav-icon fa fa-car"
+                                                menuName="Замын хөдөлгөөний дүрэм, жолоодлого"
                                             />
 
                                             <MenuItem
                                                 url="/officer/back/skill/approve"
-                                                icon="nav-icon fa fa-newspaper-o"
-                                                menuName="Ур чадварын шалгалт"
+                                                icon="nav-icon fa fa-puzzle-piece"
+                                                menuName="Мэргэжлийн ур чадвар"
+                                            />
+                                            <MenuItem
+                                                url="#"
+                                                icon="nav-icon fa fa-balance-scale"
+                                                menuName="Хууль эрх зүйн бэлтгэл "
+                                            />
+                                            <MenuItem
+                                                url="#"
+                                                icon="nav-icon fa fa-calendar-check-o"
+                                                menuName="Шийдвэр"
                                             />
                                             {/* <MenuItem
                                                 url="/com/main/history"
@@ -1083,13 +1096,14 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                             <MenuItem
                                                 url="/pko/admin"
                                                 icon="nav-icon fa fa-user"
-                                                menuName="Хэрэглэгч бүртгэх"
+                                                menuName="Ангийн админ бүртгэх"
                                             />
                                             <MenuItem
                                                 url="/all/admins"
                                                 icon="nav-icon fa fa-user"
                                                 menuName="Бүх хэрэглэгч"
                                             />
+                                            {/* commandlal */}
                                             {/* <MenuItem
                                                 url="/comandlal/users"
                                                 icon="nav-icon fa fa-user"
@@ -1259,8 +1273,9 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                             <MenuItem
                                                 url="/pko/admin"
                                                 icon="nav-icon fa fa-user"
-                                                menuName="Хэрэглэгч бүртгэх"
+                                                menuName="Админы бүртгэл"
                                             />
+
                                             {/* <MenuItem
                                                 url="/admins"
                                                 icon="nav-icon fa fa-user"
@@ -1384,7 +1399,7 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                             <MenuItem
                                                 url="/main/history"
                                                 icon="nav-icon fa fa-archive"
-                                                menuName="ЦАХ-ийн дэлгэрэнгүй"
+                                                menuName="ЦАХ-ийн оролцоо"
                                             />
 
                                             {/* <MenuItem
@@ -1397,11 +1412,12 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                                 icon="nav-icon fa fa-history"
                                                 menuName="Ажиллагааны түүх"
                                             /> */}
-                                            <MenuItem
+
+                                            {/* <MenuItem
                                                 url="/mission/unit/history"
                                                 icon="nav-icon fa fa-history"
                                                 menuName="Ажиллагааны түүх"
-                                            />
+                                            /> */}
                                         </ul>
                                     </li>
                                     {/* <li className="nav-item">
@@ -1547,10 +1563,15 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                             className="nav nav-treeview"
                                             style={{ paddingLeft: "10px" }}
                                         >
-                                            <MenuItem
+                                            {/* <MenuItem
                                                 url="/pko/admin"
                                                 icon="nav-icon fa fa-user"
-                                                menuName="Хэрэглэгч бүртгэх"
+                                                menuName="Ангийн админ бүртгэх"
+                                            /> */}
+                                            <MenuItem
+                                                url="/all/admins"
+                                                icon="nav-icon fa fa-user"
+                                                menuName="Бүх хэрэглэгч"
                                             />
                                             {/* <MenuItem
                                                 url="/comandlal/users"
@@ -2173,11 +2194,11 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                                 paddingLeft: "10px",
                                             }}
                                         >
-                                            <MenuItem
+                                            {/* <MenuItem
                                                 url="/all/admins"
                                                 icon="nav-icon fa fa-user"
                                                 menuName="Бүх хэрэглэгч"
-                                            />
+                                            /> */}
                                             <MenuItem
                                                 url="/main/history"
                                                 icon="nav-icon fa fa-archive"

@@ -30,9 +30,9 @@ export default function HeaderMenu(props) {
     const state = useContext(AppContext);
     const [getRows, setRows] = useState([]);
     const [loadData, setData] = useState([]);
-    const [getRankName, setRankName] = useState(localStorage.getItem("rank"));
-    const [getFirstName, setFirstName] = useState(localStorage.getItem("name"));
-    const [getUserId, setUserId] = useState(localStorage.getItem("userID"));
+    // const [getRankName, setRankName] = useState(localStorage.getItem("rank"));
+    // const [getFirstName, setFirstName] = useState(localStorage.getItem("name"));
+    // const [getUserId, setUserId] = useState(localStorage.getItem("userID"));
 
     // const [getnotify, setNotify] = useState("");
 
@@ -434,7 +434,9 @@ export default function HeaderMenu(props) {
                                                         style={{
                                                             backgroundColor:
                                                                 row.status.includes(
-                                                                    getUserId
+                                                                    state
+                                                                        .getUserDataRow
+                                                                        .id
                                                                 )
                                                                     ? "#FCF3CF"
                                                                     : "white",
@@ -521,7 +523,12 @@ export default function HeaderMenu(props) {
                         <i className="fa fa-user" />
                         &nbsp; &nbsp;
                         <span className="glyphicon glyphicon-user" />
-                        {getRankName} &nbsp; {getFirstName}
+                        {userType != "unitUser" &&
+                            userType != "superAdmin" &&
+                            state.getUserDataRow.userUnitName}{" "}
+                        &nbsp;{" "}
+                        {userType != "superAdmin" && state.getUserDataRow.rank}{" "}
+                        &nbsp; {state.getUserDataRow.name}
                         {/* {getRankName.map((el) => el.shortRank)}  */}
                         {/* {varAdminName} */}
                         <span className="caret" />

@@ -15,6 +15,19 @@ import { AppContext } from "../../../../Context/MyContext";
 const PkoAdmin = (props) => {
     const state = useContext(AppContext);
     const [users, setUsers] = useState([]);
+
+    const [getSystemAllAdmins, setSystemAllAdmins] = useState(0);
+    const [getComandlalAdmins, setComandlalAdmins] = useState(0);
+    const [getUnitAdmins, setUnitAdmins] = useState(0);
+    const [getOtherAdmins, setOtherAdmins] = useState(0);
+
+    const [getAdminsByType, setAdminsByType] = useState(
+        userType == "superAdmin"
+            ? "allAdmin"
+            : userType == "gsmafAdmin"
+            ? "comandlalAdmin"
+            : ""
+    ); // allAdmin, comandlalAdmin, unitAdmin, otherAdmin
     // const [getRowSelectedIndex, setRowSelectedIndex] = useState(-1);
     const [getRowsSelected, setRowsSelected] = useState([]); // row clear хийж байгаа
     const [clickedRowData, setclickedRowData] = useState([]);
@@ -42,13 +55,23 @@ const PkoAdmin = (props) => {
         if (getRowsSelected[0] != undefined) {
             setIsEditBtnClick(false);
             setclickedRowData(users[getRowsSelected[0]]);
+            console.log(users[getRowsSelected[0]]);
         }
     }, [getRowsSelected]);
+    useEffect(() => {
+        refreshUsers();
+    }, [getAdminsByType]);
     const refreshUsers = () => {
         axios
-            .get("/get/amdins")
+            .post("/get/amdins", {
+                getAdminsByType: getAdminsByType,
+            })
             .then((res) => {
-                setUsers(res.data);
+                setSystemAllAdmins(res.data.allSysytemAdmins);
+                setComandlalAdmins(res.data.comandlalAdmins);
+                setUnitAdmins(res.data.allUnitAdmin);
+                setOtherAdmins(res.data.otherSystemAdmins);
+                setUsers(res.data.adminsData);
             })
             .catch((err) => {
                 console.log(err);
@@ -89,7 +112,7 @@ const PkoAdmin = (props) => {
         setRowsSelected([]);
         if (users[getRowsSelected[0]].id != "") {
             Swal.fire({
-                title: "Та шилжүүлэхдээ итгэлтэй байна уу?",
+                title: "Та хүний нөөцийн мэдэлд шилжүүлэхдээ итгэлтэй байна уу?",
                 showCancelButton: true,
                 confirmButtonText: `Тийм`,
                 cancelButtonText: `Үгүй`,
@@ -125,80 +148,87 @@ const PkoAdmin = (props) => {
     };
 
     return (
-        <div>
-            {/* {state.getMissionRowID} {state.getEeljRowID} */}
+        <>
+            {userType != "comandlalAdmin" && (
+                <div
+                    className="info-box col d-flex flex-column"
+                    style={{
+                        paddingTop: "25px",
+                        paddingBottom: "0px",
+                    }}
+                >
+                    <div className="row px-3">
+                        <div className="col-lg-3 col-12 col-sm-6">
+                            <div
+                                className="bg-info small-box d-flex flex-column"
+                                style={{ height: "80%" }}
+                            >
+                                <div className="inner">
+                                    <h3>{getSystemAllAdmins}</h3>
+                                    <p>НИЙТ СИСТЕМИЙН АДМИН</p>
+                                </div>
+                                <div className="icon">
+                                    <i className="fas fa-users" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-lg-3 col-12 col-sm-6">
+                            <div
+                                className="bg-info small-box d-flex flex-column"
+                                style={{ height: "80%" }}
+                            >
+                                <div className="inner">
+                                    <h3>{getComandlalAdmins}</h3>
+                                    <p>КОМАНДЛАЛЫН АДМИН</p>
+                                </div>
+                                <div className="icon">
+                                    <i className="fas fa-users-cog" />
+                                </div>
+                            </div>
+                        </div>
 
-            <MUIDatatable
-                data={users}
-                setdata={setUsers}
-                columns={columns}
-                costumToolbar={
-                    <>
-                        {userType == "superAdmin" ? (
-                            <CustomToolbar
-                                title={"ХЭРЭГЛЭГЧИЙН БҮРТГЭЛ"}
-                                btnClassName={"btn btn-success"}
-                                modelType={"modal"}
-                                dataTargetID={"#adminNew"}
-                                spanIconClassName={"fas fa-solid fa-plus"}
-                                buttonName={"НЭМЭХ"}
-                                // btnInsert={btnInsert}
-                                excelDownloadData={users}
-                                excelHeaders={excelHeaders}
-                                isHideInsert={true}
-                            />
-                        ) : (
-                            <>
-                                {isUserAddButton === 1 ? (
-                                    <CustomToolbar
-                                        title={"ХЭРЭГЛЭГЧИЙН БҮРТГЭЛ"}
-                                        btnClassName={"btn btn-success"}
-                                        modelType={"modal"}
-                                        dataTargetID={"#adminNew"}
-                                        spanIconClassName={
-                                            "fas fa-solid fa-plus"
-                                        }
-                                        buttonName={"НЭМЭХ"}
-                                        // btnInsert={btnInsert}
-                                        excelDownloadData={users}
-                                        excelHeaders={excelHeaders}
-                                        isHideInsert={true}
-                                    />
-                                ) : (
-                                    <CustomToolbar
-                                        title={"ХЭРЭГЛЭГЧИЙН БҮРТГЭЛ"}
-                                        btnClassName={"btn btn-success"}
-                                        modelType={"modal"}
-                                        dataTargetID={"#adminNew"}
-                                        spanIconClassName={
-                                            "fas fa-solid fa-plus"
-                                        }
-                                        buttonName={"НЭМЭХ"}
-                                        // btnInsert={btnInsert}
-                                        excelDownloadData={users}
-                                        excelHeaders={excelHeaders}
-                                        isHideInsert={false}
-                                    />
-                                )}
-                            </>
-                        )}
-                    </>
-                }
-                btnEdit={btnEdit}
-                modelType={showModal}
-                editdataTargetID={"#userEdit"}
-                // btnDelete={btnDelete}
-                btnHuman={fn_send_to_noots}
-                isHideHuman={true}
-                avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
-                avgColumnName={"email"} //
-                avgName={"Дундаж: "}
-                getRowsSelected={getRowsSelected}
-                setRowsSelected={setRowsSelected}
-                isHideDelete={false}
-                isHideEdit={true}
-            />
+                        <div className="col-lg-3 col-12 col-sm-6">
+                            <div
+                                className="bg-info small-box d-flex flex-column"
+                                style={{ height: "80%" }}
+                            >
+                                <div className="inner">
+                                    <h3>{getUnitAdmins}</h3>
+                                    <p>АНГИЙН АДМИН </p>
+                                </div>
+                                <div className="icon">
+                                    <i className="fas fa-user-friends" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-lg-3 col-12 col-sm-6">
+                            <div
+                                className="bg-info small-box d-flex flex-column"
+                                style={{ height: "80%" }}
+                            >
+                                <div className="inner">
+                                    <h3>{getOtherAdmins}</h3>
+                                    <p>БУСАД </p>
+                                    <p style={{ marginTop: -15 }}>
+                                        СИСТЕМИЙН АДМИНУУД
+                                    </p>
+                                </div>
+                                <div className="icon">
+                                    <i className="fas fas fa-user-check" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    {/* {userType} */}
+                    {/* <PkoAdminEdit
+            setRowsSelected={setRowsSelected}
+            refreshUsers={refreshUsers}
+            changeDataRow={clickedRowData}
+            isEditBtnClick={isEditBtnClick}
+        /> */}
+                </div>
+            )}
             {/* <PkoAdminNew refreshUsers={refreshUsers} /> */}
             {userType == "unitAdmin" ? (
                 <>
@@ -229,14 +259,159 @@ const PkoAdmin = (props) => {
                     )}
                 </>
             )}
-            {/* {userType} */}
-            {/* <PkoAdminEdit
-                setRowsSelected={setRowsSelected}
-                refreshUsers={refreshUsers}
-                changeDataRow={clickedRowData}
-                isEditBtnClick={isEditBtnClick}
-            /> */}
-        </div>
+
+            <div className="info-box">
+                <div className="col-md-12">
+                    <div className="row">
+                        <div className="col-md-3">
+                            {/* <div className="input-group-prepend">
+                                    <span className="input-group-text">
+                                        Командлал:
+                                    </span>
+                                </div> */}
+                            {userType != "comandlalAdmin" && (
+                                <select
+                                    className="form-control"
+                                    value={getAdminsByType}
+                                    onChange={(e) => {
+                                        setAdminsByType(e.target.value);
+                                    }}
+                                >
+                                    {userType == "superAdmin" && (
+                                        <>
+                                            <option value="allAdmin">
+                                                Бүх админ
+                                            </option>
+                                            <option value="comandlalAdmin">
+                                                Командлал админ
+                                            </option>
+                                            <option value="unitAdmin">
+                                                Ангийн админ
+                                            </option>
+                                            <option value="otherAdmin">
+                                                Бусад админ
+                                            </option>
+                                        </>
+                                    )}
+                                    {userType == "gsmafAdmin" && (
+                                        <>
+                                            <option value="comandlalAdmin">
+                                                Командлал админ
+                                            </option>
+                                            <option value="unitAdmin">
+                                                Ангийн админ
+                                            </option>
+                                        </>
+                                    )}
+                                </select>
+                            )}
+                        </div>
+                        <div className="col-md-9">
+                            <h1
+                                className="text-center"
+                                style={{ paddingTop: 5 }}
+                            >
+                                {getAdminsByType == "allAdmin"
+                                    ? "Бүх админ"
+                                    : getAdminsByType == "comandlalAdmin"
+                                    ? "Командлал админ"
+                                    : getAdminsByType == "unitAdmin"
+                                    ? "Ангийн админ"
+                                    : getAdminsByType == "otherAdmin" &&
+                                      "Бусад админ"}
+                            </h1>
+                            {userType == "comandlalAdmin" && (
+                                <h1>Харьяа ангийн админууд</h1>
+                            )}
+                        </div>
+                    </div>
+                    <div
+                        className="row"
+                        style={{
+                            overflow: "scroll",
+                            marginBottom: "10px",
+                        }}
+                    >
+                        <MUIDatatable
+                            data={users}
+                            setdata={setUsers}
+                            columns={columns}
+                            costumToolbar={
+                                <>
+                                    {userType == "superAdmin" ? (
+                                        <CustomToolbar
+                                            title={"АДМИНЫ БҮРТГЭЛ"}
+                                            btnClassName={"btn btn-success"}
+                                            modelType={"modal"}
+                                            dataTargetID={"#adminNew"}
+                                            spanIconClassName={
+                                                "fas fa-solid fa-plus"
+                                            }
+                                            buttonName={"НЭМЭХ"}
+                                            // btnInsert={btnInsert}
+                                            excelDownloadData={users}
+                                            excelHeaders={excelHeaders}
+                                            isHideInsert={true}
+                                        />
+                                    ) : (
+                                        <>
+                                            {isUserAddButton === 1 ? (
+                                                <CustomToolbar
+                                                    title={"АДМИНЫ БҮРТГЭЛ"}
+                                                    btnClassName={
+                                                        "btn btn-success"
+                                                    }
+                                                    modelType={"modal"}
+                                                    dataTargetID={"#adminNew"}
+                                                    spanIconClassName={
+                                                        "fas fa-solid fa-plus"
+                                                    }
+                                                    buttonName={"НЭМЭХ"}
+                                                    // btnInsert={btnInsert}
+                                                    excelDownloadData={users}
+                                                    excelHeaders={excelHeaders}
+                                                    isHideInsert={true}
+                                                />
+                                            ) : (
+                                                <CustomToolbar
+                                                    title={"АДМИНЫ БҮРТГЭЛ"}
+                                                    btnClassName={
+                                                        "btn btn-success"
+                                                    }
+                                                    modelType={"modal"}
+                                                    dataTargetID={"#adminNew"}
+                                                    spanIconClassName={
+                                                        "fas fa-solid fa-plus"
+                                                    }
+                                                    buttonName={"НЭМЭХ"}
+                                                    // btnInsert={btnInsert}
+                                                    excelDownloadData={users}
+                                                    excelHeaders={excelHeaders}
+                                                    isHideInsert={false}
+                                                />
+                                            )}
+                                        </>
+                                    )}
+                                </>
+                            }
+                            btnEdit={btnEdit}
+                            modelType={showModal}
+                            editdataTargetID={"#userEdit"}
+                            // btnDelete={btnDelete}
+                            btnHuman={fn_send_to_noots} // хүний нөөцөд шилжүүлэх
+                            isHideHuman={false} // хүний нөөцөд шилжүүлэх
+                            avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
+                            avgColumnName={"email"} //
+                            avgName={"Дундаж: "}
+                            getRowsSelected={getRowsSelected}
+                            setRowsSelected={setRowsSelected}
+                            isHideDelete={false}
+                            isHideEdit={true}
+                        />
+                    </div>
+                </div>
+            </div>
+        </>
     );
 };
 
@@ -291,48 +466,49 @@ const columns = [
             },
         },
     },
-    {
-        name: "image",
-        label: "Цээж зураг",
-        options: {
-            filter: true,
-            sort: true,
-            setCellHeaderProps: (value) => {
-                return {
-                    style: {
-                        backgroundColor: "#5DADE2",
-                        color: "white",
-                        width: 100,
-                    },
-                };
-            },
-            customBodyRender: (value, tableMeta, updateValue) => {
-                return (
-                    <div
-                        style={{
-                            textAlign: "center",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                    >
-                        <img
-                            className="image css-img-object"
-                            src={
-                                value != 0
-                                    ? "https://psod.maf.gov.mn/storage" + value
-                                    : "https://psod.maf.gov.mn/storage/profile/No-photo.jpg"
-                            }
-                            style={{
-                                width: "65px",
-                                height: "70px",
-                            }}
-                            onClick={() => profile(value)}
-                        />
-                    </div>
-                );
-            },
-        },
-    },
+    // {
+    //     name: "image",
+    //     label: "Цээж зураг",
+    //     options: {
+    //         filter: true,
+    //         sort: true,
+    //         setCellHeaderProps: (value) => {
+    //             return {
+    //                 style: {
+    //                     backgroundColor: "#5DADE2",
+    //                     color: "white",
+    //                     width: 100,
+    //                 },
+    //             };
+    //         },
+    //         customBodyRender: (value, tableMeta, updateValue) => {
+    //             return (
+    //                 <div
+    //                     style={{
+    //                         textAlign: "center",
+    //                         justifyContent: "center",
+    //                         alignItems: "center",
+    //                     }}
+    //                 >
+    //                     <img
+    //                         className="image css-img-object"
+    //                         src={
+    //                             value != 0
+    //                                 ? "https://psod.maf.gov.mn/storage" + value
+    //                                 : "https://psod.maf.gov.mn/storage/profile/No-photo.jpg"
+    //                         }
+    //                         // https://psod.maf.gov.mn/storage
+    //                         style={{
+    //                             width: "65px",
+    //                             height: "70px",
+    //                         }}
+    //                         onClick={() => profile(value)}
+    //                     />
+    //                 </div>
+    //             );
+    //         },
+    //     },
+    // },
     {
         name: "comandlal",
         label: "Командлал",
@@ -340,7 +516,7 @@ const columns = [
             filter: true,
             sort: true,
             display:
-                userType == "comandlalAdmin" || userType == "unitAdmin"
+                userType == "comandlalAdmin" || userType == "gsmaf"
                     ? false
                     : true,
             setCellHeaderProps: (value) => {
@@ -439,59 +615,8 @@ const columns = [
         },
     },
     {
-        name: "age",
-        label: "Нас",
-        options: {
-            filter: true,
-            sort: false,
-            setCellHeaderProps: (value) => {
-                return {
-                    style: {
-                        backgroundColor: "#5DADE2",
-                        color: "white",
-                        width: 150,
-                    },
-                };
-            },
-        },
-    },
-    {
         name: "genderName",
         label: "Хүйс",
-        options: {
-            filter: true,
-            sort: false,
-            setCellHeaderProps: (value) => {
-                return {
-                    style: {
-                        backgroundColor: "#5DADE2",
-                        color: "white",
-                        width: 50,
-                    },
-                };
-            },
-        },
-    },
-    {
-        name: "foreignPass",
-        label: "Гадаад паспорт",
-        options: {
-            filter: true,
-            sort: false,
-            setCellHeaderProps: (value) => {
-                return {
-                    style: {
-                        backgroundColor: "#5DADE2",
-                        color: "white",
-                        width: 50,
-                    },
-                };
-            },
-        },
-    },
-    {
-        name: "foreignFinishDate",
-        label: "Гадаад паспортын дуусах хугацаа",
         options: {
             filter: true,
             sort: false,
@@ -543,6 +668,22 @@ const columns = [
     {
         name: "position",
         label: "Албан тушаал",
+        options: {
+            filter: true,
+            sort: false,
+            setCellHeaderProps: (value) => {
+                return {
+                    style: {
+                        backgroundColor: "#5DADE2",
+                        color: "white",
+                    },
+                };
+            },
+        },
+    },
+    {
+        name: "adminPermision",
+        label: "Админы эрх",
         options: {
             filter: true,
             sort: false,

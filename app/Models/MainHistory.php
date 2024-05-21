@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class MainHistory extends Model
 {
@@ -144,6 +145,13 @@ class MainHistory extends Model
 
     public function getMainHistorys($req){
         try {
+            $currentYear = now()->year;
+        $ageCalculationSql = DB::raw("
+            CASE
+                WHEN SUBSTRING(all_users.rd, 3, 2) <= 99 AND SUBSTRING(all_users.rd, 3, 2) >= 20 THEN $currentYear - (1900 + CAST(SUBSTRING(all_users.rd, 3, 2) AS UNSIGNED))
+                WHEN SUBSTRING(all_users.rd, 3, 2) < 20 THEN $currentYear - (2000 + CAST(SUBSTRING(all_users.rd, 3, 2) AS UNSIGNED))
+            END as age
+        ");
             if(Auth::user()->user_type == "superAdmin"){
                 $getMainHistory = DB::table("pko_main_history")
                 ->where("pko_main_history.missionID", "=", $req->_missionID)
@@ -204,7 +212,7 @@ class MainHistory extends Model
                         $query->on("pko_main_history.id", "=", "pko_sport_changed.pkoMainHistoryID");
                     });
                 })
-                ->select("pko_main_history.*", "all_users.firstName","all_users.lastName","all_users.rd", "all_users.age", "tb_gender.genderName", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                ->select("pko_main_history.*", "all_users.firstName","all_users.lastName","all_users.rd", $ageCalculationSql, "tb_gender.genderName", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
                 ->orderBy("pko_main_history.sportScore", "DESC")
                 ->orderBy(function ($query) {
                     $query->select("sportType4")
@@ -269,7 +277,7 @@ class MainHistory extends Model
                 ->join("tb_ranks", function($query){
                     $query->on("all_users.rankID", "=", "tb_ranks.id");
                 })
-                ->select("pko_main_history.*", "all_users.firstName", "all_users.lastName", "all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                ->select("pko_main_history.*", "all_users.firstName", "all_users.lastName", "all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName", $ageCalculationSql)
                 ->orderBy("pko_main_history.sportScore", "DESC")
                 ->get();
             return $getMainHistory;
@@ -323,7 +331,7 @@ class MainHistory extends Model
                 ->join("tb_ranks", function($query){
                     $query->on("all_users.rankID", "=", "tb_ranks.id");
                 })
-                ->select("pko_main_history.*", "all_users.firstName", "all_users.lastName", "all_users.rd", "tb_ranks.shortRank",  "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                ->select("pko_main_history.*", "all_users.firstName", "all_users.lastName", "all_users.rd", "tb_ranks.shortRank",  "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName", $ageCalculationSql)
                 ->orderBy("pko_main_history.sportScore", "DESC")
                 ->get();
             return $getMainHistory;
@@ -367,7 +375,7 @@ class MainHistory extends Model
                     $query->on("all_users.rankID", "=", "tb_ranks.id");
                 })
                 ->leftJoin("pko_heltes_decline_description", "pko_heltes_decline_description.pkoMainHistoryID", "=", "pko_main_history.id")
-                ->select("pko_main_history.*", "all_users.firstName", "all_users.lastName", "all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_heltes_decline_description.heltesPdf", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                ->select("pko_main_history.*", "all_users.firstName", "all_users.lastName", "all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_heltes_decline_description.heltesPdf", "pko_missions.missionName", "pko_mission_eelj.eeljName", $ageCalculationSql)
                 ->orderBy("tb_comandlal.id", "ASC")
                 ->orderBy("tb_unit.id", "ASC")
                 ->orderBy("pko_main_history.id", "ASC")
@@ -409,7 +417,7 @@ class MainHistory extends Model
                     $query->on("all_users.rankID", "=", "tb_ranks.id");
                 })
                 ->leftJoin("pko_heltes_decline_description", "pko_heltes_decline_description.pkoMainHistoryID", "=", "pko_main_history.id")
-                ->select("pko_main_history.*", "all_users.firstName", "all_users.lastName", "all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_heltes_decline_description.heltesPdf", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                ->select("pko_main_history.*", "all_users.firstName", "all_users.lastName", "all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_heltes_decline_description.heltesPdf", "pko_missions.missionName", "pko_mission_eelj.eeljName", $ageCalculationSql)
                 ->orderBy("tb_comandlal.id", "ASC")
                 ->orderBy("tb_unit.id", "ASC")
                 ->orderBy("pko_main_history.id", "ASC")
@@ -456,7 +464,7 @@ class MainHistory extends Model
                         ->join("tb_ranks", function($query){
                             $query->on("all_users.rankID", "=", "tb_ranks.id");
                         })
-                        ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                        ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName", $ageCalculationSql)
                         ->get();
                     return $getMainHistory;
                 } else {
@@ -494,7 +502,7 @@ class MainHistory extends Model
                         ->join("tb_ranks", function($query){
                             $query->on("all_users.rankID", "=", "tb_ranks.id");
                         })
-                        ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                        ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName", $ageCalculationSql)
                         ->get();
                     return $getMainHistory;
                 }
@@ -537,7 +545,7 @@ class MainHistory extends Model
                 ->join("tb_ranks", function($query){
                     $query->on("all_users.rankID", "=", "tb_ranks.id");
                 })
-                ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName", $ageCalculationSql)
                 ->get();
             return $getMainHistory;
                 } else {
@@ -575,7 +583,7 @@ class MainHistory extends Model
                 ->join("tb_ranks", function($query){
                     $query->on("all_users.rankID", "=", "tb_ranks.id");
                 })
-                ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName")
+                ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName", $ageCalculationSql)
                 ->get();
             return $getMainHistory;
                 }
@@ -635,7 +643,7 @@ class MainHistory extends Model
                             $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                         }
                     })
-                    ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "all_users.age", "all_users.gender", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_sport_changed.averageScore as childScore", "tb_gender.genderName", "pko_missions.missionName", "pko_mission_eelj.eeljName", DB::raw("DATE(pko_health.created_at) as healthDate"))
+                    ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", $ageCalculationSql, "all_users.gender", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_sport_changed.averageScore as childScore", "tb_gender.genderName", "pko_missions.missionName", "pko_mission_eelj.eeljName", DB::raw("DATE(pko_health.created_at) as healthDate"))
                     // ->orderBy("pko_main_history.sportScore",function($query){
                     //     $query->on("DESC");
                     // })
@@ -694,7 +702,7 @@ class MainHistory extends Model
                             $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                         }
                     })
-                    ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "all_users.age", "all_users.gender", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_sport_changed.averageScore as childScore", "tb_gender.genderName", "pko_missions.missionName", "pko_mission_eelj.eeljName", DB::raw("DATE(pko_health.created_at) as healthDate"))
+                    ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", $ageCalculationSql, "all_users.gender", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_sport_changed.averageScore as childScore", "tb_gender.genderName", "pko_missions.missionName", "pko_mission_eelj.eeljName", DB::raw("DATE(pko_health.created_at) as healthDate"))
                     // ->orderBy("pko_main_history.sportScore", "DESC")
                     // ->orderBy("pko_sport_score.sportScore", "DESC")
                     ->orderByRaw("DATE(pko_health.created_at) DESC, all_users.age ASC")
@@ -752,7 +760,7 @@ class MainHistory extends Model
                             $query->whereDate("pko_health.created_at", "=", $req->_healthDate);
                         }
                     })
-                    ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", "all_users.age", "all_users.gender", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName",   "tb_gender.genderName", "pko_missions.missionName", "pko_mission_eelj.eeljName", DB::raw("DATE(pko_health.created_at) as healthDate"))
+                    ->select("pko_main_history.*", "all_users.lastName", "all_users.firstName","all_users.rd", $ageCalculationSql, "all_users.gender", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName",   "tb_gender.genderName", "pko_missions.missionName", "pko_mission_eelj.eeljName", DB::raw("DATE(pko_health.created_at) as healthDate"))
                     // ->orderBy("pko_main_history.sportScore", "DESC")
                     // ->orderBy("pko_sport_score.sportScore", "DESC")
                     ->orderByRaw("DATE(pko_health.created_at) DESC, all_users.age ASC")
@@ -824,7 +832,7 @@ class MainHistory extends Model
                 ->join("tb_gender", function($query){
                     $query->on("all_users.gender", "=", "tb_gender.id");
                 })
-                ->select("pko_main_history.*", "all_users.firstName","all_users.lastName","all_users.rd", "all_users.age", "tb_gender.genderName", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName", "pko_sport_changed.averageScore as childScore")
+                ->select("pko_main_history.*", "all_users.firstName","all_users.lastName","all_users.rd", $ageCalculationSql, "tb_gender.genderName", "tb_ranks.shortRank", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "pko_missions.missionName", "pko_mission_eelj.eeljName", "pko_sport_changed.averageScore as childScore")
                 ->orderBy("pko_main_history.sportScore", "DESC")
                 // ->orderBy("pko_sport_score.sportScore", "DESC")
                 ->orderBy("pko_sport_changed.sportType4", "DESC")

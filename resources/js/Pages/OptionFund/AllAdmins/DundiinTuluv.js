@@ -9,6 +9,7 @@ const DundiinTuluv = () => {
     const [getDataRowLenght, setGetDataRowLenght] = useState(-1);
     const [beforeIndex, setBeforeIndex] = useState(-1);
     const [ranks, setRanks] = useState([]);
+
     useEffect(() => {
         refreshUsers();
     }, []);
@@ -50,29 +51,184 @@ const DundiinTuluv = () => {
     const handleChangeNew = (event, data, rowIndex) => {
         setChangeDataRow(data);
         setGetDataRowLenght(rowIndex);
-        event.nativeEvent.path[2].children[rowIndex].style.backgroundColor =
-            "#ADD8E6";
-        if (rowIndex != beforeIndex) {
-            setBeforeIndex(rowIndex);
-            event.nativeEvent.path[2].children[
-                beforeIndex
-            ].style.backgroundColor = "";
-        }
     };
+    const columns = [
+        {
+            text: "№",
+            key: "id",
+            cell: (row, index) => {
+                if (index === 0) {
+                    if (changeDataRow.id === row.id && getDataRowLenght > -1) {
+                        return (
+                            <div className="text-center pointer-on-hover">
+                                <i className="fa fa-check fa animated-check text-success"></i>
+                            </div>
+                        );
+                    }
+                    return (
+                        <div className="text-center pointer-on-hover">
+                            {parseInt(index) + 1}
+                        </div>
+                    );
+                } else {
+                    if (changeDataRow.id === row.id && getDataRowLenght > -1) {
+                        return (
+                            <div className="pointer-on-hover">
+                                <i className="fa fa-check fa animated-check text-success"></i>
+                            </div>
+                        );
+                    }
+                    return (
+                        <div className="text-center pointer-on-hover">
+                            {parseInt(index) + 1}
+                        </div>
+                    );
+                }
+            },
+            align: "center",
+            sortable: true,
+            className: "small-column-id pointer-on-hover",
+        },
+
+        {
+            text: "Цол",
+            key: "shortRank",
+            align: "center",
+            sortable: true,
+            className: "text-center pointer-on-hover",
+            cell: (row) => {
+                return (
+                    <div
+                        className="text-center pointer-on-hover"
+                        style={{ width: "100px" }}
+                    >
+                        {row.shortRank}
+                    </div>
+                );
+            },
+        },
+        {
+            text: "РД:",
+            key: "rd",
+            align: "center",
+            sortable: true,
+            className: "text-center pointer-on-hover",
+            cell: (row) => {
+                return (
+                    <div className="text-center" style={{ width: "100px" }}>
+                        {row.rd}
+                    </div>
+                );
+            },
+        },
+        {
+            text: "Хүйс",
+            key: "genderName",
+            align: "center",
+            sortable: true,
+            className: "text-center pointer-on-hover",
+            cell: (row) => {
+                return (
+                    <div className="text-center" style={{ width: "100px" }}>
+                        {row.genderName}
+                    </div>
+                );
+            },
+        },
+        {
+            text: "Овог",
+            key: "lastName",
+            align: "center",
+            sortable: true,
+            className: "text-center pointer-on-hover",
+            cell: (row) => {
+                return (
+                    <div className="text-center" style={{ width: "100px" }}>
+                        {row.lastName}
+                    </div>
+                );
+            },
+        },
+        {
+            text: "Нэр",
+            key: "firstName",
+            align: "center",
+            sortable: true,
+            className: "text-center pointer-on-hover",
+            cell: (row) => {
+                return (
+                    <div className="text-center" style={{ width: "100px" }}>
+                        {row.firstName}
+                    </div>
+                );
+            },
+        },
+        {
+            text: "Утасны дугаар",
+            key: "phone",
+            align: "center",
+            sortable: true,
+            className: "text-center pointer-on-hover",
+            cell: (row) => {
+                return (
+                    <div className="text-center" style={{ width: "100px" }}>
+                        {row.phone}
+                    </div>
+                );
+            },
+        },
+        {
+            text: "Цахим хаяг",
+            key: "email",
+            align: "center",
+            sortable: true,
+            className: "text-center pointer-on-hover",
+            cell: (row) => {
+                return (
+                    <div className="text-center" style={{ width: "100px" }}>
+                        {row.email}
+                    </div>
+                );
+            },
+        },
+        {
+            text: "Албан тушаал",
+            key: "position",
+            align: "center",
+            sortable: true,
+            className: "text-center pointer-on-hover",
+            cell: (row) => {
+                return (
+                    <div className="text-center" style={{ width: "100px" }}>
+                        {row.position}
+                    </div>
+                );
+            },
+        },
+    ];
     return (
         <>
             <div className="row">
                 <div className="info-box">
                     <div className="col-md-12">
                         <h1 className="text-center">
-                            Хүний нөөцийн мэдэлд шилжсэн ЦАХ
+                            Хүний нөөцийн мэдэлд шилжсэн, анги байгууллага руу
+                            томилогдоогүй ЦАХ
                         </h1>
-                        <ReactDatatable
-                            config={config}
-                            columns={columns}
-                            records={users}
-                            onRowClicked={handleChangeNew}
-                        />
+                        <div
+                            style={{
+                                whiteSpace: "nowrap", // used only to display text as not wrapped lines
+                                overflow: "scroll",
+                                marginBottom: "10px",
+                            }}
+                        >
+                            <ReactDatatable
+                                config={config}
+                                columns={columns}
+                                records={users}
+                                onRowClicked={handleChangeNew}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -96,67 +252,3 @@ const DundiinTuluv = () => {
 };
 
 export default DundiinTuluv;
-const columns = [
-    {
-        text: "№",
-        key: "id",
-        cell: (row, index) => {
-            if (index == 0) {
-                return index + 1;
-            } else {
-                return index + 1;
-            }
-        },
-        align: "center",
-        sortable: true,
-    },
-
-    {
-        text: "Цол",
-        key: "shortRank",
-        align: "center",
-        sortable: true,
-    },
-    {
-        text: "РД:",
-        key: "rd",
-        align: "center",
-        sortable: true,
-    },
-    {
-        text: "Хүйс",
-        key: "genderName",
-        align: "center",
-        sortable: true,
-    },
-    {
-        text: "Овог",
-        key: "lastName",
-        align: "center",
-        sortable: true,
-    },
-    {
-        text: "Нэр",
-        key: "firstName",
-        align: "center",
-        sortable: true,
-    },
-    {
-        text: "Утасны дугаар",
-        key: "phone",
-        align: "center",
-        sortable: true,
-    },
-    {
-        text: "Цахим хаяг",
-        key: "email",
-        align: "center",
-        sortable: true,
-    },
-    {
-        text: "Албан тушаал",
-        key: "position",
-        align: "center",
-        sortable: true,
-    },
-];

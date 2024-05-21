@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-// import ReactPlayer from "react-player";
+import ReactPlayer from "react-player";
+import axios from "../../../AxiosUser";
 import "./Instructions.css";
 
 const Instructions = () => {
@@ -24,7 +25,7 @@ const Instructions = () => {
                                 <br /> <br />
                                 <div className="player-container">
                                     {/* <ReactPlayer
-                                        url="http://172.16.10.78:8000/images/zaavar.mp4"
+                                        url="http://127.0.0.1:8000//images/Document.mp4"
                                         controls={true}
                                     /> */}
                                 </div>
@@ -79,6 +80,10 @@ const Instructions = () => {
                                 </h1>
                                 <br /> <br />
                                 <div className="player-container">
+                                           <ReactPlayer
+                                        url="http://127.0.0.1:8000/images/Document.mp4"
+                                        controls={true}
+                                    />
                                     {/* <ReactPlayer
                                         url="http://172.16.10.78:8000/images/zaavar.mp4"
                                         controls={true}

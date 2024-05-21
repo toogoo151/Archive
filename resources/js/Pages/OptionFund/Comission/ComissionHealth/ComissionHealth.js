@@ -96,7 +96,7 @@ const ComissionHealth = () => {
 
     const healthPdf = (record) => {
         const newWindow = window.open(
-            record,
+            "/storage" + record,
             "_blank",
             "noopener,noreferrer,resizable"
         );

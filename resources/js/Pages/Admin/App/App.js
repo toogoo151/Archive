@@ -60,6 +60,8 @@ function App() {
     const [getEeljRowID, setEeljRowID] = useState("");
     const [getMissionType, setMissionType] = useState("");
 
+    const [getUserDataRow, setUserDataRow] = useState([]);
+
     const handleFirstMenuClick = (whatIsMissionType) => {
         localStorage.setItem("whatIsMission", whatIsMissionType);
         setMissionType(whatIsMissionType);
@@ -70,6 +72,7 @@ function App() {
         axios
             .get("/get/auth")
             .then((res) => {
+                setUserDataRow(res.data);
                 localStorage.setItem("userImage", res.data.userImage);
                 localStorage.setItem("userID", res.data.userID);
                 localStorage.setItem("admin", res.data.permission);
@@ -102,6 +105,7 @@ function App() {
                         setMissionRowID,
                         getEeljRowID,
                         setEeljRowID,
+                        getUserDataRow,
                     }}
                 >
                     <AsideMenu

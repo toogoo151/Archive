@@ -3,8 +3,9 @@ import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIData
 import axios from "../../../AxiosUser";
 import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
 import EditChild from "./EditChild";
-
+import { AppContext } from "../../../Context/MyContext";
 const QuestionAll = () => {
+    const state = useContext(AppContext);
     const [getQuestionAll, setQuestionAll] = useState([]);
     const [getRowsSelected, setRowsSelected] = useState([]); // row clear хийж байгаа
     const [clickedRowData, setclickedRowData] = useState([]);
@@ -37,6 +38,14 @@ const QuestionAll = () => {
             getGender
         );
     }, []);
+    useEffect(() => {
+        refreshQuestionEdit(
+            getComandlalID,
+            getUnitID,
+            getQuestionState,
+            getGender
+        );
+    }, [state.getMissionRowID, state.getEeljRowID]);
 
     const changeComandlal = (inComandlal) => {
         axios
@@ -76,6 +85,8 @@ const QuestionAll = () => {
     ) => {
         axios
             .post("/get/question/all", {
+                _missionID: state.getMissionRowID,
+                _eeljID: state.getEeljRowID,
                 _comandlalID: comandlalID,
                 _unitID: unitID,
                 _questionState: questionState,
@@ -484,6 +495,29 @@ const QuestionAll = () => {
                 //         };
                 //     }
                 // },
+            },
+        },
+        {
+            name: "movement",
+            label: "Одоогийн албан тушаалд томилогдсон байдал",
+            options: {
+                filter: true,
+                sort: false,
+                setCellHeaderProps: (value) => {
+                    return {
+                        style: {
+                            backgroundColor: "#5DADE2",
+                            color: "white",
+                        },
+                    };
+                },
+                customBodyRender: (value) => {
+                    if (value == 1) {
+                        return " Анги дотороо томилогдсон";
+                    } else {
+                        return "Анги хооронд шилжин томилогдсон";
+                    }
+                },
             },
         },
         {
@@ -973,31 +1007,41 @@ const QuestionAll = () => {
                     </div>
                 </div>
             </div>
-            <MUIDatatable
-                data={getQuestionAll}
-                setdata={setQuestionAll}
-                columns={columns}
-                costumToolbar={
-                    <>
-                        <CustomToolbar
-                            title={"АСУУМЖ ЗАСАХ"}
-                            excelDownloadData={getQuestionAll}
-                            excelHeaders={excelHeaders}
-                            isHideInsert={false}
-                        />
-                    </>
-                }
-                btnEdit={btnEdit}
-                editdataTargetID={"#questionEdit"}
-                modelType={showModal}
-                isHideDelete={false}
-                isHideEdit={true}
-                avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
-                avgColumnName={"email"}
-                avgName={"Дундаж: "}
-                getRowsSelected={getRowsSelected}
-                setRowsSelected={setRowsSelected}
-            />
+            <div
+                className="info-box"
+                style={{
+                    overflowX: "auto",
+                    whiteSpace: "nowrap",
+                    width: "100%",
+                }}
+            >
+                <MUIDatatable
+                    data={getQuestionAll}
+                    setdata={setQuestionAll}
+                    columns={columns}
+                    costumToolbar={
+                        <>
+                            <CustomToolbar
+                                title={"АСУУМЖ ЗАСАХ"}
+                                excelDownloadData={getQuestionAll}
+                                excelHeaders={excelHeaders}
+                                isHideInsert={false}
+                            />
+                        </>
+                    }
+                    btnEdit={btnEdit}
+                    editdataTargetID={"#questionEdit"}
+                    modelType={showModal}
+                    isHideDelete={false}
+                    isHideEdit={true}
+                    avgColumnIndex={-1} // -1 байвал дундаж бодохгүй. дундаж бодох column index оруул. index нь 0 ээс эхлэж байгаа
+                    avgColumnName={"email"}
+                    avgName={"Дундаж: "}
+                    getRowsSelected={getRowsSelected}
+                    setRowsSelected={setRowsSelected}
+                />
+            </div>
+
             <EditChild
                 setRowsSelected={setRowsSelected}
                 refreshQuestionEdit={refreshQuestionEdit}

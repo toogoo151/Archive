@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\LoginAttempt;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -46,25 +47,34 @@ class LoginController extends Controller
     }
 
     public function login(Request $request)
-{
-    $credentials = $request->only('email', 'password');
+    {
+        $credentials = $request->only('email', 'password');
+        $successful = Auth::attempt($credentials);
 
-    $successful = Auth::attempt($credentials);
+        if ($successful) {
+               // Save the login attempt to the database
+                LoginAttempt::create([
+                    'email' => $request->input('email'),
+                    'successful' => "Нэвтэрсэн",
+                    'user_ip' => $request->ip(),
+                ]);
+            return redirect()->intended('home');
+        }
 
-    // Save the login attempt to the database
-    LoginAttempt::create([
-        'email' => $request->input('email'),
-        'successful' => "Нэвтэрсэн",
-        'user_ip' => $request->ip(),
+        $user = User::where('email', $request->email)->first();
 
-    ]);
-
-    if ($successful) {
-        return redirect()->intended('home');
+            if ($user) {
+                // User exists, so the password must be incorrect
+                $error = ['password' => 'Нууц үг буруу.'];
+            } else {
+                // User does not exist
+                $error = ['email' => 'Бүртгэлгүй цахим хаяг байна.'];
+            }
+        // return redirect()->back()->withInput()->withErrors(['login_error' => 'Дахиад оролдллд үз.']); // Ингэж хийсэн пиздааг алнаа
+        return redirect()->back()
+        ->withInput($request->only('email'))
+        ->withErrors($error);
     }
-
-    return redirect()->back()->withInput()->withErrors(['login_error' => 'Дахиад оролдллд үз.']);
-}
 
     public function logout(Request $req)
         {
@@ -73,7 +83,6 @@ class LoginController extends Controller
         'email' => $user->email,
         'successful' => "Гарсан",
         'user_ip' => $req->ip(),
-
     ]);
             Auth::logout();
             Auth::guard('web')->logout();

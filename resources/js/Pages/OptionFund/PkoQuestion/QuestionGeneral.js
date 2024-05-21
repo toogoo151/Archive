@@ -11,19 +11,29 @@ const QuestionGeneral = () => {
 
     const [getQuestionState, setQuestionState] = useState("");
     const [getAllUser, setAllUser] = useState("");
+    const [getAllUserVerified, setAllUserVerified] = useState("");
     const [getBugluugui, setBugluugui] = useState("");
     const [getAllTotal, setAllTotal] = useState("");
     const [getHangasan, setHangasan] = useState("");
     const [getHangaagui, setHangaagui] = useState("");
 
     useEffect(() => {
-        getTsahSum();
+        getTsahSum(state.getMissionRowID, state.getEeljRowID);
     }, []);
+    useEffect(() => {
+        getTsahSum(state.getMissionRowID, state.getEeljRowID);
+    }, [state.getMissionRowID, state.getEeljRowID]);
 
-    const getTsahSum = () => {
+    const getTsahSum = (missionID, eeljID) => {
         axios
-            .post("/get/count/question")
+            .post("/get/count/question", {
+                _missionID: missionID,
+                _eeljID: eeljID,
+            })
             .then((res) => {
+                if (res.data.allUserVerified != undefined) {
+                    setAllUserVerified(res.data.allUserVerified);
+                }
                 if (res.data.allUser != undefined) {
                     setAllUser(res.data.allUser);
                 }
@@ -91,17 +101,37 @@ const QuestionGeneral = () => {
                         textAlign: "center",
                     }}
                 >
-                    <button
-                        className="btn btn-info"
-                        style={{
-                            width: "280px",
-                        }}
-                    >
-                        Нийт ЦАХ -{" "}
-                        <strong style={{ fontSize: "30px", color: "black" }}>
-                            {getAllUser}
-                        </strong>
-                    </button>
+                    <div className="col-md-6">
+                        <button
+                            className="btn btn-info"
+                            style={{
+                                width: "280px",
+                            }}
+                        >
+                            Нийт ЦАХ -{" "}
+                            <strong
+                                style={{ fontSize: "30px", color: "black" }}
+                            >
+                                {getAllUser}
+                            </strong>
+                        </button>
+                    </div>
+                    <br />
+                    <div className="col-md-6">
+                        <button
+                            className="btn btn-info"
+                            style={{
+                                width: "280px",
+                            }}
+                        >
+                            Email баталгаажуулсан ЦАХ -{" "}
+                            <strong
+                                style={{ fontSize: "30px", color: "black" }}
+                            >
+                                {getAllUserVerified}
+                            </strong>
+                        </button>
+                    </div>
                 </div>
 
                 <div

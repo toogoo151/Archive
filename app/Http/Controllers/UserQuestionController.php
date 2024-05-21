@@ -27,13 +27,46 @@ class UserQuestionController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function getQuestionCheck()
+    public function getQuestionCheck(Request $req)
     {
         try {
+
             $check = DB::table("pko_user_question")
+                ->where("pko_user_question.missionID", "=", $req->_missionID)
+                ->where("pko_user_question.eeljID", "=", $req->_eeljID)
                 ->where("pko_user_question.pkoUserID", "=", Auth::user()->id)
                 ->get();
-            return count($check);
+
+            $missionName = DB::table("pko_mission_eelj")
+                ->where("pko_mission_eelj.missionID", "=", $req->_missionID)
+                ->where("pko_mission_eelj.id", "=", $req->_eeljID)
+                ->select("pko_mission_eelj.id", "pko_mission_eelj.eeljName")
+                ->first();
+
+            $oldRowInQuestion = UserQuestion::where("pkoUserID", "=", Auth::user()->id)
+                ->where("missionID", "=", $req->_missionID)
+                ->where("eeljID", "=", $req->_eeljID)
+                ->first();
+            if(count($check) > 0){
+                return $this->checkUserQuestionWhenBeforeMission($oldRowInQuestion, $missionName, false);
+                // return count($check);
+                return response(
+                    array(
+                        "count" => count($check),
+                        "missionName" => $missionName,
+                    ),
+                    200
+                );
+            }else{
+                return response(
+                    array(
+                        "count" => count($check),
+                        "missionName" => $missionName,
+                    ),
+                    200
+                );
+            }
+
         } catch (\Throwable $th) {
             return response(
                 array(
@@ -45,13 +78,21 @@ class UserQuestionController extends Controller
         }
     }
 
-    public function getUserWish()
+    public function getUserWish(Request $req)
     {
         try {
             $wish = DB::table("pko_wish")
                 ->where("pko_wish.pkoUserID", "=", Auth::user()->id)
+                ->where("missionID", "=", $req->_missionID)
+                ->where("eeljID", "=", $req->_eeljID)
                 ->get();
-            return count($wish);
+                $getCreated_at = DB::table("pko_wish")
+                ->where("pko_wish.pkoUserID", "=", Auth::user()->id)
+                ->where("missionID", "=", $req->_missionID)
+                ->where("eeljID", "=", $req->_eeljID)
+                ->first()->created_at;
+            return response(array("count"=>count($wish),
+        "getCreated_at"=>$getCreated_at,));
         } catch (\Throwable $th) {
             return response(
                 array(
@@ -155,7 +196,7 @@ class UserQuestionController extends Controller
         }
     }
 
-    public function checkQuestion($newQuestion)
+    public function checkQuestion($newQuestion) //Асуумж шаардлга хангаж байгаа эсэхийг шалгаж байна.
     {
         try {
             $dateNow = Carbon::now();
@@ -168,11 +209,11 @@ class UserQuestionController extends Controller
 
             $resultAppointedYear = $subtractedAppointedDate->format('y');
             $resultAppointedMonth = $subtractedAppointedDate->format('m');
-            $appointed = $resultAppointedYear * 12 + $resultAppointedMonth;
+            $appointed = $resultAppointedYear * 12 + $resultAppointedMonth; // томилогдсоноос хоош хугацаа тоолсон жишээ нь: 6
 
-            if ($newQuestion->rolePlayed == 0) {
+            if ($newQuestion->rolePlayed == 0) { // тийм
                 $dateNow1 = Carbon::now();
-                $dateCame = Carbon::parse($newQuestion->missionCameDate);
+                $dateCame = Carbon::parse($newQuestion->missionCameDate); // буцаж ирсэн огноо
 
                 $formatCameYear = $dateCame->format('Y');
                 $formatCameMonth = $dateCame->format('m');
@@ -181,10 +222,10 @@ class UserQuestionController extends Controller
 
                 $resultCameYear = $subtractedCameDate->format('y');
                 $resultCameMonth = $subtractedCameDate->format('m');
-                $cameDate = $resultCameYear * 12 + $resultCameMonth;
+                $cameDate = $resultCameYear * 12 + $resultCameMonth; // ажиллагаанаас ирсэн сар тоолсон
             }
 
-            if ($newQuestion->punishment == 0) {
+            if ($newQuestion->punishment == 0) { // тийм
                 $dateNow2 = Carbon::now();
                 $datePunishment = Carbon::parse($newQuestion->punishmentDate);
 
@@ -195,8 +236,9 @@ class UserQuestionController extends Controller
 
                 $resultPunishmentYear = $subtractedPunishmentDate->format('y');
                 $resultPunishmentMonth = $subtractedPunishmentDate->format('m');
-                $punishmentDate = $resultPunishmentYear * 12 + $resultPunishmentMonth;
+                $punishmentDate = $resultPunishmentYear * 12 + $resultPunishmentMonth; // сараар гарч байгаа
             }
+
 
 
             if ($newQuestion->rolePlayed == 0) {
@@ -299,6 +341,8 @@ class UserQuestionController extends Controller
     {
         try {
             $check = DB::table("pko_user_question")
+                ->where("missionID", "=", $$newQuestion->missionID)
+                ->where("eeljID", "=", $$newQuestion->eeljID)
                 ->where("pko_user_question.pkoUserID", "=", $newQuestion->pkoUserID)
                 ->get();
             return $check;
@@ -317,7 +361,8 @@ class UserQuestionController extends Controller
     {
         try {
 
-            if (!$this->checkUserID(Auth::user()->id)) {
+            if (!$this->checkUserID($req)) {
+
                 return response(
                     array(
                         "msg" => "Та асуумж бөглөсөн байна.",
@@ -325,8 +370,13 @@ class UserQuestionController extends Controller
                     500
                 );
             }
+
+
             $newQuestion = new UserQuestion();
             $newQuestion->pkoUserID = Auth::user()->id;
+            $newQuestion->missionID =$req->_missionID;
+            $newQuestion->eeljID =$req->_eeljID;
+            $newQuestion->movement =$req->movement;
             $newQuestion->appointedDate = $req->appointedDate; // томилогдсон date
             $newQuestion->rolePlayed = $req->rolePlayed; // ажиллагаанд явсан эсэх тийм / үгүй
             $newQuestion->missionType = 1; // 6 сар 12 сар
@@ -337,6 +387,12 @@ class UserQuestionController extends Controller
             $newQuestion->punishmentDate = $req->punishmentDate; // шийтгэгдсэн хугацаа
             $newQuestion->save();
 
+            $missionName = DB::table("pko_mission_eelj")
+                ->where("pko_mission_eelj.missionID", "=", $req->_missionID)
+                ->where("pko_mission_eelj.id", "=", $req->_eeljID)
+                ->select("pko_mission_eelj.id", "pko_mission_eelj.eeljName")
+                ->first();
+return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, true);
             return response(
                 array(
                     "userCheck" => count($this->checkQuestion($newQuestion)),
@@ -357,9 +413,12 @@ class UserQuestionController extends Controller
         }
     }
 
-    public function checkUserID()
+    public function checkUserID($inReq)
     {
-        $check = UserQuestion::where("pkoUserID", "=", Auth::user()->id)->get();
+        $check = UserQuestion::where("pkoUserID", "=", Auth::user()->id)
+            ->where("missionID", "=", $inReq->_missionID)
+            ->where("eeljID", "=", $inReq->_eeljID)
+            ->get();
         if (count($check) == 0)
             return true;
         else
@@ -542,133 +601,67 @@ class UserQuestionController extends Controller
         }
     }
 
-
-    public function getQuestionEdit(Request $req)
+    public function getQuestionEdit(Request $req) // шаардлага хангасаныг татаж байна
     {
         try {
-            if ($req->_questionState == "") {
-                $getQuestion = DB::table("pko_user_question")
-                    ->where("pko_user_question.appointedDate", "<=", "2022-06-23")
-                    ->where(function ($query) {
-                        $query->where("pko_user_question.missionCameDate", "<=", "2021-06-23")
-                            ->orWhereNull("pko_user_question.missionCameDate");
-                    })
-                    ->where(function ($query) {
-                        $query->where("pko_user_question.punishmentDate", "<=", "2022-06-23")
-                            ->orWhereNull("pko_user_question.punishmentDate");
-                    })
-                    ->where("pko_user_question.studying", "=", 1)
-                    ->join("pko_users", function ($query) {
-                        $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
-                    })
-                    ->join("all_users", function ($query) use ($req) {
-                        $query->on("pko_users.allUsersID", "=", "all_users.id");
-                        if ($req->_comandlalID != "") {
-                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
-                            if ($req->_unitID != "") {
-                                $query->where("all_users.unitID", "=", $req->_unitID);
-                            }
+
+            $getRequerment = DB::table("pko_user_requirements")->first(); // Ажиллагааны шаардлагийг татаж авч байна.
+            $getQuestion = DB::table("pko_user_question")
+                ->where("pko_user_question.missionID", "=", $req->_missionID)
+                ->where("pko_user_question.eeljID", "=", $req->_eeljID)
+                ->where("pko_user_question.studying", "=", 1) // сурахгүй байгаа тэнцэнэ
+                ->where(function($query)use ($req){
+                    if($req->_questionState == "hiigdeegui"){
+                        $query->whereNull('pko_user_question.updated_at');
+                    }
+                    if($req->_questionState == "hiigdsen"){
+                        $query->whereNotNull('pko_user_question.updated_at');
+                    }
+                })
+                ->where(function($query) use ($getRequerment) {  // Use 'use' to include external variable
+                    $query->where(function($subQuery) use ($getRequerment) {  // Include here as well
+                        $subQuery->where('pko_user_question.movement', '=', 0) // шилжилт хөдөлгөөн хийсэн бол томилогдсон хцгацааг
+                                 ->whereRaw('DATE_ADD(pko_user_question.appointedDate, INTERVAL ? MONTH) <= pko_user_question.created_at', [$getRequerment->appointedDate]);
+                        })
+                    ->orWhere('pko_user_question.movement', '=', 1);
+                })
+                ->where(function($query) use ($getRequerment) {  // Use 'use' to include external variable
+                    $query->where(function($subQuery) use ($getRequerment) {  // Include here as well
+                        $subQuery->where('pko_user_question.rolePlayed', '=', 0)
+                                 ->whereRaw('DATE_ADD(pko_user_question.missionCameDate, INTERVAL ? MONTH) <= pko_user_question.created_at', [$getRequerment->missionTypeFull]);
+                        })
+                    ->orWhere('pko_user_question.rolePlayed', '=', 1);
+                })
+                ->where(function($query) use ($getRequerment) {  // Use 'use' to include external variable
+                    $query->where(function($subQuery) use ($getRequerment) {  // Include here as well
+                        $subQuery->where('pko_user_question.punishment', '=', 0)
+                                 ->whereRaw('DATE_ADD(pko_user_question.punishmentDate, INTERVAL ? MONTH) <= pko_user_question.created_at', [$getRequerment->punishmentDate]);
+                        })
+                    ->orWhere('pko_user_question.punishment', '=', 1);
+                })
+                ->join('pko_users', 'pko_user_question.pkoUserID', '=', 'pko_users.id')
+                ->join("all_users", function ($query) use ($req) {
+                    $query->on("pko_users.allUsersID", "=", "all_users.id");
+                    if ($req->_comandlalID != "") {
+                        $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                        if ($req->_unitID != "") {
+                            $query->where("all_users.unitID", "=", $req->_unitID);
                         }
-                        if ($req->_gender != "") {
-                            $query->where("all_users.gender", "=", $req->_gender);
-                        }
-                    })
-                    ->join("tb_comandlal", function ($query) {
-                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
-                    })
-                    ->join("tb_unit", function ($query) {
-                        $query->on("all_users.unitID", "=", "tb_unit.id");
-                    })
-                    ->join("tb_gender", function ($query) {
-                        $query->on("all_users.gender", "=", "tb_gender.id");
-                    })
-                    ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                    ->get();
+                    }
+                    if ($req->_gender != "") {
+                        $query->where("all_users.gender", "=", $req->_gender);
+                    }
+                })
+                ->join('tb_comandlal', 'all_users.comandlalID', '=', 'tb_comandlal.id')
+                ->join('tb_unit', 'all_users.unitID', '=', 'tb_unit.id')
+                ->join('tb_gender', 'all_users.gender', '=', 'tb_gender.id')
+                ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
+                ->get();
+
                 return $getQuestion;
-            }
-            if ($req->_questionState == "hiigdeegui") {
-                $getQuestion = DB::table("pko_user_question")
-                    ->where("pko_user_question.appointedDate", "<=", "2022-06-23")
-                    ->where(function ($query) {
-                        $query->where("pko_user_question.missionCameDate", "<=", "2021-06-23")
-                            ->orWhereNull("pko_user_question.missionCameDate");
-                    })
-                    ->where(function ($query) {
-                        $query->where("pko_user_question.punishmentDate", "<=", "2022-06-23")
-                            ->orWhereNull("pko_user_question.punishmentDate");
-                    })
-                    ->where("pko_user_question.studying", "=", 1)
-                    ->whereNull("pko_user_question.comandlalName")
-                    ->join("pko_users", function ($query) {
-                        $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
-                    })
-                    ->join("all_users", function ($query) use ($req) {
-                        $query->on("pko_users.allUsersID", "=", "all_users.id");
-                        if ($req->_comandlalID != "") {
-                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
-                            if ($req->_unitID != "") {
-                                $query->where("all_users.unitID", "=", $req->_unitID);
-                            }
-                        }
-                        if ($req->_gender != "") {
-                            $query->where("all_users.gender", "=", $req->_gender);
-                        }
-                    })
-                    ->join("tb_comandlal", function ($query) {
-                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
-                    })
-                    ->join("tb_unit", function ($query) {
-                        $query->on("all_users.unitID", "=", "tb_unit.id");
-                    })
-                    ->join("tb_gender", function ($query) {
-                        $query->on("all_users.gender", "=", "tb_gender.id");
-                    })
-                    ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                    ->get();
-                return $getQuestion;
-            }
-            if ($req->_questionState == "hiigdsen") {
-                $getQuestion = DB::table("pko_user_question")
-                    ->where("pko_user_question.appointedDate", "<=", "2022-06-23")
-                    ->where(function ($query) {
-                        $query->where("pko_user_question.missionCameDate", "<=", "2021-06-23")
-                            ->orWhereNull("pko_user_question.missionCameDate");
-                    })
-                    ->where(function ($query) {
-                        $query->where("pko_user_question.punishmentDate", "<=", "2022-06-23")
-                            ->orWhereNull("pko_user_question.punishmentDate");
-                    })
-                    ->where("pko_user_question.studying", "=", 1)
-                    ->whereNotNull("pko_user_question.comandlalName")
-                    ->join("pko_users", function ($query) {
-                        $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
-                    })
-                    ->join("all_users", function ($query) use ($req) {
-                        $query->on("pko_users.allUsersID", "=", "all_users.id");
-                        if ($req->_comandlalID != "") {
-                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
-                            if ($req->_unitID != "") {
-                                $query->where("all_users.unitID", "=", $req->_unitID);
-                            }
-                        }
-                        if ($req->_gender != "") {
-                            $query->where("all_users.gender", "=", $req->_gender);
-                        }
-                    })
-                    ->join("tb_comandlal", function ($query) {
-                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
-                    })
-                    ->join("tb_unit", function ($query) {
-                        $query->on("all_users.unitID", "=", "tb_unit.id");
-                    })
-                    ->join("tb_gender", function ($query) {
-                        $query->on("all_users.gender", "=", "tb_gender.id");
-                    })
-                    ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                    ->get();
-                return $getQuestion;
-            }
+
         } catch (\Throwable $th) {
+            // return $th;
             return response(
                 array(
                     "status" => "error",
@@ -679,119 +672,66 @@ class UserQuestionController extends Controller
         }
     }
 
-
-    public function getQuestionHangaagui(Request $req)
+    public function getQuestionHangaagui(Request $req) // шаардлага хангаагүйг татаж байна.
     {
         try {
-            if ($req->_questionState == "") {
-                $getQuestion = DB::table("pko_user_question")
-                    ->where("pko_user_question.appointedDate", ">", "2022-06-23")
-                    ->orWhere("pko_user_question.missionCameDate", ">", "2021-06-23")
-                    ->orWhere("pko_user_question.punishmentDate", ">", "2022-06-23")
-                    ->orWhere("pko_user_question.studying", "=", 0)
+            $getRequerment = DB::table("pko_user_requirements")->first(); // Ажиллагааны шаардлагийг татаж авч байна.
+            $getQuestion = DB::table("pko_user_question")
+                ->where("pko_user_question.missionID", "=", $req->_missionID)
+                ->where("pko_user_question.eeljID", "=", $req->_eeljID)
+                ->where(function ($query) use ($getRequerment) {
+                    // Group OR conditions for checking columns equal to 0
+                    $query->where("pko_user_question.studying", "=", 0)
+                        ->orWhere(function ($subQuery) use ($getRequerment) {
+                            $subQuery->where("pko_user_question.movement", "=", 0)
+                            ->whereRaw('DATE_ADD(pko_user_question.appointedDate, INTERVAL ? MONTH) > pko_user_question.created_at', [$getRequerment->appointedDate]);
+                        })
+                        ->orWhere(function ($subQuery) use ($getRequerment) {
+                            $subQuery->where("pko_user_question.rolePlayed", "=", 0)
+                            ->whereRaw('DATE_ADD(pko_user_question.missionCameDate, INTERVAL ? MONTH) > pko_user_question.created_at', [$getRequerment->missionTypeFull]);
+                        })
+                        ->orWhere(function ($subQuery) use ($getRequerment) {
+                            $subQuery->where("pko_user_question.punishment", "=", 0)
+                            ->whereRaw('DATE_ADD(pko_user_question.punishmentDate, INTERVAL ? MONTH) > pko_user_question.created_at', [$getRequerment->punishmentDate]);
+                        });
 
-                    ->join("pko_users", function ($query) {
-                        $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
-                    })
-                    ->join("all_users", function ($query) use ($req) {
-                        $query->on("pko_users.allUsersID", "=", "all_users.id");
-                        if ($req->_comandlalID != "") {
-                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
-                            if ($req->_unitID != "") {
-                                $query->where("all_users.unitID", "=", $req->_unitID);
-                            }
+                })
+                ->where(function ($query) use ($req) {
+                    // Handle date addition and checks based on external requirements
+                    if ($req->_questionState == "hiigdeegui") {
+                        $query->whereNull('pko_user_question.updated_at');
+                    } elseif ($req->_questionState == "hiigdsen") {
+                        $query->whereNotNull('pko_user_question.updated_at');
+                    }
+                })
+                ->join("pko_users", function ($query) {
+                    $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
+                })
+                ->join("all_users", function ($query) use ($req) {
+                    $query->on("pko_users.allUsersID", "=", "all_users.id");
+                    if ($req->_comandlalID != "") {
+                        $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                        if ($req->_unitID != "") {
+                            $query->where("all_users.unitID", "=", $req->_unitID);
                         }
-                        if ($req->_gender != "") {
-                            $query->where("all_users.gender", "=", $req->_gender);
-                        }
-                    })
-                    ->join("tb_comandlal", function ($query) {
-                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
-                    })
-                    ->join("tb_unit", function ($query) {
-                        $query->on("all_users.unitID", "=", "tb_unit.id");
-                    })
-                    ->join("tb_gender", function ($query) {
-                        $query->on("all_users.gender", "=", "tb_gender.id");
-                    })
-                    ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                    ->get();
+                    }
+                    if ($req->_gender != "") {
+                        $query->where("all_users.gender", "=", $req->_gender);
+                    }
+                })
+                ->join("tb_comandlal", function ($query) {
+                    $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                })
+                ->join("tb_unit", function ($query) {
+                    $query->on("all_users.unitID", "=", "tb_unit.id");
+                })
+                ->join("tb_gender", function ($query) {
+                    $query->on("all_users.gender", "=", "tb_gender.id");
+                })
+                ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
+                ->get();
+
                 return $getQuestion;
-            }
-            if ($req->_questionState == "hiigdeegui") {
-                $getQuestion = DB::table("pko_user_question")
-                    ->where(function ($query) {
-                        $query->where("pko_user_question.appointedDate", ">", "2022-06-23")
-                            ->orWhere("pko_user_question.missionCameDate", ">", "2021-06-23")
-                            ->orWhere("pko_user_question.punishmentDate", ">", "2022-06-23")
-                            ->orWhere("pko_user_question.studying", "=", 0);
-                    })
-                    ->whereNull("pko_user_question.comandlalName")
-                    ->join("pko_users", function ($query) {
-                        $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
-                    })
-                    ->join("all_users", function ($query) use ($req) {
-                        $query->on("pko_users.allUsersID", "=", "all_users.id");
-                        if ($req->_comandlalID != "") {
-                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
-                            if ($req->_unitID != "") {
-                                $query->where("all_users.unitID", "=", $req->_unitID);
-                            }
-                        }
-                        if ($req->_gender != "") {
-                            $query->where("all_users.gender", "=", $req->_gender);
-                        }
-                    })
-                    ->join("tb_comandlal", function ($query) {
-                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
-                    })
-                    ->join("tb_unit", function ($query) {
-                        $query->on("all_users.unitID", "=", "tb_unit.id");
-                    })
-                    ->join("tb_gender", function ($query) {
-                        $query->on("all_users.gender", "=", "tb_gender.id");
-                    })
-                    ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                    ->get();
-                return $getQuestion;
-            }
-            if ($req->_questionState == "hiigdsen") {
-                $getQuestion = DB::table("pko_user_question")
-                    ->where(function ($query) {
-                        $query->where("pko_user_question.appointedDate", ">", "2022-06-23")
-                            ->orWhere("pko_user_question.missionCameDate", ">", "2021-06-23")
-                            ->orWhere("pko_user_question.punishmentDate", ">", "2022-06-23")
-                            ->orWhere("pko_user_question.studying", "=", 0);
-                    })
-                    ->whereNotNull("pko_user_question.comandlalName")
-                    ->join("pko_users", function ($query) {
-                        $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
-                    })
-                    ->join("all_users", function ($query) use ($req) {
-                        $query->on("pko_users.allUsersID", "=", "all_users.id");
-                        if ($req->_comandlalID != "") {
-                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
-                            if ($req->_unitID != "") {
-                                $query->where("all_users.unitID", "=", $req->_unitID);
-                            }
-                        }
-                        if ($req->_gender != "") {
-                            $query->where("all_users.gender", "=", $req->_gender);
-                        }
-                    })
-                    ->join("tb_comandlal", function ($query) {
-                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
-                    })
-                    ->join("tb_unit", function ($query) {
-                        $query->on("all_users.unitID", "=", "tb_unit.id");
-                    })
-                    ->join("tb_gender", function ($query) {
-                        $query->on("all_users.gender", "=", "tb_gender.id");
-                    })
-                    ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                    ->get();
-                return $getQuestion;
-            }
         } catch (\Throwable $th) {
             return response(
                 array(
@@ -802,8 +742,6 @@ class UserQuestionController extends Controller
             );
         }
     }
-
-
 
     public function editQuestion(Request $req)
     {
@@ -924,107 +862,56 @@ class UserQuestionController extends Controller
             return "no";
         }
     }
-
-    public function getQuestionAll(Request $req)
+    public function getQuestionAll(Request $req) // Асуумж бөглөсөн нийт
     {
         try {
-            if ($req->_questionState == "") {
-                $getQuestion = DB::table("pko_user_question")
+            // $getQuestion1 = DB::table("pko_user_question")
 
-                    ->join("pko_users", function ($query) {
-                        $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
-                    })
-                    ->join("all_users", function ($query) use ($req) {
-                        $query->on("pko_users.allUsersID", "=", "all_users.id");
-                        if ($req->_comandlalID != "") {
-                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
-                            if ($req->_unitID != "") {
-                                $query->where("all_users.unitID", "=", $req->_unitID);
-                            }
+            $getQuestion = DB::table("pko_user_question")
+            ->where("pko_user_question.missionID", "=", $req->_missionID)
+            ->where("pko_user_question.eeljID", "=", $req->_eeljID)
+            ->where(function($query)use ($req){
+                if($req->_questionState == "hiigdeegui"){
+                    $query->whereNull('pko_user_question.updated_at');
+                }
+                if($req->_questionState == "hiigdsen"){
+                    $query->whereNotNull('pko_user_question.updated_at');
+                }
+            })
+                ->join("pko_users", function ($query) {
+                    $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
+                })
+                ->join("all_users", function ($query) use ($req) {
+                    $query->on("pko_users.allUsersID", "=", "all_users.id");
+                    if ($req->_comandlalID != "") {
+                        $query->where("all_users.comandlalID", "=", $req->_comandlalID);
+                        if ($req->_unitID != "") {
+                            $query->where("all_users.unitID", "=", $req->_unitID);
                         }
-                        if ($req->_gender != "") {
-                            $query->where("all_users.gender", "=", $req->_gender);
-                        }
-                    })
-                    ->join("tb_comandlal", function ($query) {
-                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
-                    })
-                    ->join("tb_unit", function ($query) {
-                        $query->on("all_users.unitID", "=", "tb_unit.id");
-                    })
-                    ->join("tb_gender", function ($query) {
-                        $query->on("all_users.gender", "=", "tb_gender.id");
-                    })
-                    ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                    ->get();
+                    }
+                    if ($req->_gender != "") {
+                        $query->where("all_users.gender", "=", $req->_gender);
+                    }
+                })
+                ->join("tb_comandlal", function ($query) {
+                    $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
+                })
+                ->join("tb_unit", function ($query) {
+                    $query->on("all_users.unitID", "=", "tb_unit.id");
+                })
+                ->join("tb_gender", function ($query) {
+                    $query->on("all_users.gender", "=", "tb_gender.id");
+                })
+                ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
+                ->get();
                 return $getQuestion;
-            }
-            if ($req->_questionState == "hiigdeegui") {
-                $getQuestion = DB::table("pko_user_question")
 
-                    ->whereNull("pko_user_question.comandlalName")
-                    ->join("pko_users", function ($query) {
-                        $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
-                    })
-                    ->join("all_users", function ($query) use ($req) {
-                        $query->on("pko_users.allUsersID", "=", "all_users.id");
-                        if ($req->_comandlalID != "") {
-                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
-                            if ($req->_unitID != "") {
-                                $query->where("all_users.unitID", "=", $req->_unitID);
-                            }
-                        }
-                        if ($req->_gender != "") {
-                            $query->where("all_users.gender", "=", $req->_gender);
-                        }
-                    })
-                    ->join("tb_comandlal", function ($query) {
-                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
-                    })
-                    ->join("tb_unit", function ($query) {
-                        $query->on("all_users.unitID", "=", "tb_unit.id");
-                    })
-                    ->join("tb_gender", function ($query) {
-                        $query->on("all_users.gender", "=", "tb_gender.id");
-                    })
-                    ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                    ->get();
-                return $getQuestion;
-            }
-            if ($req->_questionState == "hiigdsen") {
-                $getQuestion = DB::table("pko_user_question")
 
-                    ->whereNotNull("pko_user_question.comandlalName")
-                    ->join("pko_users", function ($query) {
-                        $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
-                    })
-                    ->join("all_users", function ($query) use ($req) {
-                        $query->on("pko_users.allUsersID", "=", "all_users.id");
-                        if ($req->_comandlalID != "") {
-                            $query->where("all_users.comandlalID", "=", $req->_comandlalID);
-                            if ($req->_unitID != "") {
-                                $query->where("all_users.unitID", "=", $req->_unitID);
-                            }
-                        }
-                        if ($req->_gender != "") {
-                            $query->where("all_users.gender", "=", $req->_gender);
-                        }
-                    })
-                    ->join("tb_comandlal", function ($query) {
-                        $query->on("all_users.comandlalID", "=", "tb_comandlal.id");
-                    })
-                    ->join("tb_unit", function ($query) {
-                        $query->on("all_users.unitID", "=", "tb_unit.id");
-                    })
-                    ->join("tb_gender", function ($query) {
-                        $query->on("all_users.gender", "=", "tb_gender.id");
-                    })
-                    ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                    ->get();
-                return $getQuestion;
-            }
+
         } catch (\Throwable $th) {
+            return $th;
             return response(
+
                 array(
                     "status" => "error",
                     "msg" => "Алдаа гарлаа."
@@ -1034,60 +921,140 @@ class UserQuestionController extends Controller
         }
     }
 
-    public function getQuestionTotal()
+
+    public function getQuestionTotal(Request $req)
     {
         try {
+            $getMissionEeljYear = DB::table("pko_mission_eelj")
+                ->where("id", $req->_eeljID)->first();
+
+            $missionEeljDate = Carbon::parse($getMissionEeljYear->eeljStartDate);
+            $formatmissionEeljDate = $missionEeljDate->format('Y');
+
             $getUser = DB::table("pko_users")
+                ->whereRaw("YEAR(created_at) = ?", [$formatmissionEeljDate])
+
                 ->where("pko_users.user_type", "=", "unitUser")
-                ->get();
+                ->count();
+
+            $getUserVerified = DB::table("pko_users")
+                ->whereRaw("YEAR(created_at) = ?", [$formatmissionEeljDate])
+                ->whereNotNull("email_verified_at")
+                ->where("pko_users.user_type", "=", "unitUser")
+                ->count();
 
             $getAll = DB::table("pko_user_question")
+                ->where("pko_user_question.missionID", $req->_missionID)
+                ->where("pko_user_question.eeljID", $req->_eeljID)
                 ->join("pko_users", function ($query) {
                     $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
                 })
                 ->join("all_users", function ($query) {
                     $query->on("pko_users.allUsersID", "=", "all_users.id");
                 })
-                ->get();
+                ->count();
 
+                $getRequerment = DB::table("pko_user_requirements")->first(); // Ажиллагааны шаардлагийг татаж авч байна.
             $getHangasan = DB::table("pko_user_question")
+                ->where("pko_user_question.missionID", "=", $req->_missionID)
+                ->where("pko_user_question.eeljID", "=", $req->_eeljID)
+                ->where("pko_user_question.studying", "=", 1) // сурахгүй байгаа тэнцэнэ
+                ->where(function($query) use ($getRequerment) {  // Use 'use' to include external variable
+                    $query->where(function($subQuery) use ($getRequerment) {  // Include here as well
+                        $subQuery->where('pko_user_question.movement', '=', 0) // шилжилт хөдөлгөөн хийсэн бол томилогдсон хцгацааг
+                                 ->whereRaw('DATE_ADD(pko_user_question.appointedDate, INTERVAL ? MONTH) <= pko_user_question.created_at', [$getRequerment->appointedDate]);
+                        })
+                    ->orWhere('pko_user_question.movement', '=', 1);
+                })
+                ->where(function($query) use ($getRequerment) {  // Use 'use' to include external variable
+                    $query->where(function($subQuery) use ($getRequerment) {  // Include here as well
+                        $subQuery->where('pko_user_question.rolePlayed', '=', 0)
+                                 ->whereRaw('DATE_ADD(pko_user_question.missionCameDate, INTERVAL ? MONTH) <= pko_user_question.created_at', [$getRequerment->missionTypeFull]);
+                        })
+                    ->orWhere('pko_user_question.rolePlayed', '=', 1);
+                })
+                ->where(function($query) use ($getRequerment) {  // Use 'use' to include external variable
+                    $query->where(function($subQuery) use ($getRequerment) {  // Include here as well
+                        $subQuery->where('pko_user_question.punishment', '=', 0)
+                                 ->whereRaw('DATE_ADD(pko_user_question.punishmentDate, INTERVAL ? MONTH) <= pko_user_question.created_at', [$getRequerment->punishmentDate]);
+                        })
+                    ->orWhere('pko_user_question.punishment', '=', 1);
+                })
                 ->join("pko_users", function ($query) {
                     $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
                 })
                 ->join("all_users", function ($query) {
                     $query->on("pko_users.allUsersID", "=", "all_users.id");
                 })
-                ->where("pko_user_question.appointedDate", "<=", "2022-06-23")
-                ->where(function ($query) {
-                    $query->where("pko_user_question.missionCameDate", "<=", "2021-06-23")
-                        ->orWhereNull("pko_user_question.missionCameDate");
-                })
-                ->where(function ($query) {
-                    $query->where("pko_user_question.punishmentDate", "<=", "2022-06-23")
-                        ->orWhereNull("pko_user_question.punishmentDate");
-                })
-                ->where("pko_user_question.studying", "=", 1)
-                ->get();
+                ->count();
 
+            // $getHangasan = DB::table("pko_user_question")
+            //     ->join("pko_users", function ($query) {
+            //         $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
+            //     })
+            //     ->join("all_users", function ($query) {
+            //         $query->on("pko_users.allUsersID", "=", "all_users.id");
+            //     })
+            //     ->where("pko_user_question.appointedDate", "<=", "2022-06-23")
+            //     ->where(function ($query) {
+            //         $query->where("pko_user_question.missionCameDate", "<=", "2021-06-23")
+            //             ->orWhereNull("pko_user_question.missionCameDate");
+            //     })
+            //     ->where(function ($query) {
+            //         $query->where("pko_user_question.punishmentDate", "<=", "2022-06-23")
+            //             ->orWhereNull("pko_user_question.punishmentDate");
+            //     })
+            //     ->where("pko_user_question.studying", "=", 1)
+            //     ->get();
+
+            // $getHangaagui = DB::table("pko_user_question")
+            //     ->join("pko_users", function ($query) {
+            //         $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
+            //     })
+            //     ->join("all_users", function ($query) {
+            //         $query->on("pko_users.allUsersID", "=", "all_users.id");
+            //     })
+            //     ->where("pko_user_question.appointedDate", ">", "2022-06-23")
+            //     ->orWhere("pko_user_question.missionCameDate", ">", "2021-06-23")
+            //     ->orWhere("pko_user_question.punishmentDate", ">", "2022-06-23")
+            //     ->orWhere("pko_user_question.studying", "=", 0)
+            //     ->get();
             $getHangaagui = DB::table("pko_user_question")
-                ->join("pko_users", function ($query) {
-                    $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
-                })
-                ->join("all_users", function ($query) {
-                    $query->on("pko_users.allUsersID", "=", "all_users.id");
-                })
-                ->where("pko_user_question.appointedDate", ">", "2022-06-23")
-                ->orWhere("pko_user_question.missionCameDate", ">", "2021-06-23")
-                ->orWhere("pko_user_question.punishmentDate", ">", "2022-06-23")
-                ->orWhere("pko_user_question.studying", "=", 0)
-                ->get();
+            ->where("pko_user_question.missionID", "=", $req->_missionID)
+            ->where("pko_user_question.eeljID", "=", $req->_eeljID)
+            ->where(function ($query) use ($getRequerment) {
+                // Group OR conditions for checking columns equal to 0
+                $query->where("pko_user_question.studying", "=", 0)
+                    ->orWhere(function ($subQuery) use ($getRequerment) {
+                        $subQuery->where("pko_user_question.movement", "=", 0)
+                        ->whereRaw('DATE_ADD(pko_user_question.appointedDate, INTERVAL ? MONTH) > pko_user_question.created_at', [$getRequerment->appointedDate]);
+                    })
+                    ->orWhere(function ($subQuery) use ($getRequerment) {
+                        $subQuery->where("pko_user_question.rolePlayed", "=", 0)
+                        ->whereRaw('DATE_ADD(pko_user_question.missionCameDate, INTERVAL ? MONTH) > pko_user_question.created_at', [$getRequerment->missionTypeFull]);
+                    })
+                    ->orWhere(function ($subQuery) use ($getRequerment) {
+                        $subQuery->where("pko_user_question.punishment", "=", 0)
+                        ->whereRaw('DATE_ADD(pko_user_question.punishmentDate, INTERVAL ? MONTH) > pko_user_question.created_at', [$getRequerment->punishmentDate]);
+                    });
+
+            })
+            ->join("pko_users", function ($query) {
+                $query->on("pko_user_question.pkoUserID", "=", "pko_users.id");
+            })
+            ->join("all_users", function ($query) {
+                $query->on("pko_users.allUsersID", "=", "all_users.id");
+            })
+            ->count();
 
             $row = array(
-                "allUser" => count($getUser),
-                "bugluugui" => count($getUser) - count($getAll),
-                "allTotal" => count($getAll),
-                "hangasan" => count($getHangasan),
-                "hangaagui" => count($getHangaagui),
+                "allUser" => $getUser,
+                "allUserVerified" => $getUserVerified,
+
+                "bugluugui" => $getUser - $getAll,
+                "allTotal" => $getAll,
+                "hangasan" => $getHangasan,
+                "hangaagui" => $getHangaagui,
             );
             return $row;
         } catch (\Throwable $th) {
@@ -1125,6 +1092,125 @@ class UserQuestionController extends Controller
             //     ),200
             // );
         } catch (\Throwable $th) {
+            return response(
+                array(
+                    "status" => "error",
+                    "msg" => "Алдаа гарлаа."
+                ),
+                500
+            );
+        }
+    }
+
+
+    public function checkUserQuestionWhenBeforeMission($newQuestion, $missionName, $isFirst) //Асуумж шаардлга хангаж байгаа эсэхийг шалгаж байна. Шинээр бичсэн
+    {
+        try {
+            $appointedFromOther=""; // томилогдсон огноо 1 байвал тэнцэнэ.
+            $rolePlayedMonthComplate="";  // Ажиллгаа хоорондын хугацаа бодох 1 байвал тэнцэнэ
+            $punishmentCount=""; // шийтгэл эдлэж байсан эсэх 1 байвал тэнцэнэ
+            $monthsSinceAppointed = 0;
+            $cameMonthCount =0;
+             $punishmentMonths =0;
+            if($newQuestion->movement ==0) // Анги хооронд шилжсэн
+            {
+                $dateNow = Carbon::parse($newQuestion->created_at);
+                $dateAppointed = Carbon::parse($newQuestion->appointedDate);
+                $monthsSinceAppointed = $dateNow->diffInMonths($dateAppointed);
+
+                $appointedFromOther = DB::table("pko_user_requirements")
+                        ->where("pko_user_requirements.appointedDate", "<=", $monthsSinceAppointed)
+                        ->count(); // 0 гарж байгаа бол боломжгүй гэсэн үг
+
+            }else{
+                $appointedFromOther = 1; // Бусад тохиолдол хугацаа бодохгүй шууд боломжтой болгох
+            }
+
+
+            if ($newQuestion->rolePlayed == 0) { // Ажиллагаанд явсан
+                $dateNow1 = Carbon::parse($newQuestion->created_at);
+                $dateCame = Carbon::parse($newQuestion->missionCameDate); // буцаж ирсэн огноо
+                $cameMonthCount = $dateNow1->diffInMonths($dateCame); // өнөөдрийг хүртэл сарийг тоолж байна.
+
+                $rolePlayedMonthComplate = DB::table("pko_user_requirements")
+                ->where("pko_user_requirements.missionTypeFull", "<=", $cameMonthCount)
+                ->count(); // 0 гарж байгаа бол боломжгүй гэсэн үг
+            }else{
+                $rolePlayedMonthComplate = 1;
+            }
+
+            // studying байгаа 0 = сурч байгаа учраас тэнцэхгүй. 1 = суралцаагүй учраас тэнцэнэ
+            if ($newQuestion->punishment == 0) { // тийм
+                $dateNow2 = Carbon::parse($newQuestion->created_at);
+                $datePunishment = Carbon::parse($newQuestion->punishmentDate);
+                $punishmentDate = $dateNow2->diffInMonths($datePunishment); // сараар гарч байгаа
+
+
+                $punishmentCount = DB::table("pko_user_requirements")
+                ->where("pko_user_requirements.punishmentDate", "<=", $punishmentDate)
+                ->count();
+
+                if($punishmentCount ==0){
+                    $punishmentMonths = 12-$punishmentDate;
+                }
+            }else{
+                $punishmentCount = 1;
+            }
+
+            if($appointedFromOther == 1 && $rolePlayedMonthComplate ==1 && $newQuestion->studying ==1 && $punishmentCount ==1){
+                $getIsRequestedInWish = new Wish();
+                return response(
+                    array(
+                        "count" => 1,
+                        "missionName" => $missionName,
+                        "msg" => $isFirst ? "Та энэ ажиллагаанд ХҮСЭЛТ илгээх боломжтой байна.": "Та энэ ажиллагаанд ХҮСЭЛТ илгээж сонгон шалгаруулалтад оролцох эрхтэй болсон байна.",
+                        "isComplate" => true,
+                        "isErrorArr" => [],
+                        "isReqSent"=> $getIsRequestedInWish->isRequestedInWish(Auth::user()->id,$newQuestion->missionID, $newQuestion->eeljID),
+                        "wishRow"=> $getIsRequestedInWish->getWishCreated_at(Auth::user()->id,$newQuestion->missionID, $newQuestion->eeljID),
+                    ),
+                    200
+                );
+
+            }else{
+                $getErrorMsgs = array();
+
+                if($appointedFromOther == 0){
+                    $row = array("errorMsg"=>"Одоогийн албан тушаалд томилогдсоноос хойш 12 сарын хугацаа хүрээгүй байна.");
+                    array_push($getErrorMsgs, $row);
+                }
+                if($rolePlayedMonthComplate == 0){
+                    $row = array("errorMsg"=>"Таны ажиллагаа хоорондын хугацаа ".$cameMonthCount." сар байна. Ажиллагаа хоорондын хугацаа 24 сараас багагүй байх ёстой.");
+                    array_push($getErrorMsgs, $row);
+                }
+                if($newQuestion->studying == 0){
+                    $row = array("errorMsg"=>"Та БХ-ын болон бусад их, дээд
+                    сургууль, коллежийн өдрийн ангийн
+                    сургалт, дамжаанд суралцаж байна.");
+                    array_push($getErrorMsgs, $row);
+                }
+                if($punishmentCount == 0){
+                    $row = array("errorMsg"=>"Төрийн албаны тухай хууль, цэргийн сахилгын дүрэмд заасан сахилгын шийтгэл дуусах хугацаа ".$punishmentMonths." сар дутуу байна.");
+                    array_push($getErrorMsgs, $row);
+                }
+                return response(
+                    array(
+                        "count" => 1,
+                        "missionName" => $missionName,
+                        "msg" =>  "Та энхийг сахиулах ажиллагааны сонгон шалгаруулалтын журмын зарим шалгуурыг хангаагүй байна.",
+                        "isComplate" => false,
+                        "isErrorArr" => $getErrorMsgs,
+                        "isReqSent"=> 0,
+                        "wishRow"=> [],
+                    ),
+                    200
+                );
+
+            }
+
+
+        } catch (\Throwable $th) {
+            return $th;
             return response(
                 array(
                     "status" => "error",

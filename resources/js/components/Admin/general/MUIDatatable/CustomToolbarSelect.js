@@ -9,6 +9,7 @@ const defaultToolbarSelectStyles = {
     iconButton: {},
     iconContainer: {
         marginRight: "24px",
+        // float: "left",
     },
     inverseIcon: {
         transform: "rotate(90deg)",
@@ -87,7 +88,9 @@ class CustomToolbarSelect extends React.Component {
                                 style={{ marginLeft: 10 }}
                                 btnClassName={"btn btn-info"}
                                 spanIconClassName={"fas fa-solid fa-pen"}
-                                buttonName={"Өөр анги, байгууллага руу шилжсэн"}
+                                buttonName={
+                                    "Өөр анги, байгууллага руу шилжүүлэх"
+                                }
                                 clickHeaderOpenModal={this.props.btnHumanClick}
                             />
                         </>

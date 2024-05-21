@@ -21,14 +21,8 @@ const SkillApproveOfficer = () => {
     const [scoretrueTotal, setScoretrueTotal] = useState(0);
     const [scorefalseTotal, setScorefalseTotal] = useState(0);
 
-
-
-
-
-
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
     const [showModal, setShowModal] = useState("modal");
-
 
     //    useEffect(() => {
     //  axios
@@ -42,21 +36,21 @@ const SkillApproveOfficer = () => {
     //         });
     //   }, []);
 
-//     useEffect(() => {
-//           axios
-//             .post("skill/count")
-//             .then((res) => {
-//                 // console.log(res.data);
-//                 setSkillTotal(res.data);
-//             })
-//             .catch((err) => {
-//                 console.log(err);
-//             });
-//     }
+    //     useEffect(() => {
+    //           axios
+    //             .post("skill/count")
+    //             .then((res) => {
+    //                 // console.log(res.data);
+    //                 setSkillTotal(res.data);
+    //             })
+    //             .catch((err) => {
+    //                 console.log(err);
+    //             });
+    //     }
 
-// )
+    // )
 
-      useEffect(() => {
+    useEffect(() => {
         axios
             .post("/get/ID/byComandlal")
             .then((res) => {
@@ -76,11 +70,11 @@ const SkillApproveOfficer = () => {
             state.getMissionRowID,
             state.getEeljRowID,
             getComandlalID,
-            getUnitID,
+            getUnitID
         );
-      }, []);
+    }, []);
 
-     const changeComandlal = (inComandlal) => {
+    const changeComandlal = (inComandlal) => {
         axios
             .post("/get/ID/byUnit", {
                 _comandlalID: inComandlal,
@@ -91,19 +85,19 @@ const SkillApproveOfficer = () => {
             .catch((err) => {
                 console.log(err);
             });
-     };
+    };
 
-      const changeUnit = (e) => {
+    const changeUnit = (e) => {
         setUnitID(e.target.value);
         refreshSkill(
             state.getMissionRowID,
             state.getEeljRowID,
             getComandlalID,
-            e.target.value,
+            e.target.value
         );
-      };
+    };
 
-     const changeType = (e) => {
+    const changeType = (e) => {
         refreshSkill(
             state.getMissionRowID,
             state.getEeljRowID,
@@ -111,9 +105,7 @@ const SkillApproveOfficer = () => {
             getUnitID,
             e.target.value
         );
-      };
-
-
+    };
 
     useEffect(() => {
         refreshSkill(state.getMissionRowID, state.getEeljRowID);
@@ -128,36 +120,24 @@ const SkillApproveOfficer = () => {
         }
     }, [getRowsSelected]);
 
-
-       useEffect(() => {
+    useEffect(() => {
         refreshSkill(
             state.getMissionRowID,
             state.getEeljRowID,
             getComandlalID,
-            getUnitID,
+            getUnitID
         );
     }, [state.getMissionRowID, state.getEeljRowID]);
 
-
-
-
-    const refreshSkill =
-    (
-        missionID,
-        eeljID,
-        comandlalID,
-        unitID,
-        typeID
-    ) =>
-    {
+    const refreshSkill = (missionID, eeljID, comandlalID, unitID, typeID) => {
         if (missionID != undefined && eeljID != undefined) {
             axios
                 .post("/get/skill", {
-                _missionID: missionID,
-                _eeljID: eeljID,
-                _comandlalID: comandlalID,
-                _unitID: unitID,
-                 _typeID: typeID,
+                    _missionID: missionID,
+                    _eeljID: eeljID,
+                    _comandlalID: comandlalID,
+                    _unitID: unitID,
+                    _typeID: typeID,
                 })
                 .then((res) => {
                     setSkill(res.data.data);
@@ -166,12 +146,9 @@ const SkillApproveOfficer = () => {
                     setScoretrueTotal(res.data.score_true_count);
                     setScorefalseTotal(res.data.score_false_count);
 
-
-
-
-                //   if (res.data.complete != undefined) {
-                //         setSkillTotal(res.data.complete);
-                //     }
+                    //   if (res.data.complete != undefined) {
+                    //         setSkillTotal(res.data.complete);
+                    //     }
                 })
                 .catch((err) => {
                     console.log(err);
@@ -198,7 +175,7 @@ const SkillApproveOfficer = () => {
                                 state.getMissionRowID,
                                 state.getEeljRowID,
                                 getComandlalID,
-                                getUnitID,
+                                getUnitID
                             );
                         })
                         .catch((err) => {
@@ -210,7 +187,6 @@ const SkillApproveOfficer = () => {
             });
         }
     };
-
 
     const btnEdit = () => {
         setIsEditBtnClick(true);
@@ -224,7 +200,7 @@ const SkillApproveOfficer = () => {
                     paddingBottom: "0px",
                 }}
             >
-                 <div className="col-md-3">
+                <div className="col-md-3">
                     <div className="input-group mb-3">
                         <div className="input-group-prepend">
                             <span className="input-group-text">Төлөв:</span>
@@ -234,7 +210,6 @@ const SkillApproveOfficer = () => {
                             <option value="">Сонгоно уу</option>
                             <option value="1">Өгсөн ЦАХ</option>
                             <option value="0">Өгөөгүй ЦАХ</option>
-
                         </select>
                     </div>
                 </div>
@@ -253,8 +228,7 @@ const SkillApproveOfficer = () => {
                                         state.getMissionRowID,
                                         state.getEeljRowID,
                                         e.target.value,
-                                        "",
-
+                                        ""
                                     );
                                     changeComandlal(e.target.value);
                                 }}
@@ -298,9 +272,8 @@ const SkillApproveOfficer = () => {
                         </select>
                     </div>
                 </div>
-
             </div>
-                <div
+            <div
                 className="info-box"
                 style={{ padding: "20px", paddingBottom: "0px" }}
             >
@@ -315,7 +288,7 @@ const SkillApproveOfficer = () => {
                         </div>
                     </div>
                 </div>
-                    <div className="col-md-3">
+                <div className="col-md-3">
                     <div className="small-box bg-success">
                         <div className="inner">
                             <h3>{scoretrueTotal}</h3>
@@ -326,7 +299,7 @@ const SkillApproveOfficer = () => {
                         </div>
                     </div>
                 </div>
-                    <div className="col-md-3">
+                <div className="col-md-3">
                     <div className="small-box bg-danger">
                         <div className="inner">
                             <h3>{scorefalseTotal}</h3>
@@ -337,7 +310,7 @@ const SkillApproveOfficer = () => {
                         </div>
                     </div>
                 </div>
-                </div>
+            </div>
 
             <MUIDatatable
                 data={getSkill}
@@ -387,8 +360,14 @@ const SkillApproveOfficer = () => {
 
 export default SkillApproveOfficer;
 const documentPdf = (record) => {
+    // const newWindow = window.open(
+    //     "https://psod.maf.gov.mn/storage" + record,
+    //     "_blank",
+    //     "noopener,noreferrer,resizable"
+    // );
+
     const newWindow = window.open(
-        "https://psod.maf.gov.mn/storage" + record,
+        "http://172.16.10.73:8000/storage" + record,
         "_blank",
         "noopener,noreferrer,resizable"
     );
@@ -452,7 +431,7 @@ const columns = [
             },
         },
     },
-      {
+    {
         name: "lastName",
         label: "Овог",
         options: {
@@ -468,7 +447,7 @@ const columns = [
             },
         },
     },
-        {
+    {
         name: "firstName",
         label: "Нэр",
         options: {
@@ -500,7 +479,7 @@ const columns = [
             },
         },
     },
-       {
+    {
         name: "documentPdf",
         label: "PDF",
         options: {
@@ -536,7 +515,7 @@ const columns = [
             },
         },
     },
-                {
+    {
         name: "LocationScore",
         label: "Байрзүй",
         options: {
@@ -552,7 +531,7 @@ const columns = [
             },
         },
     },
-                        {
+    {
         name: "TotalScore",
         label: "Дүн",
         options: {
@@ -568,7 +547,6 @@ const columns = [
             },
         },
     },
-
 ];
 
 const excelHeaders = [
@@ -576,8 +554,7 @@ const excelHeaders = [
     { label: "Анги", key: "unitShortName" },
     { label: "Овог нэр", key: "lastName" },
     { label: "Нэр", key: "firstName" },
-     { label: "Холбоо", key: "SignalScore" },
+    { label: "Холбоо", key: "SignalScore" },
     { label: "Байрзүй", key: "LocationScore" },
     { label: "Дүн", key: "TotalScore" },
-
 ];

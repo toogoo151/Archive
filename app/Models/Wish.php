@@ -13,6 +13,24 @@ class Wish extends Model
     protected $table = 'pko_wish';
     public $timestamps = false;
 
+    public function isRequestedInWish($userID,$missionID,$eeljID){
+        $wish = DB::table('pko_wish')
+            ->where('pkoUserID', '=', $userID)
+            ->where('missionID', '=', $missionID)
+            ->where('eeljID', '=', $eeljID)
+            ->get();
+            return count($wish);
+
+      }
+      public function getWishCreated_at($userID,$missionID,$eeljID){
+        $wish = DB::table('pko_wish')
+            ->where('pkoUserID', '=', $userID)
+            ->where('missionID', '=', $missionID)
+            ->where('eeljID', '=', $eeljID)
+            ->first();
+            return $wish;
+
+      }
 
     public function getWishTotalInfo($req) {
         try {

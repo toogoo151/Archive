@@ -9,6 +9,7 @@ class UserQuestion extends Model
 {
     use HasFactory;
     protected $table = 'pko_user_question';
-    public $timestamps = false;
+    public $timestamps = true;
+    const UPDATED_AT = null;
 
 }

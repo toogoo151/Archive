@@ -47,7 +47,8 @@ class all_users extends Model
         $getUserName = DB::table("all_users")
         ->where("all_users.id", "=", Auth::user()->allUsersID)
         ->join("tb_ranks", "all_users.rankID", "tb_ranks.id")
-        ->select("all_users.firstName as name", "tb_ranks.shortRank", "all_users.image")
+        ->join("tb_unit", "all_users.unitID", "tb_unit.id")
+        ->select("all_users.firstName as name", "tb_ranks.shortRank", "all_users.image", "tb_unit.unitShortName")
         ->first();
 
         return response(
@@ -56,6 +57,7 @@ class all_users extends Model
                         "userID"=>Auth::user()->id,
                         "rank" => $getUserName->shortRank,
                         "name" => $getUserName->name,
+                        "userUnitName" => $getUserName->unitShortName,
                         "permission" =>Auth::user()->permission,
                         "user_type" =>Auth::user()->user_type,
                     ), 201
@@ -90,6 +92,21 @@ class all_users extends Model
         ->select("all_users.image")
         ->first()->image;
         return $getUserName;
+    }
+
+    public function getComandlalID(){
+        $getComandlalID = DB::table("all_users")
+        ->where("all_users.id", "=", Auth::user()->allUsersID)
+        ->select("all_users.comandlalID")
+        ->first();
+        return $getComandlalID->comandlalID;
+    }
+    public function getUnitlID(){
+        $getComandlalID = DB::table("all_users")
+        ->where("all_users.id", "=", Auth::user()->allUsersID)
+        ->select("all_users.unitID")
+        ->first();
+        return $getComandlalID->unitID;
     }
 
 }

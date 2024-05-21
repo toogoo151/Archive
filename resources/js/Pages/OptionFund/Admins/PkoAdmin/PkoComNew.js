@@ -602,10 +602,12 @@ const PkoComNew = (props) => {
                                                         хэлтэс
                                                     </option>
                                                     <option value="comandlalAdmin">
-                                                        Төрлийн цэрэг
+                                                        Төрлийн цэргийн
+                                                        командлалын хүний нөөц
                                                     </option>
                                                     <option value="unitAdmin">
-                                                        ЗХ-ний анги байгууллага
+                                                        ЗХ-ний анги байгууллагын
+                                                        админ
                                                     </option>
                                                     <option value="gsmafAdmin">
                                                         ЗХЖШ-ын Хүний нөөцийн
@@ -627,7 +629,7 @@ const PkoComNew = (props) => {
                                                         төв
                                                     </option>
                                                     <option value="batalionAdmin">
-                                                        Мотобуудлагын 13-р ээлж
+                                                        Цэргийн багийн админ
                                                     </option>
                                                     <option value="comissionAdmin">
                                                         Сонгон шалгаруулалтын
@@ -664,15 +666,15 @@ const PkoComNew = (props) => {
                                                     className="form-control"
                                                     {...register("userType")}
                                                 >
-                                                    <option value="">
+                                                    {/* <option value="">
                                                         Сонгоно уу
-                                                    </option>
+                                                    </option> */}
                                                     <option value="unitAdmin">
-                                                        ЗХ-ний анги байгууллага
+                                                        Ангийн админ
                                                     </option>
-                                                    <option value="unitUser">
+                                                    {/* <option value="unitUser">
                                                         Командлалын хэрэглэгч
-                                                    </option>
+                                                    </option> */}
                                                 </select>
                                             )}
                                         </div>

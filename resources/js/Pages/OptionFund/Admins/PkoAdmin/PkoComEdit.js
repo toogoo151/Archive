@@ -733,8 +733,7 @@ const PkoComEdit = (props) => {
                                         {userType == "superAdmin" && (
                                             <select
                                                 className="form-control"
-                                                value={user_type}
-                                                onChange={changeUsertype}
+                                                // {...register("userType")}
                                             >
                                                 <option value="">
                                                     Сонгоно уу
@@ -744,10 +743,12 @@ const PkoComEdit = (props) => {
                                                     ажиллагааны хэлтэс
                                                 </option>
                                                 <option value="comandlalAdmin">
-                                                    Төрлийн цэрэг
+                                                    Төрлийн цэргийн командлалын
+                                                    хүний нөөц
                                                 </option>
                                                 <option value="unitAdmin">
-                                                    ЗХ-ний анги байгууллага
+                                                    ЗХ-ний анги байгууллагын
+                                                    админ
                                                 </option>
                                                 <option value="gsmafAdmin">
                                                     ЗХЖШ-ын Хүний нөөцийн хэлтэс
@@ -766,7 +767,7 @@ const PkoComEdit = (props) => {
                                                     ЗХЖШ-ын Гадаад хэлний төв
                                                 </option>
                                                 <option value="batalionAdmin">
-                                                    Мотобуудлагын 13-р ээлж
+                                                    Цэргийн багийн админ
                                                 </option>
                                                 <option value="comissionAdmin">
                                                     Сонгон шалгаруулалтын комисс
@@ -803,15 +804,12 @@ const PkoComEdit = (props) => {
                                                 value={user_type}
                                                 onChange={changeUsertype}
                                             >
-                                                <option value="">
-                                                    Сонгоно уу
-                                                </option>
                                                 <option value="unitAdmin">
-                                                    ЗХ-ний анги байгууллага
+                                                    Ангийн админ
                                                 </option>
-                                                <option value="unitUser">
+                                                {/* <option value="unitUser">
                                                     Командлалын хэрэглэгч
-                                                </option>
+                                                </option> */}
                                             </select>
                                         )}
                                     </div>

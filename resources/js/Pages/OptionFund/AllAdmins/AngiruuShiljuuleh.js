@@ -60,10 +60,10 @@ const AngiruuShiljuuleh = (props) => {
     const saveUser = () => {
         const pattern = /^[^.\s]/;
 
-        if (userTypeOld == "" || userTypeOld == null) {
-            Swal.fire("Эрх оруулна уу.");
-            return;
-        }
+        // if (userTypeOld == "" || userTypeOld == null) {
+        //     Swal.fire("Эрх оруулна уу.");
+        //     return;
+        // }
 
         if (comandlal == "" || comandlal == null) {
             Swal.fire("Командлал сонгоно уу.");
@@ -77,13 +77,13 @@ const AngiruuShiljuuleh = (props) => {
         axios
             .post("/angiruu/shiljuuleh", {
                 id: props.changeDataRow.id,
-                userTypeOld: userTypeOld,
+                // userTypeOld: userTypeOld,
                 comandlal: comandlal,
                 unit: unit,
             })
             .then((res) => {
                 Swal.fire(res.data.msg);
-                setUserTypeOld("");
+                // setUserTypeOld("");
                 setComandlal("");
                 setUnit("");
                 setShowModal("");
@@ -133,7 +133,7 @@ const AngiruuShiljuuleh = (props) => {
 
                         <div className="modal-body">
                             <div className="row">
-                                <div className="col-md-6">
+                                {/* <div className="col-md-6">
                                     <div className="input-group mb-3">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
@@ -184,7 +184,7 @@ const AngiruuShiljuuleh = (props) => {
                                             </select>
                                         )}
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="row">
                                 <div className="col-md-6">

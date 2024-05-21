@@ -42,6 +42,7 @@ width: 300px;
 display: none;
 align-items: center;
 justify-content: center;
+z-index: 10;
 }
 .button{
 position: relative;
@@ -151,18 +152,10 @@ color: cyan;
     .login-container {
         flex-direction: column;
     }
-}
-
-@media only screen and (max-width: 480px) {
-    /* Styles for screens up to 480px */
-    .login-container {
-        /* Adjust the styles as per your requirements for smaller screens */
-    }
-}
-        .cont1{
+    .cont1{
                 position: none;
-               left: -25px;
-                padding: 55px 65px;
+               /* left: -25px; */
+                padding: 65px 10px;
 
                 /* background: #fff; */
                 background: rgba(255,255,255,0.05);
@@ -172,47 +165,23 @@ color: cyan;
                 z-index: 1;
                 transition: 0.5s;
                 color: black;
-                background-color:rgb(255, 255, 255, 0.4);
+                background-color:rgba(255, 255, 255, 0.8);
                 /* background-color: rgb(254, 255, 255); */
                 /* opacity: 2; */
             }
+}
 
-
-            .cont2{
-                position: none;
-                left: -50px;
-
-                /* padding: 10px 10px; */
-                /* background: #fff; */
-                /* background: rgba(255,255,255,0.05); */
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-                width: 300px;
-                height: 300px;
-                background-image: radial-gradient(white, rgb(28, 230, 162), blue);
-                margin-top:150px;
-                margin-left: 150px;
-
-                border-radius: 50%;
-                /* border-radius: 50%; */
-                /* backdrop-filter: blur(80px); */
-
-                transition: 0.5s;
-                color: black;
-                background-color:rgb(255, 255, 255, 0.9);
-                /* background-color: rgb(254, 255, 255); */
-                /* opacity: 2; */
-            }
+@media only screen and (max-width: 480px) {
+    /* Styles for screens up to 480px */
+    .login-container {
+        /* Adjust the styles as per your requirements for smaller screens */
+    }
+}
 
             .cont1:hover{
-                left: -20px;
-                padding: 60px 65px;
+                /* left: -20px;
+                padding: 60px 65px; */
             }
-
-        .img{
-            /* display: flex;
-            justify-content: flex-end;
-            align-items: center; */
-        }
 
 /* Default styles for the .form element */
 .form {
@@ -235,7 +204,7 @@ color: cyan;
         /* Adjust other properties as needed for notebook screens */
     }
     .cont1 {
-        padding: 35px; /* Adjust the padding value as desired for notebook screens */
+        padding: 35px; /* Adjust the padding value as desired for notebook screens 35*/
         /* Adjust other properties as needed for notebook screens */
     }
 }
@@ -246,6 +215,23 @@ color: cyan;
         width: 60%; /* Adjust the width percentage as desired for PC screens */
         /* Adjust other properties as needed for PC screens */
     }
+    .cont1{
+                position: none;
+               /* left: -25px; */
+                padding: 55px 65px;
+
+                /* background: #fff; */
+                background: rgba(255,255,255,0.05);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                border-radius: 25px;
+                /* backdrop-filter: blur(80px); */
+                z-index: 1;
+                transition: 0.5s;
+                color: black;
+                background-color:rgba(255, 255, 255, 0.8);
+                /* background-color: rgb(254, 255, 255); */
+                /* opacity: 2; */
+            }
 }
 
 
@@ -256,6 +242,8 @@ color: cyan;
         }
 
         .avatar{
+            padding-top: 0px;
+            margin-top: 0px;
             width: 220px;
             text-align: center;
             justify-content: center;
@@ -273,13 +261,13 @@ color: cyan;
             display: grid;
             grid-template-columns: 7% 93%;
             margin: 25px 0;
-            padding: 5px 0;
-            color: black;
+            padding: 0px 0;
+            color: rgb(106, 108, 255);
             border-bottom: 2px solid #ffffff;
         }
         ::placeholder{
             color: rgb(0, 0, 0);
-            opacity: 1;
+            opacity: 0.5;
         }
         .input-div:after, .input-div::before{
             content: '';
@@ -322,8 +310,10 @@ color: cyan;
         }
 
         .i i {
-            color: #ffffff;
+            color: #0388e7;
             transition: .3s;
+
+            /* color: linear-gradient(to right,#4234da,#2ac3d1, #0388e7); */
         }
         .input-div > div{
             position: relative;
@@ -460,22 +450,19 @@ color: cyan;
 
         }
     }
-            body {
-    --menu-item-size: 50px;
-    --green-color: #16284c;
-    --blue-color: #1286d3;
-    --dark-green-color: #539cd8;
-    --white-color: #FFF;
-    --gray-color: #EDEDED;
-    --line-offset: calc((100% - var(--container-height))/ 2 + var(--menu-item-size) + 0.6em);
-    background-image: url("/images/55.png");
-    background-size: cover;
-    backdrop-filter: blur(6px);
-    overflow: hidden;
-/* background-blend-mode: normal; */
-
-
-        }
+    body {
+        --menu-item-size: 50px;
+        --green-color: #16284c;
+        --blue-color: #1286d3;
+        --dark-green-color: #539cd8;
+        --white-color: #FFF;
+        --gray-color: #EDEDED;
+        --line-offset: calc((100% - var(--container-height))/ 2 + var(--menu-item-size) + 0.6em);
+        background-image: url("/images/55.png");
+        background-size: cover;
+        backdrop-filter: blur(1px);
+        overflow: hidden;
+    }
 
     .topnav {
     display: flex;
@@ -601,111 +588,104 @@ margin-bottom: calc(var(--size) * 0.13 * -1);
 
 <div class="container">
 
-    <div class="img">
-        {{-- <br>
+        <div class="img">
+            {{-- <br>
 
-        <br> <br> <br> <br> <br> <br> <br> --}}
-            {{-- <div class="cont2"> --}}
-                {{-- <img class="com" src="images/12.gif" style="width:780px;height:480px;margin-top:250px;margin-left:-350px;"> --}}
-                {{-- <img class="base" src="images/66.png" style="width:680px;height:480px;margin-top:-450px;margin-left:-185px;"> --}}
+            <br> <br> <br> <br> <br> <br> <br> --}}
+                {{-- <div class="cont2"> --}}
+                    {{-- <img class="com" src="images/12.gif" style="width:780px;height:480px;margin-top:250px;margin-left:-350px;"> --}}
+                    {{-- <img class="base" src="images/66.png" style="width:680px;height:480px;margin-top:-450px;margin-left:-185px;"> --}}
 
-            {{-- </div> --}}
+                {{-- </div> --}}
 
-    </div>
-
-    <div class="menu-container">
-        <div class="button">
-            Меню
-            <span class="fas fa-bars" id="drop_down"></span>
         </div>
-        <ul>
-            <li><a href="{{url("/info/onePost/1")}}">Бидний тухай</a></li>
-            <li><a href="{{url("/image")}}">Зургийн цомог</a></li>
-            <li><a href="{{url("/announcement")}}">Зарлал</a></li>
-            <li><a href="{{url("/zaawar")}}" target="_blank">Заавар</a></li>
-            <li><a href="{{url("/login")}}">Нэвтрэх</a></li>
-        </ul>
-    </div>
+
+        <div class="menu-container">
+            <div class="button">
+                Меню
+                <span class="fas fa-bars" id="drop_down"></span>
+            </div>
+            <ul>
+                <li><a href="{{url("/info/onePost/1")}}">Бидний тухай</a></li>
+                <li><a href="{{url("/image")}}">Зургийн цомог</a></li>
+                <li><a href="{{url("/announcement")}}">Зарлал</a></li>
+                <li><a href="{{url("/zaawar")}}" target="_blank">Заавар</a></li>
+                <li><a href="{{url("/login")}}">Нэвтрэх</a></li>
+            </ul>
+        </div>
 
         <div class="login-container">
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="cont1">
-                <img class="avatar" src="images/12.gif" alt="">
-                <br>  <br>
+                    <img class="avatar" src="images/12.gif" alt="">
+                    <br><br>
 
                         {{-- <b><h2>НЭВТРЭХ ХЭСЭГ<h2></b> --}}
-<div class="input-div one">
-    <div class="i">
-        <i class="fas fa-envelope"></i>
-    </div>
-    <div>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="fas fa-envelope "></i>
+                        </div>
+                        <div>
+                            <input id="email" type="email" class="input" placeholder="Имэйл хаяг"  class="form-control @error('email') is-invalid @enderror" name="email"
+                                value="{{ old('email') }}" required autocomplete="email" autofocus>
+                        </div>
 
-        <input id="email" type="email" class="input" placeholder="Хэрэглэгчийн нэр"  class="form-control @error('email') is-invalid @enderror" name="email"
-            value="{{ old('email') }}" required autocomplete="email" autofocus>
 
-    </div>
-        {{-- @error('email')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-            @enderror --}}
-</div>
 
-        <div class="input-div two">
-            <button id="togglePassword" type="button" onclick="togglePasswordVisibility()" style="background-color: transparent; border: none;">
-                <div class="i">
-                    <i id="lockIcon" class="fas fa-lock"></i>
-                </div>
-            </button>
-            <div>
-                @error('password')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
+                    </div>
 
-                <input id="password" type="password" class="input" placeholder="Нууц үг" name="password"
-                    required autocomplete="current-password" autofocus>
-                <br/>
-                <br/>
-            </div>
-        </div>
+                    <div class="input-div two">
+                        <button id="togglePassword" type="button" onclick="togglePasswordVisibility()" style="background-color: transparent; border: none;">
+                            <div class="i">
+                                <i id="lockIcon" class="fas fa-lock"></i>
+                            </div>
+                        </button>
+                        <div>
+                            <input id="password" type="password" class="input" placeholder="Нууц үг" name="password"
+                                required autocomplete="current-password" autofocus>
+                            <br/>
+                            <br/>
+                        </div>
+                    </div>
 
-        <style>
-            #lockIcon.fa-unlock {
-                color: red;
-            }
-        </style>
+                    <style>
+                        #lockIcon.fa-unlock {
+                            color: red;
+                        }
+                    </style>
 
-        <script>
-            function togglePasswordVisibility() {
-                var passwordInput = document.getElementById("password");
-                var lockIcon = document.getElementById("lockIcon");
+                    <script>
+                        function togglePasswordVisibility() {
+                            var passwordInput = document.getElementById("password");
+                            var lockIcon = document.getElementById("lockIcon");
 
-                if (passwordInput.type === "password") {
-                    passwordInput.type = "text";
-                    lockIcon.className = "fas fa-unlock";
-                } else {
-                    passwordInput.type = "password";
-                    lockIcon.className = "fas fa-lock";
-                }
-            }
-        </script>
+                            if (passwordInput.type === "password") {
+                                passwordInput.type = "text";
+                                lockIcon.className = "fas fa-unlock";
+                            } else {
+                                passwordInput.type = "password";
+                                lockIcon.className = "fas fa-lock";
+                            }
+                        }
+                    </script>
 
-                    <a href="{{route('verification.notice')}}" style="color:black">
+                    <a href="{{route('verification.notice')}}" style="color:black;  text-decoration: underline;">
                         Имэйл баталгаажуулах
                     </a>
                     <br/>
-                    <a href="{{route('reset.show')}}" style="color:black" >
+                    <a href="{{route('reset.show')}}" style="color:black; text-decoration: underline; " >
                         Нууц үгээ мартсан уу?
                     </a>
-
                     <input type="submit" class="btn" value="Нэвтрэх" onclick="myfunc()">
                     @error('email')
                     <input class="invalid-feedback" role="alert">
-                        <h5>{{ $message }}</h5>
-                        @enderror
+                        <p style="color:red">{{ $message }}</p>
+                    @enderror
+                    @error('password')
+                    <input class="invalid-feedback" role="alert">
+                        <p style="color:red">{{ $message }}</p>
+                    @enderror
                         <span id='paramParent' role="alert">
                             <h5 id='paramMessage'><?php
                                 if (isset($_GET['message'])) {
@@ -714,14 +694,14 @@ margin-bottom: calc(var(--size) * 0.13 * -1);
                                 $param1 = filter_input(INPUT_GET, 'message', FILTER_SANITIZE_STRING);
                                 ?></h5>
                         </span>
-                                </div>
+                </div>
                     {{-- <button type="submit"  >
                         {{ __('Нэвтрэх') }}
                     </button> --}}
-                </form>
-            </div>
-            </div>
-            </div>
+            </form>
+        </div>
+</div>
+{{-- </div> --}}
 {{-- <script type="text.javascript" src="js/main.js"></script> --}}
 {{-- <script src="{{ asset('js/main.js') }}" defer></script> --}}
 <script>

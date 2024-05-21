@@ -77,40 +77,56 @@ class AdminController extends Controller
         }
     }
 
-    public function getAdmins(){
+    public function getAdmins(Request $req){
         try {
+            // getAdminsByType
             $admins = DB::table("pko_users")
-            ->where( function($query){
-                if(Auth::user()->user_type == "gsmafAdmin"){
-                    $query->whereIn("pko_users.user_type", ["comandlalAdmin", "unitAdmin"] )
-                    ->join("all_users", "all_users.id", "=", "pko_users.allUsersID")
-                    ->where("all_users.dundiinTulv", "=", 0);
+            ->where( function($query)use($req){
+                if($req->getAdminsByType ==="allAdmin"){
+                    $query->where("pko_users.user_type", "!=", "unitUser");
+                // ->join("all_users", "all_users.id", "=", "pko_users.allUsersID")
+                // ->where("all_users.dundiinTulv", "=", 0);
+                }
+                if($req->getAdminsByType ==="comandlalAdmin"|| $req->getAdminsByType ==="unitAdmin"){
+                    $query->where("pko_users.user_type", "=", $req->getAdminsByType)
+                ->join("all_users", "all_users.id", "=", "pko_users.allUsersID")
+                ->where("all_users.dundiinTulv", "=", 0);
+                }
+                if($req->getAdminsByType ==="otherAdmin"){
+                    $query->whereIn("pko_users.user_type", ["superAdmin","gsmafAdmin", "healthDepartmentAdmin", "comissionAdmin", "hospitalAdmin", "sportAdmin", "languageAdmin", "batalionAdmin"] )
+                ->join("all_users", "all_users.id", "=", "pko_users.allUsersID")
+                ->where("all_users.dundiinTulv", "=", 0);
                 }
 
-                if(Auth::user()->user_type == "superAdmin"){
-                    $query->whereIn("pko_users.user_type", ["comandlalAdmin", "gsmafAdmin", "healthDepartmentAdmin", "comissionAdmin", "hospitalAdmin", "sportAdmin", "languageAdmin", "batalionAdmin"] )
-                    ->join("all_users", "all_users.id", "=", "pko_users.allUsersID")
-                    ->where("all_users.dundiinTulv", "=", 0);
-                }
+                // if(Auth::user()->user_type == "gsmafAdmin"){
+                //     $query->whereIn("pko_users.user_type", ["comandlalAdmin", "unitAdmin"] )
+                //     ->join("all_users", "all_users.id", "=", "pko_users.allUsersID")
+                //     ->where("all_users.dundiinTulv", "=", 0);
+                // }
+
+
                 if(Auth::user()->user_type == "comandlalAdmin"){
                     $myComandlal = new all_users;
                     $myComandlalID = $myComandlal->getUserComandlal();
 
-                    $query->whereIn("pko_users.user_type", ["unitAdmin", "unitUser"] )
+                    $query->whereIn("pko_users.user_type", ["unitAdmin"] )
                     ->join("all_users", "all_users.id", "=", "pko_users.allUsersID")
                     ->where("all_users.comandlalID", "=", $myComandlalID->id)
                     ->where("all_users.dundiinTulv", "=", 0);
                 }
-                if(Auth::user()->user_type == "unitAdmin"){
-                    $myUnit = new all_users;
-                    $myUnitFirstRow = $myUnit->getUserUnit();
+                // if(Auth::user()->user_type == "unitAdmin"){
+                //     $myUnit = new all_users;
+                //     $myUnitFirstRow = $myUnit->getUserUnit();
 
-                    $query->where("pko_users.user_type", "=", "unitUser")
-                    ->join("all_users", "all_users.id", "=", "pko_users.allUsersID")
-                    ->where("all_users.unitID", "=", $myUnitFirstRow->id)
-                    ->where("all_users.dundiinTulv", "=", 0);
-                }
+                //     $query->where("pko_users.user_type", "=", "unitUser")
+                //     ->join("all_users", "all_users.id", "=", "pko_users.allUsersID")
+                //     ->where("all_users.unitID", "=", $myUnitFirstRow->id)
+                //     ->where("all_users.dundiinTulv", "=", 0);
+                // }
 
+            })
+            ->join("pko_admin_type", function($query){
+                $query->on("pko_users.user_type", "=", "pko_admin_type.adminTypeName");
             })
             ->join("all_users", function($query){
                 $query->on("pko_users.allUsersID", "=", "all_users.id");
@@ -127,13 +143,56 @@ class AdminController extends Controller
             ->leftJoin("tb_gender", function($query){
                 $query->on("all_users.gender", "=", "tb_gender.id");
             })
-            ->select("pko_users.id", "pko_users.email", "pko_users.user_type", "all_users.image", "all_users.foreignPass", "all_users.foreignFinishDate", "pko_users.phone", "all_users.comandlalID", "all_users.unitID", "all_users.rankParentID", "all_users.rankTypeID", "all_users.rankID", "all_users.firstName", "all_users.lastName", "all_users.rd", "all_users.age", "all_users.gender", "all_users.position", "tb_gender.genderName","tb_comandlal.comandlalShortName as comandlal", "tb_unit.unitShortName as unit", "tb_ranks.shortRank")->get();
-            return $admins;
+            ->select("pko_users.id", "pko_users.email", "pko_users.user_type", "all_users.image", "all_users.foreignPass", "all_users.foreignFinishDate", "pko_users.phone", "all_users.comandlalID", "all_users.unitID", "all_users.rankParentID", "all_users.rankTypeID", "all_users.rankID", "all_users.firstName", "all_users.lastName", "all_users.rd", "all_users.gender", "all_users.position", "tb_gender.genderName","tb_comandlal.comandlalShortName as comandlal", "tb_unit.unitShortName as unit", "tb_ranks.shortRank", "pko_admin_type.adminTypeDescription as adminPermision")->get();
+            // return $admins;
+            return response(
+                array(
+                    "allSysytemAdmins" => $this->countAdmins(1),
+                    "comandlalAdmins" => $this->countAdmins(2),
+                    "allUnitAdmin" => $this->countAdmins(3),
+                    "otherSystemAdmins" => $this->countAdmins(4),
+                    "adminsData" => $admins,
+            ), 200
+            );
         } catch (\Throwable $th) {
             return response(
                 "aldaa garlaa", 500
             );
         }
+    }
+    public function countAdmins($countKind){
+        if($countKind ==1){
+            $allSysytemAdmins = DB::table("pko_users")
+                ->where("pko_users.user_type", "!=", "unitUser")
+                ->select( "pko_users.id")
+                ->count();
+            return  $allSysytemAdmins;
+        }
+        if($countKind ==2){
+            $comandlalAdmins = DB::table("pko_users")
+                ->where("pko_users.email_verified_at", "!=", null) // идвэхтэй админууд
+                ->where("pko_users.user_type", "=", "comandlalAdmin")
+                ->select( "pko_users.id")
+                ->count();
+            return  $comandlalAdmins;
+        }
+        if($countKind ==3){
+            $allUnitAdmin = DB::table("pko_users")
+                ->where("pko_users.user_type", "=", "unitAdmin")
+                ->select( "pko_users.id")
+                ->count();
+            return  $allUnitAdmin;
+        }
+        if($countKind ==4){
+            $otherSystemAdmins = DB::table("pko_users")
+                ->where("pko_users.user_type", "!=", "comandlalAdmin")
+                ->where("pko_users.user_type", "!=", "unitAdmin")
+                ->where("pko_users.user_type", "!=", "unitUser")
+                ->select( "pko_users.id")
+                ->count();
+            return  $otherSystemAdmins;
+        }
+
     }
 
 //ЭДЦХАХ-ээс Төрийн цэргийн байгууллагын хэрэглэгчийг асуумж хүсэлтийг давуулж нэмэнх хэсэг
@@ -188,7 +247,7 @@ class AdminController extends Controller
                     ), 500
                 );
             }
-            if(!$this->checkRD($req->rd)){
+            if(!$this->checkRD($req->rd)){ // хэрэглэгч all_users олдвол энэ пункц ажилна.
                 $rd = all_users::where("rd", "=", $req->rd)->first();
                 $getPkoUserRowCount = User::where("allUsersID", "=", $rd->id)->count();
                 if($getPkoUserRowCount === 0)
@@ -865,14 +924,14 @@ class AdminController extends Controller
 
     public function changePassword(Request $req){
         try {
-            $user = Auth::user();
-                if(!Hash::check($req->oldPassword, $user->password)){
+                if(!Hash::check($req->oldPassword, Auth::user()->password)){
                     return response(
                         array(
                             "msg" => "Хуучин нууц үг таарахгүй байна."
                         ),500
                     );
                 }else{
+                    $user = User::find(Auth::user()->id);
                     $user->password = Hash::make($req->newPassword);
                     $user->save();
 

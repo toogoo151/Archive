@@ -383,11 +383,16 @@ const UserDetails = (props) => {
                                             <MDBCardBody className="p-12">
                                                 <div className="d-flex text-black">
                                                     <div className="flex-shrink-0">
-                                                        <h1>
-                                                            Ангийн захирагчийн{" "}
-                                                            <br />
-                                                            шийдвэр
-                                                        </h1>
+                                                        {getUnitCommanderAppr.length !=
+                                                            0 && (
+                                                            <h1>
+                                                                Ангийн
+                                                                захирагчийн{" "}
+                                                                <br />
+                                                                шийдвэр{" "}
+                                                            </h1>
+                                                        )}
+
                                                         <div
                                                             className="center"
                                                             style={{
@@ -399,7 +404,7 @@ const UserDetails = (props) => {
                                                                 // height: "100%",
                                                             }}
                                                         >
-                                                            {getUnitCommanderAppr.chiefApprove ===
+                                                            {getUnitCommanderAppr.length ===
                                                             0 ? (
                                                                 ""
                                                             ) : getUnitCommanderAppr.chiefApprove ===
@@ -497,21 +502,23 @@ const UserDetails = (props) => {
                                                 </div>
                                                 <div className="row">
                                                     {getUnitCommanderAppr.chiefDesc !=
-                                                        null && (
-                                                        <div
-                                                            className="d-flex justify-content-start rounded-3 p-2 mb-2"
-                                                            style={{
-                                                                backgroundColor:
-                                                                    "#efefef",
-                                                            }}
-                                                        >
-                                                            Тайлбар:
-                                                            &nbsp;&nbsp;&nbsp;
-                                                            {
-                                                                getUnitCommanderAppr.chiefDesc
-                                                            }
-                                                        </div>
-                                                    )}
+                                                        null &&
+                                                        getUnitCommanderAppr.chiefApprove ===
+                                                            2 && (
+                                                            <div
+                                                                className="d-flex justify-content-start rounded-3 p-2 mb-2"
+                                                                style={{
+                                                                    backgroundColor:
+                                                                        "#efefef",
+                                                                }}
+                                                            >
+                                                                Тайлбар:{" "}
+                                                                &nbsp;&nbsp;&nbsp;
+                                                                {
+                                                                    getUnitCommanderAppr.chiefDesc
+                                                                }
+                                                            </div>
+                                                        )}
                                                 </div>
                                             </MDBCardBody>
                                         </MDBCard>

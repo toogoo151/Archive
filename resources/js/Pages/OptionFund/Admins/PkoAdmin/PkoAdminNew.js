@@ -679,7 +679,8 @@ const PkoAdminNew = (props) => {
                                                         хэлтэс
                                                     </option>
                                                     <option value="comandlalAdmin">
-                                                        Төрлийн цэрэг
+                                                        Төрлийн цэрэгийн
+                                                        командлал
                                                     </option>
                                                     <option value="gsmafAdmin">
                                                         ЗХЖШ-ын Хүний нөөцийн
