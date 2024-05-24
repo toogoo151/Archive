@@ -83,6 +83,7 @@ class DocumentUserController extends Controller
                 "getDocUser" => $getDocUser,
                 "pkoMainHistoryID" => $this->myUserID($req),
                 "getMyDocTotal" => $getTotal,
+                "docItemsLength" =>$docItemsLength,
             );
             return $row;
         } catch (\Throwable $th) {

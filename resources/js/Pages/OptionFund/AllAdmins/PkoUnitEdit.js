@@ -107,7 +107,6 @@ const PkoUnitEdit = (props) => {
 
     useEffect(() => {
         setDataRow(props.changeDataRow);
-        console.log(props.changeDataRow);
     }, [props.changeDataRow]);
     useEffect(() => {
         if (props.isEditBtnClick) {
@@ -273,6 +272,8 @@ const PkoUnitEdit = (props) => {
                 setShowModal("");
 
                 props.refreshUsers(
+                    props.serverSidePage,
+                    props.serverSideRowsPerPage,
                     state.getMissionRowID,
                     state.getEeljRowID,
                     props.changeUsersType,

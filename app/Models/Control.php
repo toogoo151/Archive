@@ -37,15 +37,42 @@ public function isHidePushButton($req){
 
 public function isDocumentAddButton($req){
     try {
-        $getControl = DB::table("pko_control")
+        $mainHistory = DB::table("pko_main_history")
         ->where("missionID", "=", $req->_missionID)
         ->where("eeljID", "=", $req->_eeljID)
-        ->first();
-        if($getControl->isDocument == 0){
-            return false;
+        ->where("pkoUserID", "=", Auth::user()->id)
+        ->count();
+
+        if($mainHistory > 0){
+            $getControl = DB::table("pko_control")
+            ->where("missionID", "=", $req->_missionID)
+            ->where("eeljID", "=", $req->_eeljID)
+            ->first();
+            if($getControl->isDocument == 0){
+                return response(
+                    array(
+                        "msg"=>"Бичиг баримт оруулах хэсэг хаалттай байна.",
+                        "isOpen"=>false
+                    ), 200
+                );
+            }else{
+                return response(
+                    array(
+                        "msg"=>"Бичиг баримт оруулах хэсэг нээгдсэн байна.",
+                        "isOpen"=>true
+                    ), 200
+                );
+            }
         }else{
-            return true;
+            return response(
+                array(
+                    "msg"=>"Та энэ ажиллагаанд хүсэлт гаргаагүй байна.",
+                    "isOpen"=>false
+                ), 200
+            );
         }
+
+
     } catch (\Throwable $th) {
         return response(
             array(

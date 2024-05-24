@@ -23,6 +23,13 @@ const QuestionEdit = () => {
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
     const [showModal, setShowModal] = useState("modal");
 
+    // server side
+    const [serverSidePage, setServerSidePage] = useState(0);
+    const [serverSideCount, setServerSideCount] = useState(0);
+    const [serverSideRowsPerPage, setServerSideRowsPerPage] = useState(10);
+    const [searchText, setSearchText] = useState("");
+    // server side
+
     useEffect(() => {
         axios
             .get("/get/comandlal")
@@ -33,6 +40,9 @@ const QuestionEdit = () => {
                 console.log(err);
             });
         refreshQuestionEdit(
+            serverSidePage,
+            serverSideRowsPerPage,
+            searchText,
             getComandlalID,
             getUnitID,
             getQuestionState,
@@ -42,12 +52,21 @@ const QuestionEdit = () => {
 
     useEffect(() => {
         refreshQuestionEdit(
+            serverSidePage,
+            serverSideRowsPerPage,
+            searchText,
             getComandlalID,
             getUnitID,
             getQuestionState,
             getGender
         );
-    }, [state.getMissionRowID, state.getEeljRowID]);
+    }, [
+        serverSidePage,
+        serverSideRowsPerPage,
+        searchText,
+        state.getMissionRowID,
+        state.getEeljRowID,
+    ]);
 
     const changeComandlal = (inComandlal) => {
         axios
@@ -65,6 +84,9 @@ const QuestionEdit = () => {
     const changeUnit = (e) => {
         setUnitID(e.target.value);
         refreshQuestionEdit(
+            serverSidePage,
+            serverSideRowsPerPage,
+            searchText,
             getComandlalID,
             e.target.value,
             getQuestionState,
@@ -80,6 +102,9 @@ const QuestionEdit = () => {
     }, [getRowsSelected]);
 
     const refreshQuestionEdit = (
+        page,
+        rowsPerPage,
+        search,
         comandlalID,
         unitID,
         questionState,
@@ -87,6 +112,9 @@ const QuestionEdit = () => {
     ) => {
         axios
             .post("/get/question/edit", {
+                page: page + 1, // Laravel pagination is 1-based
+                per_page: rowsPerPage,
+                search: search,
                 _missionID: state.getMissionRowID,
                 _eeljID: state.getEeljRowID,
                 _comandlalID: comandlalID,
@@ -97,7 +125,8 @@ const QuestionEdit = () => {
             .then((res) => {
                 // console.log(res.data);
                 // return;
-                setQuestionEdit(res.data);
+                setQuestionEdit(res.data.data);
+                setServerSideCount(res.data.total);
                 setRowsSelected([]);
             })
             .catch((err) => {
@@ -112,6 +141,9 @@ const QuestionEdit = () => {
     const changeQuestionState = (e) => {
         setQuestionState(e.target.value);
         refreshQuestionEdit(
+            serverSidePage,
+            serverSideRowsPerPage,
+            searchText,
             getComandlalID,
             getUnitID,
             e.target.value,
@@ -122,6 +154,9 @@ const QuestionEdit = () => {
     const changeGender = (e) => {
         setGender(e.target.value);
         refreshQuestionEdit(
+            serverSidePage,
+            serverSideRowsPerPage,
+            searchText,
             getComandlalID,
             getUnitID,
             getQuestionState,
@@ -924,6 +959,9 @@ const QuestionEdit = () => {
                                 setComandlalID(e.target.value);
                                 setUnitID("");
                                 refreshQuestionEdit(
+                                    serverSidePage,
+                                    serverSideRowsPerPage,
+                                    searchText,
                                     e.target.value,
                                     "",
                                     getQuestionState,
@@ -1014,6 +1052,16 @@ const QuestionEdit = () => {
                             />
                         </>
                     }
+                    // serverSide
+                    count={serverSideCount}
+                    page={serverSidePage}
+                    rowsPerPage={serverSideRowsPerPage}
+                    setPage={setServerSidePage}
+                    setRowsPerPage={setServerSideRowsPerPage}
+                    isServerSide={true}
+                    setSearchText={setSearchText}
+                    // serverSide end
+
                     btnEdit={btnEdit}
                     editdataTargetID={"#questionEdit"}
                     modelType={showModal}
@@ -1032,6 +1080,8 @@ const QuestionEdit = () => {
                 refreshQuestionEdit={refreshQuestionEdit}
                 changeDataRow={clickedRowData}
                 isEditBtnClick={isEditBtnClick}
+                serverSidePage={serverSidePage}
+                serverSideRowsPerPage={serverSideRowsPerPage}
             />
         </div>
     );

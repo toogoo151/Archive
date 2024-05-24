@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import Swal from "sweetalert2";
 import axios from "../../../AxiosUser";
-
+import { AppContext } from "../../../Context/MyContext";
 const EditChild = (props) => {
+    const state = useContext(AppContext);
+
     const [showModal, setShowModal] = useState("");
 
     const [getAppointedDate, setAppointedDate] = useState("");
+    const [getMovement, setMovement] = useState("");
     const [getRolePlayed, setRolePlayed] = useState("");
     // const [getMissionType, setMissionType] = useState("");
     const [getMissionName, setMissionName] = useState("");
@@ -24,7 +27,9 @@ const EditChild = (props) => {
     useEffect(() => {
         if (props.isEditBtnClick) {
             setAppointedDate(props.changeDataRow.appointedDate);
+            setMovement(props.changeDataRow.movement);
             setRolePlayed(props.changeDataRow.rolePlayed);
+
             // setMissionType(
             //     props.changeDataRow.missionType != null
             //         ? props.changeDataRow.missionType
@@ -61,6 +66,7 @@ const EditChild = (props) => {
                 id: props.changeDataRow.id,
                 pkoUserID: props.changeDataRow.pkoUserID,
                 appointedDate: getAppointedDate,
+                movement: getMovement,
                 rolePlayed: getRolePlayed,
                 // missionType: getMissionType,
                 missionName: getMissionName,
@@ -69,6 +75,8 @@ const EditChild = (props) => {
                 punishment: getPunishment,
                 punishmentDate: getPunishmentDate,
                 questionDes: getDes,
+                _missionID: state.getMissionRowID,
+                _eeljID: state.getEeljRowID,
             })
             .then((res) => {
                 props.setRowsSelected([]);
@@ -85,6 +93,9 @@ const EditChild = (props) => {
                 setShowModal("");
 
                 props.refreshQuestionEdit(
+                    props.serverSidePage,
+                    props.serverSideRowsPerPage,
+                    "",
                     props.getComandlalID,
                     props.getUnitID,
                     props.getQuestionState
@@ -162,6 +173,33 @@ const EditChild = (props) => {
                                     />
                                 </div>
                             </div>
+                            <div className="row">
+                                <div className="input-group mb-3">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text">
+                                            Одоогийн албан тушаалд томилогдсон
+                                            байдал:
+                                        </span>
+                                    </div>
+                                    <select
+                                        className="form-control"
+                                        onChange={(e) => {
+                                            setMovement(e.target.value);
+                                        }}
+                                        value={getMovement}
+                                    >
+                                        <option value="">Сонгоно уу</option>
+                                        <option value="1">
+                                            Анги дотороо томилогдсон
+                                        </option>
+                                        <option value="0">
+                                            Анги хооронд шилжин томилогдсон
+                                        </option>
+                                        <option value="1">Бусад</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div className="row">
                                 <div className="input-group mb-3">
                                     <div className="input-group-prepend">

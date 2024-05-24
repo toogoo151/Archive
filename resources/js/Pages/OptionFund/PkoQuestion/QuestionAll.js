@@ -21,6 +21,12 @@ const QuestionAll = () => {
 
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
     const [showModal, setShowModal] = useState("modal");
+    // server side
+    const [serverSidePage, setServerSidePage] = useState(0);
+    const [serverSideCount, setServerSideCount] = useState(0);
+    const [serverSideRowsPerPage, setServerSideRowsPerPage] = useState(10);
+    const [searchText, setSearchText] = useState("");
+    // server side
 
     useEffect(() => {
         axios
@@ -32,6 +38,9 @@ const QuestionAll = () => {
                 console.log(err);
             });
         refreshQuestionEdit(
+            serverSidePage,
+            serverSideRowsPerPage,
+            searchText,
             getComandlalID,
             getUnitID,
             getQuestionState,
@@ -40,12 +49,21 @@ const QuestionAll = () => {
     }, []);
     useEffect(() => {
         refreshQuestionEdit(
+            serverSidePage,
+            serverSideRowsPerPage,
+            searchText,
             getComandlalID,
             getUnitID,
             getQuestionState,
             getGender
         );
-    }, [state.getMissionRowID, state.getEeljRowID]);
+    }, [
+        serverSidePage,
+        serverSideRowsPerPage,
+        searchText,
+        state.getMissionRowID,
+        state.getEeljRowID,
+    ]);
 
     const changeComandlal = (inComandlal) => {
         axios
@@ -63,6 +81,9 @@ const QuestionAll = () => {
     const changeUnit = (e) => {
         setUnitID(e.target.value);
         refreshQuestionEdit(
+            serverSidePage,
+            serverSideRowsPerPage,
+            searchText,
             getComandlalID,
             e.target.value,
             getQuestionState,
@@ -78,6 +99,9 @@ const QuestionAll = () => {
     }, [getRowsSelected]);
 
     const refreshQuestionEdit = (
+        page,
+        rowsPerPage,
+        search,
         comandlalID,
         unitID,
         questionState,
@@ -85,6 +109,9 @@ const QuestionAll = () => {
     ) => {
         axios
             .post("/get/question/all", {
+                page: page + 1, // Laravel pagination is 1-based
+                per_page: rowsPerPage,
+                search: search,
                 _missionID: state.getMissionRowID,
                 _eeljID: state.getEeljRowID,
                 _comandlalID: comandlalID,
@@ -93,7 +120,8 @@ const QuestionAll = () => {
                 _gender: gender,
             })
             .then((res) => {
-                setQuestionAll(res.data);
+                setQuestionAll(res.data.data);
+                setServerSideCount(res.data.total);
                 setRowsSelected([]);
             })
             .catch((err) => {
@@ -108,6 +136,9 @@ const QuestionAll = () => {
     const changeQuestionState = (e) => {
         setQuestionState(e.target.value);
         refreshQuestionEdit(
+            serverSidePage,
+            serverSideRowsPerPage,
+            searchText,
             getComandlalID,
             getUnitID,
             e.target.value,
@@ -118,6 +149,9 @@ const QuestionAll = () => {
     const changeGender = (e) => {
         setGender(e.target.value);
         refreshQuestionEdit(
+            serverSidePage,
+            serverSideRowsPerPage,
+            searchText,
             getComandlalID,
             getUnitID,
             getQuestionState,
@@ -939,6 +973,9 @@ const QuestionAll = () => {
                                 setComandlalID(e.target.value);
                                 setUnitID("");
                                 refreshQuestionEdit(
+                                    serverSidePage,
+                                    serverSideRowsPerPage,
+                                    searchText,
                                     e.target.value,
                                     "",
                                     getQuestionState,
@@ -1029,6 +1066,16 @@ const QuestionAll = () => {
                             />
                         </>
                     }
+                    // serverSide
+                    count={serverSideCount}
+                    page={serverSidePage}
+                    rowsPerPage={serverSideRowsPerPage}
+                    setPage={setServerSidePage}
+                    setRowsPerPage={setServerSideRowsPerPage}
+                    isServerSide={true}
+                    setSearchText={setSearchText}
+                    // serverSide end
+
                     btnEdit={btnEdit}
                     editdataTargetID={"#questionEdit"}
                     modelType={showModal}
@@ -1047,6 +1094,8 @@ const QuestionAll = () => {
                 refreshQuestionEdit={refreshQuestionEdit}
                 changeDataRow={clickedRowData}
                 isEditBtnClick={isEditBtnClick}
+                serverSidePage={serverSidePage}
+                serverSideRowsPerPage={serverSideRowsPerPage}
             />
         </div>
     );

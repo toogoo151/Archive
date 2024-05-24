@@ -163,6 +163,8 @@ const PkoUnitNew = (props) => {
                 );
 
                 props.refreshUsers(
+                    props.serverSidePage,
+                    props.serverSideRowsPerPage,
                     state.getMissionRowID,
                     state.getEeljRowID,
                     props.changeUsersType,

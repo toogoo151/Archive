@@ -15,7 +15,7 @@ const Control = () => {
     const [isUserAddButton, setIsUserAddButton] = useState(0);
 
     const refreshControl = (missionID, eeljID) => {
-        if (missionID != undefined && eeljID != undefined) {
+        if (missionID != "" && eeljID != "") {
             axios
                 .post("/get/controls/check", {
                     _missionID: missionID,
@@ -48,17 +48,20 @@ const Control = () => {
     }, [state.getMissionRowID, state.getEeljRowID]);
 
     const fn_makeControl = () => {
-        axios
-            .post("/get/control/make", {
-                _missionID: state.getMissionRowID,
-                _eeljID: state.getEeljRowID,
-            })
-            .then((res) => {
-                Swal.fire(res.data.msg);
-            })
-            .catch((err) => {
-                Swal.fire(err.response.data.msg);
-            });
+        if (state.getMissionRowID != "" && state.getEeljRowID != "") {
+            axios
+                .post("/get/control/make", {
+                    _missionID: state.getMissionRowID,
+                    _eeljID: state.getEeljRowID,
+                })
+                .then((res) => {
+                    Swal.fire(res.data.msg);
+                })
+                .catch((err) => {
+                    Swal.fire(err.response.data.msg);
+                });
+        }
+
         refreshControl(state.getMissionRowID, state.getEeljRowID);
     };
 

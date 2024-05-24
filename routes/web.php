@@ -260,7 +260,7 @@ Route::get("/get/comandlal/users", [AllAdminController::class, "getComandlalUser
 Route::get("/get/dundiin/tuluv", [AllAdminController::class, "getDundiinTuluv"]);
 Route::post("/user/erh/zasah", [AllAdminController::class, "userErhZasah"]);
 
-Route::post("/user/page/by/ten", [AllAdminController::class, "getAllAdminsByTenServerSide"]); // server side туршиж байна.
+Route::post("/user/page/by/ten", [AllAdminController::class, "getAllAdminsByTenServerSide"]); // server side 10 Мөрөөр баазаас татаж байна.
 // All admins end
 
 // Ranks start --> negneesee hamaaraltai uchraas neg controller deer hiisen

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import ReactDatatable from "@ashvin27/react-datatable";
 import axios from "../../../AxiosUser";
 import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIDatatable";
 import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
@@ -26,12 +25,17 @@ const Admins = () => {
     const [getAllSystemUsers, setAllSystemUsers] = useState(0);
     const [getAllAdmins, setAllAdmins] = useState(0);
     const [getAllUnitUsers, setAllUnitUsers] = useState(0);
+    const [getAllUnitNotVerifiedUsers, setAllUnitNotVerifiedUsers] =
+        useState(0);
     const [getRequestedInThisMission, setRequestedInThisMission] = useState(0);
 
     const [data, setData] = useState([]);
+    // server side
     const [serverSidePage, setServerSidePage] = useState(0);
     const [serverSideCount, setServerSideCount] = useState(0);
     const [serverSideRowsPerPage, setServerSideRowsPerPage] = useState(10);
+    const [searchText, setSearchText] = useState("");
+    // server side
 
     const [changeUsersType, setChangeUsersType] = useState(
         userType === "superAdmin"
@@ -42,77 +46,129 @@ const Admins = () => {
             ? "2"
             : ""
     );
-    const [seeAllUsers, setSeeAllUsers] = useState();
+    const [seeAllUsers, setSeeAllUsers] = useState("");
     // const [ranks, setRanks] = useState([]);
     useEffect(() => {
+        // if (changeUsersType != "" && seeAllUsers != "") {
+        //     refreshUsers(
+        //         state.getMissionRowID,
+        //         state.getEeljRowID,
+        //         changeUsersType,
+        //         seeAllUsers
+        //     );
+        // }
         if (changeUsersType != "" && seeAllUsers != "") {
             refreshUsers(
+                serverSidePage,
+                serverSideRowsPerPage,
                 state.getMissionRowID,
                 state.getEeljRowID,
                 changeUsersType,
-                seeAllUsers
+                seeAllUsers,
+                searchText
             );
         }
     }, []);
-    useEffect(() => {
-        setRowsSelected([]);
-        if (changeUsersType != "" && seeAllUsers != "") {
-            refreshUsers(
-                state.getMissionRowID,
-                state.getEeljRowID,
-                changeUsersType,
-                seeAllUsers
-            );
-        }
-    }, [
-        state.getMissionRowID,
-        state.getEeljRowID,
-        changeUsersType,
-        seeAllUsers,
-    ]);
+    // useEffect(() => {
+    //     setRowsSelected([]);
+    //     if (changeUsersType != "" && seeAllUsers != "") {
+    //         refreshUsers(
+    //             state.getMissionRowID,
+    //             state.getEeljRowID,
+    //             changeUsersType,
+    //             seeAllUsers
+    //         );
+    //     }
+    // }, [
+    //     state.getMissionRowID,
+    //     state.getEeljRowID,
+    //     changeUsersType,
+    //     seeAllUsers,
+    // ]);
+    // const refreshUsers = (
+    //     _missionID,
+    //     _eeljID,
+    //     _changeUsersType,
+    //     _seeAllUsers
+    // ) => {
+    //     axios
+    //         .post("/get/all/amdins", {
+    //             _missionID,
+    //             _eeljID,
+    //             _changeUsersType,
+    //             _seeAllUsers,
+    //         })
+    //         .then((res) => {
+    //             setAllSystemUsers(res.data.countAllSystemUsers);
+    //             setAllAdmins(res.data.countAllAdmins);
+    //             setAllUnitUsers(res.data.countAllUnitUsers);
+    //             setRequestedInThisMission(res.data.countRequestedInThisMission);
+    //             setUsers(res.data.requestedInThisMissionData);
+    //         })
+    //         .catch((err) => {
+    //             console.log(err);
+    //         });
+    // };
+
     const refreshUsers = (
+        page,
+        rowsPerPage,
         _missionID,
         _eeljID,
         _changeUsersType,
-        _seeAllUsers
+        _seeAllUsers,
+        _search
     ) => {
         axios
-            .post("/get/all/amdins", {
+            .post("/user/page/by/ten", {
+                page: page + 1, // Laravel pagination is 1-based
+                per_page: rowsPerPage,
                 _missionID,
                 _eeljID,
                 _changeUsersType,
                 _seeAllUsers,
+                _search,
             })
             .then((res) => {
                 setAllSystemUsers(res.data.countAllSystemUsers);
                 setAllAdmins(res.data.countAllAdmins);
                 setAllUnitUsers(res.data.countAllUnitUsers);
+                setAllUnitNotVerifiedUsers(
+                    res.data.countAllUnitNotVerifiedUsers
+                );
                 setRequestedInThisMission(res.data.countRequestedInThisMission);
-                setUsers(res.data.requestedInThisMissionData);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
-    const fetchData = (page, rowsPerPage) => {
-        axios
-            .post("/user/page/by/ten", {
-                page: page + 1, // Laravel pagination is 1-based
-                per_page: rowsPerPage,
-            })
-            .then((res) => {
-                console.log(res.data);
-                console.log("irlee");
-                setData(res.data.data);
-                setServerSideCount(res.data.total);
+
+                setUsers(res.data.requestedInThisMissionData.original.data);
+                setServerSideCount(
+                    res.data.requestedInThisMissionData.original.total
+                );
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
             });
     };
     useEffect(() => {
-        fetchData(serverSidePage, serverSideRowsPerPage);
-    }, [serverSidePage, serverSideRowsPerPage]);
+        setRowsSelected([]);
+        if (changeUsersType != "" && seeAllUsers != 0) {
+            refreshUsers(
+                serverSidePage,
+                serverSideRowsPerPage,
+                state.getMissionRowID,
+                state.getEeljRowID,
+                changeUsersType,
+                seeAllUsers,
+                searchText
+            );
+        }
+    }, [
+        serverSidePage,
+        serverSideRowsPerPage,
+        state.getMissionRowID,
+        state.getEeljRowID,
+        changeUsersType,
+        seeAllUsers,
+        searchText,
+    ]);
 
     // const options = {
     //     filterType: "checkbox",
@@ -155,10 +211,13 @@ const Admins = () => {
                             Swal.fire(res.data.msg);
                             setRowsSelected([]);
                             refreshUsers(
+                                serverSidePage,
+                                serverSideRowsPerPage,
                                 state.getMissionRowID,
                                 state.getEeljRowID,
                                 changeUsersType,
-                                seeAllUsers
+                                seeAllUsers,
+                                searchText
                             );
                         })
                         .catch((err) => {
@@ -198,7 +257,7 @@ const Admins = () => {
                     {userType == "superAdmin" ||
                         (userType == "comandlalAdmin" && (
                             <>
-                                <div className="col-lg-3 col-12 col-sm-6">
+                                <div className="col-md-6">
                                     <div
                                         className="bg-info small-box d-flex flex-column"
                                         style={{ height: "80%" }}
@@ -212,7 +271,7 @@ const Admins = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col-lg-3 col-12 col-sm-6">
+                                <div className="col-md-6">
                                     <div
                                         className="bg-info small-box d-flex flex-column"
                                         style={{ height: "80%" }}
@@ -246,6 +305,24 @@ const Admins = () => {
                             </div>
                         </div>
                     </div>
+                    <div className="col-lg-3 col-12 col-sm-6">
+                        <div
+                            className="bg-info small-box d-flex flex-column"
+                            style={{ height: "80%" }}
+                        >
+                            <div className="inner">
+                                <h3>{getAllUnitNotVerifiedUsers}</h3>
+                                <p>ЦАХИМ ХАЯГ </p>
+                                <p style={{ marginTop: -15 }}>
+                                    БАТАЛГААЖААГҮЙ ХЭРЭГЛЭГЧИД
+                                </p>
+                            </div>
+                            <div className="icon">
+                                <i className="fas fa-user-friends" />
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="col-lg-3 col-12 col-sm-6">
                         <div
                             className="bg-info small-box d-flex flex-column"
@@ -530,6 +607,10 @@ const Admins = () => {
                                             refreshUsers={refreshUsers}
                                             changeUsersType={changeUsersType}
                                             seeAllUsers={seeAllUsers}
+                                            serverSidePage={serverSidePage}
+                                            serverSideRowsPerPage={
+                                                serverSideRowsPerPage
+                                            }
                                         />
                                         <button
                                             style={{ marginLeft: "5px" }}
@@ -563,6 +644,10 @@ const Admins = () => {
                                             refreshUsers={refreshUsers}
                                             changeUsersType={changeUsersType}
                                             seeAllUsers={seeAllUsers}
+                                            serverSidePage={serverSidePage}
+                                            serverSideRowsPerPage={
+                                                serverSideRowsPerPage
+                                            }
                                         />
                                         <button
                                             style={{ marginLeft: "5px" }}
@@ -616,7 +701,7 @@ const Admins = () => {
                             records={users}
                             onRowClicked={handleChangeNew}
                         /> */}
-                <MUIDatatable
+                {/* <MUIDatatable
                     data={data}
                     setdata={setData}
                     columns={columnsServer}
@@ -658,9 +743,9 @@ const Admins = () => {
                     setRowsSelected={setRowsSelected}
                     isHideDelete={false}
                     isHideEdit={false}
-                />
+                /> */}
 
-                {/* <MUIDatatable
+                <MUIDatatable
                     data={users}
                     setdata={setUsers}
                     columns={columns}
@@ -680,6 +765,16 @@ const Admins = () => {
                             />
                         </>
                     }
+                    // serverSide
+                    count={serverSideCount}
+                    page={serverSidePage}
+                    rowsPerPage={serverSideRowsPerPage}
+                    setPage={setServerSidePage}
+                    setRowsPerPage={setServerSideRowsPerPage}
+                    isServerSide={true}
+                    setSearchText={setSearchText}
+                    // serverSide end
+
                     btnEdit={btnEdit}
                     modelType={showModal}
                     editdataTargetID={"#userEdit"}
@@ -693,7 +788,7 @@ const Admins = () => {
                     setRowsSelected={setRowsSelected}
                     isHideDelete={false}
                     isHideEdit={false}
-                /> */}
+                />
             </div>
 
             {userType === "comandlalAdmin" && (
@@ -704,6 +799,8 @@ const Admins = () => {
                     seeAllUsers={seeAllUsers}
                     changeDataRow={clickedRowData}
                     isEditBtnClick={isEditBtnClick}
+                    serverSidePage={serverSidePage}
+                    serverSideRowsPerPage={serverSideRowsPerPage}
                 />
             )}
             {userType === "unitAdmin" && (
@@ -714,6 +811,8 @@ const Admins = () => {
                     seeAllUsers={seeAllUsers}
                     changeDataRow={clickedRowData}
                     isEditBtnClick={isEditBtnClick}
+                    serverSidePage={serverSidePage}
+                    serverSideRowsPerPage={serverSideRowsPerPage}
                 />
             )}
         </>
@@ -721,12 +820,7 @@ const Admins = () => {
 };
 
 export default Admins;
-const columnsServer = [
-    { name: "id", label: "ID" },
-    { name: "phone", label: "phone" },
-    { name: "email", label: "Email" },
-    // Add other columns as needed
-];
+
 const columns = [
     {
         name: "id",
@@ -760,10 +854,11 @@ const columns = [
     },
     {
         name: "image",
-        label: "Цээж зураг",
+        label: "Цээж зураг123",
         options: {
             filter: true,
             sort: true,
+
             setCellHeaderProps: (value) => {
                 return {
                     style: {
@@ -774,30 +869,33 @@ const columns = [
                 };
             },
             customBodyRender: (value, tableMeta, updateValue) => {
-                return (
-                    <div
-                        style={{
-                            textAlign: "center",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                    >
-                        <img
-                            className="image css-img-object"
-                            src={
-                                value != 0
-                                    ? "https://psod.maf.gov.mn/storage" + value
-                                    : "https://psod.maf.gov.mn/storage/profile/No-photo.jpg"
-                            }
-                            // https://psod.maf.gov.mn/storage
+                if (value != "0") {
+                    return (
+                        <div
                             style={{
-                                width: "65px",
-                                height: "70px",
+                                textAlign: "center",
+                                justifyContent: "center",
+                                alignItems: "center",
                             }}
-                            onClick={() => profile(value)}
-                        />
-                    </div>
-                );
+                        >
+                            <img
+                                className="image css-img-object"
+                                src={
+                                    value != 0
+                                        ? "https://psod.maf.gov.mn/storage/" +
+                                          value
+                                        : "https://psod.maf.gov.mn/storage/profile/No-photo.jpg"
+                                }
+                                //  "https://psod.maf.gov.mn/storage/profile/No-photo.jpg"
+                                style={{
+                                    width: "65px",
+                                    height: "70px",
+                                }}
+                                onClick={() => profile(value)}
+                            />
+                        </div>
+                    );
+                }
             },
         },
     },
@@ -1042,6 +1140,27 @@ const columns = [
     {
         name: "email",
         label: "Цахим хаяг",
+        options: {
+            filter: true,
+            sort: false,
+            setCellHeaderProps: (value) => {
+                return {
+                    style: {
+                        backgroundColor: "#5DADE2",
+                        color: "white",
+                    },
+                };
+            },
+            setCellProps: () => ({
+                style: {
+                    whiteSpace: "nowrap",
+                },
+            }),
+        },
+    },
+    {
+        name: "email_verified_date",
+        label: "Баталгаажуулсан огноо",
         options: {
             filter: true,
             sort: false,

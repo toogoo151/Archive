@@ -301,11 +301,20 @@ const MUIDatatable = (props) => {
         page: props.page,
         rowsPerPage: props.rowsPerPage,
         onTableChange: (action, tableState) => {
+            // if (action === "changePage") {
+            //     props.setPage(tableState.page);
+            // } else if (action === "changeRowsPerPage") {
+            //     props.setRowsPerPage(tableState.rowsPerPage);
+            //     props.setPage(0); // Reset to first page when rows per page change
+            // }
             if (action === "changePage") {
                 props.setPage(tableState.page);
             } else if (action === "changeRowsPerPage") {
                 props.setRowsPerPage(tableState.rowsPerPage);
                 props.setPage(0); // Reset to first page when rows per page change
+            } else if (action === "search") {
+                props.setSearchText(tableState.searchText);
+                props.setPage(0); // Reset to first page on search
             }
         },
         // server side

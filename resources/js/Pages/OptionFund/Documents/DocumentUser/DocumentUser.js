@@ -11,7 +11,7 @@ import DocumentUnitDes from "../DocumentUnit/DocumentUnitDes";
 
 const DocumentUser = () => {
     const [getDocUser, setDocUser] = useState([]);
-    const [getMainHistoryID, setMainHistoryID] = useState([]);
+    const [getMainHistoryID, setMainHistoryID] = useState(0);
     const [getRowsSelected, setRowsSelected] = useState([]); // row clear хийж байгаа
     const [clickedRowDataChild, setclickedRowData] = useState([]);
 
@@ -58,8 +58,11 @@ const DocumentUser = () => {
     const changeMission = (e) => {
         setMissionID(e.target.value);
         setEeljID("");
+
+        // /get/eelj/by/missionID
+        // /get/eelj/by/missionID/this/year
         axios
-            .post("/get/eelj/by/missionID", {
+            .post("/get/eelj/by/missionID/this/year", {
                 _missionID: e.target.value,
             })
             .then((res) => {
@@ -84,7 +87,7 @@ const DocumentUser = () => {
     }, [getRowsSelected]);
 
     const refreshDocUser = (missionID, eeljID) => {
-        if (missionID != undefined && eeljID != undefined) {
+        if (missionID != "" && eeljID != "") {
             axios
                 .post("/get/document/user", {
                     _missionID: missionID,
@@ -137,14 +140,21 @@ const DocumentUser = () => {
     };
 
     const fn_isDocumentAddButton = (missionID, eeljID) => {
+        //
+
         if (missionID != "" && eeljID != "") {
+            console.log("add button");
             axios
                 .post("/is/document/add/button", {
                     _missionID: missionID,
                     _eeljID: eeljID,
                 })
                 .then((res) => {
-                    setIsDocumentAddButton(res.data);
+                    if (!res.data.isOpen) {
+                        Swal.fire(res.data.msg);
+                    } else {
+                        setIsDocumentAddButton(res.data.isOpen);
+                    }
                 });
         }
     };
@@ -239,9 +249,13 @@ const DocumentUser = () => {
                                 className="col-md-4"
                                 style={{ textAlign: "left" }}
                             >
-                               <a href="/Video/zaawar" target="_blank" rel="noreferrer">
-        Бичиг баримт оруулах заавар
-    </a>
+                                <a
+                                    href="/Video/zaawar"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    Бичиг баримт оруулах заавар
+                                </a>
                             </div>
                             <div
                                 className="col-md-4"
@@ -271,7 +285,7 @@ const DocumentUser = () => {
                         columns={columns}
                         costumToolbar={
                             <>
-                                {getMyDocTotal != 1 ? (
+                                {isDocumentAddButton && getMyDocTotal == 0 ? (
                                     <CustomToolbar
                                         title={"БҮРДҮҮЛСЭН БИЧИГ БАРИМТ"}
                                         btnClassName={"btn btn-success"}
@@ -316,18 +330,17 @@ const DocumentUser = () => {
                         isHideEdit={true}
                     />
                     <br />
-                    {missionID != "" &&
-                        eeljID != "" &&
-                        isDocumentAddButton &&
-                        getMyDocTotal != 1 && (
-                            <DocumentUserNew
-                                refreshDocUser={refreshDocUser}
-                                missionID={missionID}
-                                eeljID={eeljID}
-                                getMainHistoryID={getMainHistoryID}
-                                countRow={getDocUser.length}
-                            />
-                        )}
+                    {/* isDocumentAddButton &&
+                        getMyDocTotal != 1 && */}
+                    {missionID != "" && eeljID != "" && (
+                        <DocumentUserNew
+                            refreshDocUser={refreshDocUser}
+                            missionID={missionID}
+                            eeljID={eeljID}
+                            getMainHistoryID={getMainHistoryID}
+                            countRow={getDocUser.length}
+                        />
+                    )}
 
                     <DocumentUserEdit
                         setRowsSelected={setRowsSelected}

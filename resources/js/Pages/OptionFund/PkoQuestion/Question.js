@@ -102,43 +102,53 @@ const Question = () => {
     };
     const checkQuestion = (missionID, eeljID) => {
         // mission eelj сонгох үед шууд ажиллаж байна.
-        setUserID(-1);
-        setMissionName("");
+        if (missionID != "" && eeljID != "") {
+            setUserID(-1);
+            setMissionName("");
 
-        setMsg("");
-        setIsComplate(false);
-        setWish(0);
-        setWishCreatedDate("");
-        axios
-            .post("/user/question/check", {
-                _missionID: missionID,
-                _eeljID: eeljID,
-            })
-            .then((res) => {
-                console.log(res.data);
-                setUserID(res.data.count);
-                setMissionName(res.data.missionName);
-                setWish(res.data.isReqSent);
+            setMsg("");
+            setIsComplate(false);
+            setWish(0);
+            setWishCreatedDate("");
+            axios
+                .post("/user/question/check", {
+                    _missionID: missionID,
+                    _eeljID: eeljID,
+                })
+                .then((res) => {
+                    console.log(res.data);
 
-                if (res.data.isReqSent != 0) {
-                    setWishCreatedDate(res.data.wishRow.created_at);
-                }
+                    if (res.data.count == -1) {
+                        return; //Хүсэлт илгээх нээгдээгүй.
+                    }
 
-                setMsg(res.data.msg);
-                setIsComplate(res.data.isComplate);
-                if (!res.data.isComplate) {
-                    setErrorArr(res.data.isErrorArr);
-                } else {
-                    setErrorArr([]);
-                }
+                    if (res.data.count == 0) {
+                        setUserID(res.data.count); //count = 0 ирнэ асуумж гарж ирнэ.
+                    }
+                    if (res.data.count == 1) {
+                        setUserID(res.data.count);
+                        setMissionName(res.data.missionName);
+                        setWish(res.data.isReqSent);
+                        if (res.data.isReqSent == 1) {
+                            setWishCreatedDate(res.data.wishRow.created_at);
+                        }
+                        setMsg(res.data.msg);
+                        setIsComplate(res.data.isComplate);
+                        if (!res.data.isComplate) {
+                            setErrorArr(res.data.isErrorArr);
+                        } else {
+                            setErrorArr([]);
+                        }
+                    }
 
-                // if (res.data.count === 1) {
-                //     setShowCard(true);
-                // }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+                    // if (res.data.count === 1) {
+                    //     setShowCard(true);
+                    // }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
 
         // requestSent(missionID, eeljID);
     };

@@ -67,23 +67,7 @@ const DocumentUserNew = (props) => {
             .then((res) => {
                 setDocumentPdf("");
                 fileInputRef.current.value = null;
-
-                if (props.countRow + 1 <= 7) {
-                    Swal.fire("Амжилттай хадгаллаа");
-                }
-                if (props.countRow + 1 === 7) {
-                    Swal.fire(
-                        "Та бичиг баримтаа амжилттай оруулж дууслаа"
-                    ).then(() => {
-                        const modalBackdrop =
-                            document.querySelector(".modal-backdrop");
-                        if (modalBackdrop) {
-                            modalBackdrop.classList.remove("show");
-                            modalBackdrop.style.backgroundColor = "transparent";
-                            location.reload();
-                        }
-                    });
-                }
+                Swal.fire("Амжилттай хадгаллаа");
                 // Swal.fire(res.data.msg);
                 reset(
                     {

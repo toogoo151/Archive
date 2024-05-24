@@ -30,6 +30,19 @@ class UserQuestionController extends Controller
     public function getQuestionCheck(Request $req)
     {
         try {
+            $isWishOpen = DB::table("pko_control")
+            ->where("pko_control.missionID", "=", $req->_missionID)
+            ->where("pko_control.eeljID", "=", $req->_eeljID)
+            ->first();
+
+            if($isWishOpen->isRequest==0){
+                return response(
+                    array(
+                        "count" => -1,
+                    ),
+                    200
+                );
+            }
 
             $check = DB::table("pko_user_question")
                 ->where("pko_user_question.missionID", "=", $req->_missionID)
@@ -47,20 +60,15 @@ class UserQuestionController extends Controller
                 ->where("missionID", "=", $req->_missionID)
                 ->where("eeljID", "=", $req->_eeljID)
                 ->first();
+
+
             if(count($check) > 0){
                 return $this->checkUserQuestionWhenBeforeMission($oldRowInQuestion, $missionName, false);
-                // return count($check);
-                return response(
-                    array(
-                        "count" => count($check),
-                        "missionName" => $missionName,
-                    ),
-                    200
-                );
+
             }else{
                 return response(
                     array(
-                        "count" => count($check),
+                        "count" => 0,
                         "missionName" => $missionName,
                     ),
                     200
@@ -604,12 +612,20 @@ return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, tru
     public function getQuestionEdit(Request $req) // шаардлага хангасаныг татаж байна
     {
         try {
-
+            $search = $req->input('search', '');
+        $perPage = $req->get('per_page', 10);
             $getRequerment = DB::table("pko_user_requirements")->first(); // Ажиллагааны шаардлагийг татаж авч байна.
             $getQuestion = DB::table("pko_user_question")
                 ->where("pko_user_question.missionID", "=", $req->_missionID)
                 ->where("pko_user_question.eeljID", "=", $req->_eeljID)
                 ->where("pko_user_question.studying", "=", 1) // сурахгүй байгаа тэнцэнэ
+                ->where(function($query) use ($search){
+                    $query->where('pko_users.email', 'like', "%{$search}%")
+                    ->orWhere('all_users.firstName', 'like', "%{$search}%")
+                    ->orWhere('all_users.lastName', 'like', "%{$search}%")
+                    ->orWhere('all_users.phone', 'like', "%{$search}%")
+                    ->orWhere('all_users.rd', 'like', "%{$search}%");
+                })
                 ->where(function($query)use ($req){
                     if($req->_questionState == "hiigdeegui"){
                         $query->whereNull('pko_user_question.updated_at');
@@ -656,7 +672,8 @@ return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, tru
                 ->join('tb_unit', 'all_users.unitID', '=', 'tb_unit.id')
                 ->join('tb_gender', 'all_users.gender', '=', 'tb_gender.id')
                 ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                ->get();
+                ->paginate($perPage);
+                // ->get();
 
                 return $getQuestion;
 
@@ -675,10 +692,19 @@ return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, tru
     public function getQuestionHangaagui(Request $req) // шаардлага хангаагүйг татаж байна.
     {
         try {
+            $search = $req->input('search', '');
+            $perPage = $req->get('per_page', 10);
             $getRequerment = DB::table("pko_user_requirements")->first(); // Ажиллагааны шаардлагийг татаж авч байна.
             $getQuestion = DB::table("pko_user_question")
                 ->where("pko_user_question.missionID", "=", $req->_missionID)
                 ->where("pko_user_question.eeljID", "=", $req->_eeljID)
+                ->where(function($query) use ($search){
+                    $query->where('pko_users.email', 'like', "%{$search}%")
+                    ->orWhere('all_users.firstName', 'like', "%{$search}%")
+                    ->orWhere('all_users.lastName', 'like', "%{$search}%")
+                    ->orWhere('all_users.phone', 'like', "%{$search}%")
+                    ->orWhere('all_users.rd', 'like', "%{$search}%");
+                })
                 ->where(function ($query) use ($getRequerment) {
                     // Group OR conditions for checking columns equal to 0
                     $query->where("pko_user_question.studying", "=", 0)
@@ -729,7 +755,8 @@ return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, tru
                     $query->on("all_users.gender", "=", "tb_gender.id");
                 })
                 ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                ->get();
+                ->paginate($perPage);
+                // ->get();
 
                 return $getQuestion;
         } catch (\Throwable $th) {
@@ -746,6 +773,7 @@ return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, tru
     public function editQuestion(Request $req)
     {
         try {
+            // $findID = $this->questionHistory($req)
             $findID = $this->questionHistory($req);
             if ($findID != "") {
                 $nowDate = Carbon::now()->format('Y-m-d H:i:s');
@@ -779,6 +807,7 @@ return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, tru
                 $editQuestion = UserQuestion::find($req->id);
                 $editQuestion->pkoUserID = $req->pkoUserID;
                 $editQuestion->appointedDate = $req->appointedDate;
+                $editQuestion->movement = $req->movement;
                 $editQuestion->rolePlayed = $req->rolePlayed;
                 $editQuestion->missionType = 12;
                 $editQuestion->missionName = $req->missionName;
@@ -790,44 +819,46 @@ return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, tru
                 $editQuestion->comandlalName = $myComFirstRow->comandlalShortName;
                 $editQuestion->firstName = $myNameArray['name'];
                 $editQuestion->questionDes = $req->questionDes;
-                $editQuestion->save();
+                // $editQuestion->save();
 
                 //Асуумж засах үед шаардлага хангасан эсэхийг шалгаад хангасан тохиолдолд хүсэлтийг автоматаар нэмэх хэсэг
-                $pushWish = count($this->checkQuestion($editQuestion));
-                if ($pushWish == 1) {
-                    if ($this->usercheck(
-                        $editQuestion->pkoUserID,
-                        1,
-                        13
-                    ) == "no") {
+                if($editQuestion->save()){
+                    if ( $this->checkUserQuestionEditedByGsmafAdmin($editQuestion)) { // шаардлага хангаж байвал true буцаана
+                        if ($this->usercheck(
+                            $editQuestion->pkoUserID,
+                            1,
+                            13
+                        ) == "no") {
+                            return response(
+                                array(
+                                    "status" => "already",
+                                    "msg" => "Амжилттай заслаа, хүсэлт илгээсэн байна."
+                                ),
+                                200
+                            );
+                        }
+                        $insertlist = new Wish();
+                        $insertlist->pkoUserID =  $req->pkoUserID;
+                        $insertlist->missionID = $req->_missionID;
+                        $insertlist->eeljID = $req->_eeljID;
+                        $insertlist->save();
+
+                        $store = new MainHistory();
+                        $store->pkoUserID = $req->pkoUserID;
+                        $store->missionID = $req->_missionID;
+                        $store->eeljID = $req->_eeljID;
+                        $store->save();
+                    } else {
                         return response(
                             array(
-                                "status" => "already",
-                                "msg" => "Амжилттай заслаа, хүсэлт илгээсэн байна."
+                                "status" => "error",
+                                "msg" => "Амжилттай заслаа, гэхдээ шаардлага хангахгүй байна."
                             ),
                             200
                         );
                     }
-                    $insertlist = new Wish();
-                    $insertlist->pkoUserID = $editQuestion->pkoUserID;
-                    $insertlist->missionID = 1;
-                    $insertlist->eeljID = 13;
-                    $insertlist->save();
-
-                    $store = new MainHistory();
-                    $store->pkoUserID = $insertlist->pkoUserID;
-                    $store->missionID = $insertlist->missionID;
-                    $store->eeljID = $insertlist->eeljID;
-                    $store->save();
-                } else {
-                    return response(
-                        array(
-                            "status" => "error",
-                            "msg" => "Амжилттай заслаа, гэхдээ шаардлага хангахгүй байна."
-                        ),
-                        200
-                    );
                 }
+
                 //Асуумж засах үед шаардлага хангасан эсэхийг шалгаад хангасан тохиолдолд хүсэлтийг автоматаар нэмэх хэсэг
 
                 return response(
@@ -866,10 +897,19 @@ return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, tru
     {
         try {
             // $getQuestion1 = DB::table("pko_user_question")
+            $search = $req->input('search', '');
+            $perPage = $req->get('per_page', 10);
 
             $getQuestion = DB::table("pko_user_question")
             ->where("pko_user_question.missionID", "=", $req->_missionID)
             ->where("pko_user_question.eeljID", "=", $req->_eeljID)
+            ->where(function($query)use ( $search){
+                $query->where('pko_users.email', 'like', "%{$search}%")
+                ->orWhere('all_users.firstName', 'like', "%{$search}%")
+                ->orWhere('all_users.lastName', 'like', "%{$search}%")
+                ->orWhere('all_users.phone', 'like', "%{$search}%")
+                ->orWhere('all_users.rd', 'like', "%{$search}%");
+            })
             ->where(function($query)use ($req){
                 if($req->_questionState == "hiigdeegui"){
                     $query->whereNull('pko_user_question.updated_at');
@@ -903,7 +943,8 @@ return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, tru
                     $query->on("all_users.gender", "=", "tb_gender.id");
                 })
                 ->select("pko_user_question.*", "tb_comandlal.comandlalShortName", "tb_unit.unitShortName", "all_users.rd", "all_users.age", "all_users.position", "tb_gender.genderName", "all_users.lastName", "all_users.firstName as myName")
-                ->get();
+                ->paginate($perPage);
+                // ->get();
                 return $getQuestion;
 
 
@@ -1206,6 +1247,79 @@ return $this->checkUserQuestionWhenBeforeMission($newQuestion, $missionName, tru
                     200
                 );
 
+            }
+
+
+        } catch (\Throwable $th) {
+            return $th;
+            return response(
+                array(
+                    "status" => "error",
+                    "msg" => "Алдаа гарлаа."
+                ),
+                500
+            );
+        }
+    }
+
+    public function checkUserQuestionEditedByGsmafAdmin($newQuestion) //Асуумж шаардлга хангаж байгаа эсэхийг шалгах gsmafAdmin -д зориулав
+    {
+        try {
+            $appointedFromOther=""; // томилогдсон огноо 1 байвал тэнцэнэ.
+            $rolePlayedMonthComplate="";  // Ажиллгаа хоорондын хугацаа бодох 1 байвал тэнцэнэ
+            $punishmentCount=""; // шийтгэл эдлэж байсан эсэх 1 байвал тэнцэнэ
+            $monthsSinceAppointed = 0;
+            $cameMonthCount =0;
+             $punishmentMonths =0;
+            if($newQuestion->movement ==0) // Анги хооронд шилжсэн
+            {
+                $dateNow = Carbon::parse($newQuestion->created_at);
+                $dateAppointed = Carbon::parse($newQuestion->appointedDate);
+                $monthsSinceAppointed = $dateNow->diffInMonths($dateAppointed);
+
+                $appointedFromOther = DB::table("pko_user_requirements")
+                        ->where("pko_user_requirements.appointedDate", "<=", $monthsSinceAppointed)
+                        ->count(); // 0 гарж байгаа бол боломжгүй гэсэн үг
+
+            }else{
+                $appointedFromOther = 1; // Бусад тохиолдол хугацаа бодохгүй шууд боломжтой болгох
+            }
+
+
+            if ($newQuestion->rolePlayed == 0) { // Ажиллагаанд явсан
+                $dateNow1 = Carbon::parse($newQuestion->created_at);
+                $dateCame = Carbon::parse($newQuestion->missionCameDate); // буцаж ирсэн огноо
+                $cameMonthCount = $dateNow1->diffInMonths($dateCame); // өнөөдрийг хүртэл сарийг тоолж байна.
+
+                $rolePlayedMonthComplate = DB::table("pko_user_requirements")
+                ->where("pko_user_requirements.missionTypeFull", "<=", $cameMonthCount)
+                ->count(); // 0 гарж байгаа бол боломжгүй гэсэн үг
+            }else{
+                $rolePlayedMonthComplate = 1;
+            }
+
+            // studying байгаа 0 = сурч байгаа учраас тэнцэхгүй. 1 = суралцаагүй учраас тэнцэнэ
+            if ($newQuestion->punishment == 0) { // тийм
+                $dateNow2 = Carbon::parse($newQuestion->created_at);
+                $datePunishment = Carbon::parse($newQuestion->punishmentDate);
+                $punishmentDate = $dateNow2->diffInMonths($datePunishment); // сараар гарч байгаа
+
+
+                $punishmentCount = DB::table("pko_user_requirements")
+                ->where("pko_user_requirements.punishmentDate", "<=", $punishmentDate)
+                ->count();
+
+                if($punishmentCount ==0){
+                    $punishmentMonths = 12-$punishmentDate;
+                }
+            }else{
+                $punishmentCount = 1;
+            }
+
+            if($appointedFromOther == 1 && $rolePlayedMonthComplate ==1 && $newQuestion->studying ==1 && $punishmentCount ==1){
+                return true;
+            }else{
+                return false;
             }
 
 

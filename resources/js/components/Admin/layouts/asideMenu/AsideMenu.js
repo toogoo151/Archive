@@ -2569,7 +2569,17 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                                         icon="nav-icon far fa-hourglass"
                                                         menuName="Хүсэлт илгээх он"
                                                     />
-                                                    {getUserCheck == 1 && (
+                                                    <MenuItem
+                                                        url="/pko/user/documents"
+                                                        icon="nav-icon fa fa-file-text"
+                                                        menuName="Бичиг баримтын бүрдэл"
+                                                    />
+                                                    <MenuItem
+                                                        url="/Process"
+                                                        icon="nav-icon fa fa-spinner"
+                                                        menuName="Оролцооны байдал"
+                                                    />
+                                                    {/* {getUserCheck == 1 && (
                                                         <>
                                                             {getWishID == 1 && (
                                                                 <>
@@ -2586,7 +2596,7 @@ export default function AsideMenu({ getMissionType, setMissionType }) {
                                                                 </>
                                                             )}
                                                         </>
-                                                    )}
+                                                    )} */}
 
                                                     <MenuItem
                                                         url="/user/complaints"
