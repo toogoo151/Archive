@@ -16,7 +16,8 @@ class FrontendController extends Controller
         $this->middleware('auth');
     }
 
-    public function showBlade(){
+    public function showBlade()
+    {
         return view('welcome');
         // if(Auth::user()->email_verified_at != null){
         //         return view('welcome');
@@ -53,7 +54,4 @@ class FrontendController extends Controller
         Auth::logout();
         return redirect()->route('home');
     }
-
-
-
 }

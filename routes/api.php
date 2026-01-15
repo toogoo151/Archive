@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::post('/login', 'AuthController@login');
+Route::middleware('web')->group(function () {
+    Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
+    Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth');
+});
 Route::post('/information/viewed', 'InformationController@logViewedInformation');
 Route::post('/information/changed', 'InformationController@logChangedInformation');

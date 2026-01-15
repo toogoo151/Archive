@@ -51,7 +51,7 @@ const MUIDatatable = (props) => {
 
         resizableColumns: true,
         download: false,
-        filterType: "dropdown",
+        filterType: "multiselect",
         selectableRows: "single",
         selectableRowsOnClick: true,
         selectToolbarPlacement: "replace",

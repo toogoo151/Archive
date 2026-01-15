@@ -1,9 +1,0 @@
-.player-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
- /* Adjust this value based on your layout and requirements */
-}
-.info-box1{
-    background: linear-gradient(to left, #ffffff 0%, #33ccff 150%);
-}
