@@ -113,7 +113,7 @@ Route::get("/get/auth/image", function () {
 
 
 
-//Хэрэглэгч start 
+//Хэрэглэгч start
 
 Route::get("/get/ProgrammType", function () {
     $programmType = new ProgrammType();
@@ -141,7 +141,7 @@ Route::post("/delete/user", [UserController::class, "DeleteUser"]);
 
 //Хэрэглэгч end
 
-//Командлал start 
+//Командлал start
 
 
 Route::get("/get/comandlal", function () {
@@ -251,7 +251,9 @@ Route::post("/get/group-stat", [StatisticController::class, "groupStat"]);
 Route::post("/get/ClaccCount", [StatisticController::class, "ClassCount"]);
 Route::post("/get/Usercount", [StatisticController::class, "UserCount"]);
 Route::post("/get/HutheregCount", [StatisticController::class, "HutheregCount"]);
+Route::post("/get/JagsaaltCount", [StatisticController::class, "JagsaaltCount"]);
 //STATISTIC END
+
 
 
 
