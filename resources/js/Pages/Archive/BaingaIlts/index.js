@@ -146,7 +146,7 @@ const Index = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .post("/delete/dans", {
+                    .post("/delete/BaingaIlt", {
                         id: getBaingaIlt[getRowsSelected[0]].id,
                     })
                     .then((res) => {

@@ -12,6 +12,9 @@ use App\Http\Controllers\HutheregController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\HumrugController;
 use App\Http\Controllers\DansController;
+use App\Http\Controllers\BaingaIltController;
+
+
 
 
 
@@ -196,9 +199,9 @@ Route::get("/get/Humrug", function () {
 });
 Route::post("/delete/humrug", [HumrugController::class, "DeleteHuthereg"]);
 Route::post("/new/humrug", [HumrugController::class, "NewHumrug"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 Route::post("/edit/humrug", [HumrugController::class, "EditHumrug"])
-    ->middleware('auth:sanctum');;
+    ->middleware('auth');;
 Route::get("/get/humrugType", [HumrugController::class, "HumrugType"]);
 //Хөмрөг end
 
@@ -224,9 +227,9 @@ Route::get("/get/secretType", function () {
 
 Route::post("/delete/dans", [DansController::class, "DeleteDans"]);
 Route::post("/new/dans", [DansController::class, "NewDans"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 Route::post("/edit/dans", [DansController::class, "EditDans"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 //Данс бүртгэл end
 
 // Байнга хадгалах Илт
@@ -239,6 +242,9 @@ Route::get("/get/Dansburtgel/{humrugID}", function ($humrugID) {
     $baingaIlt = new BaingaIlt();
     return $baingaIlt->getDansburtgelByHumrug($humrugID);
 });
+Route::post("/delete/BaingaIlt", [BaingaIltController::class, "DeleteBaingIlt"]);
+
+
 
 
 
