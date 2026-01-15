@@ -40,6 +40,10 @@ use App\Models\Huthereg;
 use App\Models\Humrug;
 use App\Models\Dansburtgel;
 use App\Models\BaingaIlt;
+// Туслах моделууд
+use App\Models\jagsaaltZuilDugaar;
+use App\Models\SedevZuiModel;
+use App\Models\ArhivTovchlolModel;
 
 
 
@@ -241,6 +245,81 @@ Route::get("/get/Dansburtgel/{humrugID}", function ($humrugID) {
 });
 
 
+// GANBAT NEMSEN START
+
+// Jagsaalt start
+Route::get("/get/jagsaalt", function () {
+    $dans = new jagsaaltZuilDugaar();
+    return $dans->getJagsaalt();
+});
+Route::post("new/jagsaalt", [JagsaaltController::class, "NewJagsaalt"])
+    ->middleware('auth:sanctum');
+Route::post("edit/jagsaalt", [JagsaaltController::class, "EditJagsaalt"])
+    ->middleware('auth:sanctum');
+Route::post("delete/jagsaalt", [JagsaaltController::class, "DeleteJagsaalt"])
+    ->middleware('auth:sanctum');
+// Jagsaalt end
+
+// Sedev zui zaagch start
+Route::get("/get/sedevzuils", function () {
+    $sedev = new SedevZuiModel();
+    return $sedev->getSedevZui();
+});
+Route::post("new/sedevzui", [SedevZuiController::class, "NewSedevZui"])
+    ->middleware('auth:sanctum');
+Route::post("edit/sedevzui", [SedevZuiController::class, "EditSedevZui"])
+    ->middleware('auth:sanctum');
+Route::post("delete/sedevzui", [SedevZuiController::class, "DeleteSedevZui"])
+    ->middleware('auth:sanctum');
+// Sedev zui zaagch end
+
+
+// Arhiv tovchlol  start
+Route::get("/get/tovchlol", function () {
+    $arhivtovchlol = new \App\Models\ArhivTovchlolModel();
+    return $arhivtovchlol->getTovchlol();
+});
+Route::post("new/tovchlol", [\App\Http\Controllers\ArhivTovchlolController::class, "NewTovchlol"])
+    ->middleware('auth:sanctum');
+Route::post("edit/tovchlol", [\App\Http\Controllers\ArhivTovchlolController::class, "EditTovchlol"])
+    ->middleware('auth:sanctum');
+Route::post("delete/tovchlol", [\App\Http\Controllers\ArhivTovchlolController::class, "DeleteTovchlol"])
+    ->middleware('auth:sanctum');
+// Arhiv tovchlol  end
+
+
+// Ashig nom  start
+Route::get("/get/ashignoms", function () {
+    $ashignom = new \App\Models\AshigNomModel();
+    return $ashignom->getNom();
+});
+Route::post("new/ashignom", [\App\Http\Controllers\AshigNomController::class, "NewNom"])
+    ->middleware('auth:sanctum');
+Route::post("edit/ashignom", [\App\Http\Controllers\AshigNomController::class, "EditNom"])
+    ->middleware('auth:sanctum');
+Route::post("delete/ashignom", [\App\Http\Controllers\AshigNomController::class, "DeleteNom"])
+    ->middleware('auth:sanctum');
+// Ashig nom  end
+
+// Jagsaalt TURUL START
+Route::get('/get/jagsaaltturuldugaar', function () {
+    return DB::table('jagsaaltzuildugaar')->get();
+});
+
+Route::get('/get/jagsaaltTurul', function () {
+    return DB::table('jagsaalt_turul')->get();
+});
+Route::get('/get/hugatsaaTurul', function () {
+    return DB::table('retention_period')->get();
+});
+
+
+// Jagsaalt TURUL END
+
+
+
+// GANBAT NEMSEN END
+
 
 
 
@@ -251,6 +330,7 @@ Route::post("/get/group-stat", [StatisticController::class, "groupStat"]);
 Route::post("/get/ClaccCount", [StatisticController::class, "ClassCount"]);
 Route::post("/get/Usercount", [StatisticController::class, "UserCount"]);
 Route::post("/get/HutheregCount", [StatisticController::class, "HutheregCount"]);
+// Ganbat nemeh
 Route::post("/get/JagsaaltCount", [StatisticController::class, "JagsaaltCount"]);
 //STATISTIC END
 

@@ -31,6 +31,18 @@ class StatisticController extends Controller
         $HutheregCount = DB::table("db_huthereg")->count();
         return $HutheregCount;
     }
+    // GANBAT NEMSEN START
+     public function JagsaaltCount(Request $req)
+    {
+        $JagsaaltCount = DB::table("jagsaaltzuildugaar")->count();
+        return $JagsaaltCount;
+    }
+    public function SedevZuiCount(Request $req)
+    {
+        $SedevZuiCount = DB::table("arhivsedevzaagch")->count();
+        return $SedevZuiCount;
+    }
+    // GANBAT NEMSEN END
 
     public function monthlyStat(Request $request)
     {

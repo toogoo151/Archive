@@ -5,15 +5,16 @@ import "../../../../styles/muidatatable.css";
 import axios from "../../../AxiosUser";
 import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
 import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIDatatable";
-import TovchlolEdit from "./TovchlolEdit";
-import TovchlolNew from "./TovchlolNew";
+import NomEdit from "./NomEdit";
+import NomNew from "./NomNew";
 const Index = () => {
+
     // ================= FILTER CONTROL =================
     const [isFilterActive, setIsFilterActive] = useState(false);
 
     // ================= DATA =================
-    const [allTovchlol, setAllTovchlol] = useState([]);
-    const [getTovchlol, setTovchlol] = useState([]);
+    const [allBooks, setAllbooks] = useState([]);
+    const [getBooks, setBooks] = useState([]);
     const [getHumrug, setHumrug] = useState([]);
     const [getDans, setDans] = useState([]);
 
@@ -25,7 +26,7 @@ const Index = () => {
 
     // FETCH
     useEffect(() => {
-        refreshTovchlol();
+        refreshNom();
         axios
             .get("/get/Humrug")
             .then((res) => {
@@ -45,13 +46,13 @@ const Index = () => {
             });
     }, []);
 
-    const refreshTovchlol = () => {
+    const refreshNom = () => {
         axios
-            .get("/get/tovchlol")
+            .get("/get/ashignoms")
             .then((res) => {
                 setRowsSelected([]);
-                setAllTovchlol(res.data);
-                setTovchlol(res.data); // анх бүх өгөгдөл
+                setAllbooks(res.data);
+                setBooks(res.data); // анх бүх өгөгдөл
                 setIsFilterActive(false);
             })
             .catch((err) => {
@@ -63,18 +64,18 @@ const Index = () => {
     useEffect(() => {
         if (getRowsSelected[0] !== undefined) {
             setIsEditBtnClick(false);
-            setclickedRowData(getTovchlol[getRowsSelected[0]]);
+            setclickedRowData(getBooks[getRowsSelected[0]]);
         }
-    }, [getRowsSelected, getTovchlol]);
+    }, [getRowsSelected, getBooks]);
 
     //  DATE FILTER
     useEffect(() => {
         if (!isFilterActive) {
-            setTovchlol(allTovchlol);
+            setBooks(allBooks);
             return;
         }
 
-    }, [isFilterActive, allTovchlol]);
+    }, [isFilterActive, allBooks]);
     const btnEdit = () => {
         setIsEditBtnClick(true);
     };
@@ -89,12 +90,12 @@ const Index = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .post("/delete/tovchlol", {
-                        id: getTovchlol[getRowsSelected[0]].id,
+                    .post("/delete/ashignom", {
+                        id: getBooks[getRowsSelected[0]].id,
                     })
                     .then((res) => {
                         Swal.fire(res.data.msg);
-                        refreshTovchlol();
+                        refreshNom();
                     })
                     .catch((err) => {
                         Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
@@ -148,7 +149,7 @@ const Index = () => {
                 };
             },
             customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
+                const rowData = getBooks[dataIndex];
                 if (!rowData || !rowData.humrug_id) return "-";
                 const humrug = getHumrug.find((el) => el.id == rowData.humrug_id);
                 return humrug?.humrug_dugaar || "-";
@@ -170,7 +171,7 @@ const Index = () => {
                 };
             },
             customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
+                const rowData = getBooks[dataIndex];
                 if (!rowData || !rowData.humrug_id) return "-";
                 const humrug = getHumrug.find((el) => el.id == rowData.humrug_id);
                 return humrug?.humrug_ner || "-";
@@ -192,7 +193,7 @@ const Index = () => {
                 };
             },
             customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
+                const rowData = getBooks[dataIndex];
                 if (!rowData || !rowData.dans_id) return "-";
                 const dans = getDans.find((el) => el.id == rowData.dans_id);
                 return dans?.dans_dugaar || "-";
@@ -214,7 +215,7 @@ const Index = () => {
                 };
             },
             customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
+                const rowData = getBooks[dataIndex];
                 if (!rowData || !rowData.dans_id) return "-";
                 const dans = getDans.find((el) => el.id == rowData.dans_id);
                 return dans?.dans_ner || "-";
@@ -222,8 +223,8 @@ const Index = () => {
         },
     },
     {
-        name: "tobchlol",
-        label: "Товчлол",
+        name: "nom_dugaar",
+        label: "Номын дугаар",
         options: {
             filter: true,
             sort: false,
@@ -239,8 +240,8 @@ const Index = () => {
     },
 
     {
-        name: "tailal",
-        label: "Тайлал",
+        name: "nom_ners",
+        label: "Номын нэр",
         options: {
             filter: true,
             sort: false,
@@ -274,27 +275,27 @@ const Index = () => {
             <div className="row">
                 <div className="info-box">
                     <div className="col-md-12">
-                        <h1 className="text-center">Товчилсон үгийн жагсаалт</h1>
+                        <h1 className="text-center">Ашигласан номын жагсаалт</h1>
                         {/* TABLE */}
                         <MUIDatatable
-                            data={getTovchlol}
-                            setdata={setTovchlol}
+                            data={getBooks}
+                            setdata={setBooks}
                             columns={columns}
                             costumToolbar={
                                 <CustomToolbar
                                     btnClassName="btn btn-success"
                                     modelType="modal"
-                                    dataTargetID="#TovchlolNew"
+                                    dataTargetID="#NomNew"
                                     spanIconClassName="fas fa-plus"
                                     buttonName="НЭМЭХ"
-                                    excelDownloadData={getTovchlol}
+                                    excelDownloadData={getBooks}
                                     excelHeaders={excelHeaders}
                                     isHideInsert={true}
                                 />
                             }
                             btnEdit={btnEdit}
                             modelType={showModal}
-                            editdataTargetID="#TovchlolEdit"
+                            editdataTargetID="#NomEdit"
                             btnDelete={btnDelete}
                             getRowsSelected={getRowsSelected}
                             setRowsSelected={setRowsSelected}
@@ -302,10 +303,10 @@ const Index = () => {
                             isHideEdit={true}
                         />
 
-                        <TovchlolNew refreshTovchlol={refreshTovchlol} />
-                        <TovchlolEdit
+                        <NomNew refreshNom={refreshNom} />
+                        <NomEdit
                             setRowsSelected={setRowsSelected}
-                            refreshTovchlol={refreshTovchlol}
+                            refreshNom={refreshNom}
                             changeDataRow={clickedRowData}
                             isEditBtnClick={isEditBtnClick}
                         />
@@ -321,6 +322,6 @@ export default Index;
 const excelHeaders = [
     { label: "Хөмрөгийн дугаар", key: "humrug_id" },
     { label: "Дансны дугаар", key: "dans_id" },
-    { label: "Товчлол", key: "tobchlol" },
-    { label: "Тайлал", key: "tailal" },
+    { label: "Номын дугаар", key: "nom_dugaar" },
+    { label: "Номын нэр", key: "nom_ners" },
 ];

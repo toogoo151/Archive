@@ -114,11 +114,30 @@ export default function AsideMenu() {
                 //         },
                 //     ],
                 // },
-                {
-                    name: "Товилсон үгийн жагсаалт",
-                    url: "/get/tovchililsonUgs",
+                // GANBAT NEMSEN START
+                  {
+                    name: "Товчилсон үгийн жагсаалт",
+                    url: "/get/tovchilsonug",
                     icon: "fa fa-list",
                 },
+
+                {
+                    name: "Ашигласан номын жагсаалт",
+                    url: "/get/dictonaries",
+                    icon: "fa fa-book",
+                },
+                {
+                    name: "Сэдэв зүйн заагч",
+                    url: "/get/sedevZuilzaagch",
+                    icon: "fa fa-search",
+                },
+                {
+                    name: "Хадгалах хугацааны зүйлийн жагсаалт",
+                    url: "/get/jagsaaltZuils",
+                    icon: "fa fa-boxes",
+
+                },
+                // GANBAT NEMSEN END
             ],
         },
 

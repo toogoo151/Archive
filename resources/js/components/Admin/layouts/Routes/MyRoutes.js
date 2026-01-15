@@ -13,6 +13,12 @@ import User from "../../../../Pages/Archive/User/index";
 import DansBurtgel from "../../../../Pages/Archive/DansBurtgel/index";
 import BaingaIlts from "../../../../Pages/Archive/BaingaIlts/index";
 
+// Туслах санд нэмэх
+import JagsaaltZuil from "../../../../Pages/Archive/JagsaaltZuil/index";
+import SedevZui from "../../../../Pages/Archive/SedevZui/index";
+import AshigNom from "../../../../Pages/Archive/AshigNom/index";
+import Tovchlol from "../../../../Pages/Archive/TovchilsonUg/index";
+
 import Home from "../../../../Pages/OptionFund/Home/Home";
 
 const MyRoutes = (props) => {
@@ -44,6 +50,13 @@ const MyRoutes = (props) => {
             <Route path="/get/DansBurtgels" element={<DansBurtgel />} />
             <Route path="/get/tovchililsonUgs" element={<TovchilsonUg />} />
             <Route path="/get/BaingaIlts" element={<BaingaIlts />} />
+
+            {/* Туслах санд нэмэх */}
+            <Route path="/get/jagsaaltZuils" element={<JagsaaltZuil />} />
+            <Route path="/get/sedevZuilzaagch" element={<SedevZui />} />
+            <Route path="/get/dictonaries"element={<AshigNom />} />
+            <Route path="/get/tovchilsonug" element={<Tovchlol />} />
+             {/* Туслах сан дуусах*/}
 
             {/* 404 */}
             <Route path="*" element={<h1>Хуудас олдсонгүй</h1>} />

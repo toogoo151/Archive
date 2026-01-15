@@ -5,15 +5,16 @@ import "../../../../styles/muidatatable.css";
 import axios from "../../../AxiosUser";
 import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
 import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIDatatable";
-import TovchlolEdit from "./TovchlolEdit";
-import TovchlolNew from "./TovchlolNew";
+import SedevEdit from "./SedevEdit";
+import SedevNew from "./SedevNew";
 const Index = () => {
+
     // ================= FILTER CONTROL =================
     const [isFilterActive, setIsFilterActive] = useState(false);
 
     // ================= DATA =================
-    const [allTovchlol, setAllTovchlol] = useState([]);
-    const [getTovchlol, setTovchlol] = useState([]);
+    const [allSedevzui, setallSedevzui] = useState([]);
+    const [getSedevzui, setSedevzui] = useState([]);
     const [getHumrug, setHumrug] = useState([]);
     const [getDans, setDans] = useState([]);
 
@@ -25,7 +26,7 @@ const Index = () => {
 
     // FETCH
     useEffect(() => {
-        refreshTovchlol();
+        refreshSedevzui();
         axios
             .get("/get/Humrug")
             .then((res) => {
@@ -45,13 +46,13 @@ const Index = () => {
             });
     }, []);
 
-    const refreshTovchlol = () => {
+    const refreshSedevzui = () => {
         axios
-            .get("/get/tovchlol")
+            .get("/get/sedevzuils")
             .then((res) => {
                 setRowsSelected([]);
-                setAllTovchlol(res.data);
-                setTovchlol(res.data); // анх бүх өгөгдөл
+                setallSedevzui(res.data);
+                setSedevzui(res.data); // анх бүх өгөгдөл
                 setIsFilterActive(false);
             })
             .catch((err) => {
@@ -63,18 +64,19 @@ const Index = () => {
     useEffect(() => {
         if (getRowsSelected[0] !== undefined) {
             setIsEditBtnClick(false);
-            setclickedRowData(getTovchlol[getRowsSelected[0]]);
+            setclickedRowData(getSedevzui[getRowsSelected[0]]);
         }
-    }, [getRowsSelected, getTovchlol]);
+    }, [getRowsSelected, getSedevzui]);
 
     //  DATE FILTER
     useEffect(() => {
         if (!isFilterActive) {
-            setTovchlol(allTovchlol);
+            setSedevzui(allSedevzui);
             return;
         }
 
-    }, [isFilterActive, allTovchlol]);
+    }, [isFilterActive,  allSedevzui]);
+
     const btnEdit = () => {
         setIsEditBtnClick(true);
     };
@@ -89,12 +91,12 @@ const Index = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .post("/delete/tovchlol", {
-                        id: getTovchlol[getRowsSelected[0]].id,
+                    .post("/delete/sedevzui", {
+                        id: getSedevzui[getRowsSelected[0]].id,
                     })
                     .then((res) => {
                         Swal.fire(res.data.msg);
-                        refreshTovchlol();
+                        refreshSedevzui();
                     })
                     .catch((err) => {
                         Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
@@ -148,7 +150,7 @@ const Index = () => {
                 };
             },
             customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
+                const rowData = getSedevzui[dataIndex];
                 if (!rowData || !rowData.humrug_id) return "-";
                 const humrug = getHumrug.find((el) => el.id == rowData.humrug_id);
                 return humrug?.humrug_dugaar || "-";
@@ -170,7 +172,7 @@ const Index = () => {
                 };
             },
             customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
+                const rowData = getSedevzui[dataIndex];
                 if (!rowData || !rowData.humrug_id) return "-";
                 const humrug = getHumrug.find((el) => el.id == rowData.humrug_id);
                 return humrug?.humrug_ner || "-";
@@ -192,7 +194,7 @@ const Index = () => {
                 };
             },
             customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
+                const rowData = getSedevzui[dataIndex];
                 if (!rowData || !rowData.dans_id) return "-";
                 const dans = getDans.find((el) => el.id == rowData.dans_id);
                 return dans?.dans_dugaar || "-";
@@ -214,7 +216,7 @@ const Index = () => {
                 };
             },
             customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
+                const rowData = getSedevzui[dataIndex];
                 if (!rowData || !rowData.dans_id) return "-";
                 const dans = getDans.find((el) => el.id == rowData.dans_id);
                 return dans?.dans_ner || "-";
@@ -222,8 +224,8 @@ const Index = () => {
         },
     },
     {
-        name: "tobchlol",
-        label: "Товчлол",
+        name: "zaagch_tobchlol",
+        label: "Сэдэв зүй заагчийн - Товчлол",
         options: {
             filter: true,
             sort: false,
@@ -239,8 +241,8 @@ const Index = () => {
     },
 
     {
-        name: "tailal",
-        label: "Тайлал",
+        name: "zaagch_tailal",
+        label: "Сэдэв зүй заагчийн - Тайлал",
         options: {
             filter: true,
             sort: false,
@@ -274,27 +276,28 @@ const Index = () => {
             <div className="row">
                 <div className="info-box">
                     <div className="col-md-12">
-                        <h1 className="text-center">Товчилсон үгийн жагсаалт</h1>
+                        <h1 className="text-center">Сэдэв зүйн заагч 1</h1>
+
                         {/* TABLE */}
                         <MUIDatatable
-                            data={getTovchlol}
-                            setdata={setTovchlol}
+                            data={getSedevzui}
+                            setdata={setSedevzui}
                             columns={columns}
                             costumToolbar={
                                 <CustomToolbar
                                     btnClassName="btn btn-success"
                                     modelType="modal"
-                                    dataTargetID="#TovchlolNew"
+                                    dataTargetID="#SedevNew"
                                     spanIconClassName="fas fa-plus"
                                     buttonName="НЭМЭХ"
-                                    excelDownloadData={getTovchlol}
+                                    excelDownloadData={getSedevzui}
                                     excelHeaders={excelHeaders}
                                     isHideInsert={true}
                                 />
                             }
                             btnEdit={btnEdit}
                             modelType={showModal}
-                            editdataTargetID="#TovchlolEdit"
+                            editdataTargetID="#SedevEdit"
                             btnDelete={btnDelete}
                             getRowsSelected={getRowsSelected}
                             setRowsSelected={setRowsSelected}
@@ -302,10 +305,10 @@ const Index = () => {
                             isHideEdit={true}
                         />
 
-                        <TovchlolNew refreshTovchlol={refreshTovchlol} />
-                        <TovchlolEdit
+                        <SedevNew refreshSedevzui={refreshSedevzui} />
+                        <SedevEdit
                             setRowsSelected={setRowsSelected}
-                            refreshTovchlol={refreshTovchlol}
+                            refreshSedevzui={refreshSedevzui}
                             changeDataRow={clickedRowData}
                             isEditBtnClick={isEditBtnClick}
                         />
@@ -321,6 +324,6 @@ export default Index;
 const excelHeaders = [
     { label: "Хөмрөгийн дугаар", key: "humrug_id" },
     { label: "Дансны дугаар", key: "dans_id" },
-    { label: "Товчлол", key: "tobchlol" },
-    { label: "Тайлал", key: "tailal" },
+    { label: "Товчлол", key: "zaagch_tobchlol" },
+    { label: "Тайлал", key: "zaagch_tailal" },
 ];

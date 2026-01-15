@@ -7,6 +7,8 @@ const Statistic = () => {
     const [classCount, setClassCount] = useState(0);
     const [userCount, setUserCount] = useState(0);
     const [hutheregCount, setHutheregCount] = useState(0);
+    // GANBAT
+    const [jagsaaltCount, setJagsaaltCount] = useState(0);
 
     useEffect(() => {
         refreshStatic();
@@ -18,15 +20,21 @@ const Statistic = () => {
         axios
             .post("/get/HutheregCount")
             .then((res) => setHutheregCount(res.data));
+        // GANBAT
+        axios
+            .post("/get/JagsaaltCount")
+            .then((res) => setJagsaaltCount(res.data));
     };
 
     // Card-ийн background өнгө
-    const cardBackgrounds = ["#f0f8ff", "#ffe4e1", "#e6ffe6", "#fff5e6"];
+    const cardBackgrounds = ["#f0f8ff", "#ffe4e1", "#e6ffe6", "#fff5e6", "#e6f7ff"];
     const iconGradients = [
         "linear-gradient(270deg, #ff416c, #ff4b2b, #ffcc33, #ff416c)",
         "linear-gradient(270deg, #4776E6, #8E54E9, #6a11cb, #4776E6)",
         "linear-gradient(270deg, #11998e, #38ef7d, #11998e, #11998e)",
         "linear-gradient(270deg, #f7971e, #ffd200, #f7971e, #ffd200)",
+        "linear-gradient(270deg, #00c9ff, #92fe9d, #00c9ff, #00c9ff)",
+
     ];
 
     const StatCard = ({ title, value, icon: Icon, cardBg, iconGradient }) => (
@@ -143,20 +151,23 @@ const Statistic = () => {
                     cardBg={cardBackgrounds[3]}
                     iconGradient={iconGradients[3]}
                 />
-                {/* <StatCard
-                    title="Нэмэлт статистик"
+                {/* Ganbat nemsen start */}
+                 <StatCard
+                    title="Нийт хадгалах хугацааны зүйл"
+                    value={jagsaaltCount}
+                    icon={MdFolder}
+                    cardBg={cardBackgrounds[4]}
+                    iconGradient={iconGradients[4]}
+                />
+                <StatCard
+                    title="Нийт бүртгэгдсэн сэдэв зүйн заагч"
                     value={1234}
                     icon={MdFolder}
                     cardBg={cardBackgrounds[3]}
                     iconGradient={iconGradients[3]}
                 />
-                <StatCard
-                    title="Нэмэлт статистик"
-                    value={1234}
-                    icon={MdFolder}
-                    cardBg={cardBackgrounds[3]}
-                    iconGradient={iconGradients[3]}
-                /> */}
+                {/* Ganbat nemsen end */}
+
             </div>
 
             {/* Hover and gradient animation CSS */}
