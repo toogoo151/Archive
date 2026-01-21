@@ -5,8 +5,10 @@ import "../../../../styles/muidatatable.css";
 import axios from "../../../AxiosUser";
 import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
 import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIDatatable";
-// import BaingaIltsEdit from "./BaingaIltsEdit";
-// import BaingaIltsNew from "./BaingaIltsNew";
+import BaingaHadgalahHugatsaa from "./BaingaHadgalahHugatsaa";
+import BaingaIltsChild from "./BaingaIltsChild";
+import BaingaIltsEdit from "./BaingaIltsEdit";
+import BaingaIltsNew from "./BaingaIltsNew";
 
 const Index = () => {
     const today = new Date();
@@ -26,7 +28,7 @@ const Index = () => {
     //select
 
     const [getRowsSelected, setRowsSelected] = useState([]);
-    const [clickedRowData, setclickedRowData] = useState([]);
+    const [clickedRowData, setclickedRowData] = useState(null); // анх null
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
 
     const [showModal] = useState("modal");
@@ -83,13 +85,29 @@ const Index = () => {
             });
     }, [selectedHumrug]);
 
-    //  ROW SELECT
     useEffect(() => {
-        if (getRowsSelected[0] !== undefined) {
+        setRowsSelected([]);
+        setclickedRowData(null);
+    }, [selectedHumrug, selectedDans]);
+
+    // Row сонголтын watcher
+    useEffect(() => {
+        const rowIndex = getRowsSelected[0];
+
+        if (rowIndex !== undefined && getBaingaIlt[rowIndex] !== undefined) {
             setIsEditBtnClick(false);
-            setclickedRowData(getBaingaIlt[getRowsSelected[0]]);
+            setclickedRowData(getBaingaIlt[rowIndex]);
+        } else {
+            setclickedRowData(null);
         }
     }, [getRowsSelected, getBaingaIlt]);
+    //  ROW SELECT
+    // useEffect(() => {
+    //     if (getRowsSelected[0] !== undefined) {
+    //         setIsEditBtnClick(false);
+    //         setclickedRowData(getBaingaIlt[getRowsSelected[0]]);
+    //     }
+    // }, [getRowsSelected, getBaingaIlt]);
 
     // useEffect(() => {
     //     if (selectedHumrug === 0 || selectedDans === 0) {
@@ -197,7 +215,7 @@ const Index = () => {
                                     <option value={0}>Сонгоно уу</option>
                                     {getHumrug.map((el) => (
                                         <option
-                                            // key={el.humrug_dugaar}
+                                            key={el.humrug_dugaar}
                                             value={el.humrug_dugaar}
                                         >
                                             {el.humrug_ner}
@@ -266,7 +284,7 @@ const Index = () => {
                                     dataTargetID={
                                         selectedHumrug !== 0 &&
                                         selectedDans !== 0
-                                            ? "#dansNew"
+                                            ? "#BaingaNew"
                                             : null
                                     }
                                     spanIconClassName="fas fa-plus"
@@ -292,14 +310,14 @@ const Index = () => {
                             }
                             btnEdit={btnEdit}
                             modelType={showModal}
-                            editdataTargetID="#dansburtgeledit"
+                            editdataTargetID="#baingaIltedit"
                             btnDelete={btnDelete}
                             getRowsSelected={getRowsSelected}
                             setRowsSelected={setRowsSelected}
                             isHideDelete={true}
                             isHideEdit={true}
                         />
-                        {/* <BaingaIltsNew
+                        <BaingaIltsNew
                             refreshBaingaIlt={refreshBaingaIlt}
                             selectedHumrug={selectedHumrug}
                             selectedDans={selectedDans}
@@ -312,7 +330,16 @@ const Index = () => {
                             changeDataRow={clickedRowData}
                             isEditBtnClick={isEditBtnClick}
                         />
-                         */}
+                        <BaingaHadgalahHugatsaa />
+                    </div>
+                </div>
+            </div>
+            <div className="row clearfix">
+                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div className="card2">
+                        {clickedRowData && (
+                            <BaingaIltsChild changeDataRow={clickedRowData} />
+                        )}
                     </div>
                 </div>
             </div>
@@ -403,6 +430,22 @@ const columns = [
     {
         name: "hergiin_indeks",
         label: "Хэргийн индекс",
+        options: {
+            filter: true,
+            sort: false,
+            setCellHeaderProps: (value) => {
+                return {
+                    style: {
+                        backgroundColor: "#5DADE2",
+                        color: "white",
+                    },
+                };
+            },
+        },
+    },
+    {
+        name: "harya_on",
+        label: "Харьяа он",
         options: {
             filter: true,
             sort: false,
@@ -530,10 +573,11 @@ const columns = [
 ];
 
 const excelHeaders = [
-    { label: "Нууцын зэрэг", key: "Дугаар" },
+    { label: "Дугаар", key: "hadgalamj_dugaar" },
     { label: "Хадгаламжийн нэгжийн гарчиг", key: "hadgalamj_garchig" },
     { label: "Зохион байгуулалтын нэгжийн нэр", key: "hadgalamj_zbn" },
     { label: "Хэргийн индекс", key: "hergiin_indeks" },
+    { label: "Харьяа он ", key: "harya_on" },
     { label: "Эхэлсэн он,сар,өдөр", key: "on_ehen" },
     { label: "Дууссан он,сар,өдөр", key: "on_suul" },
     { label: "Хуудасны тоо", key: "huudas_too" },

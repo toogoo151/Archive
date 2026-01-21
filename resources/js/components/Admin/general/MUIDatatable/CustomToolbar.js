@@ -16,80 +16,78 @@ class CustomToolbar extends React.Component {
 
     renderCsvDataDriver() {
         if (this.props.isOfficerDriverExcelHeaders) {
-             return this.props.excelDownloadDriverData.map((item) => ({
-            missionName: item.missionName,
-                 eeljName: item.eeljName,
+            return this.props.excelDownloadDriverData.map((item) => ({
+                missionName: item.missionName,
+                eeljName: item.eeljName,
                 comandlalShortName: item.comandlalShortName,
 
-            unitShortName: item.unitShortName,
-            lastName: item.lastName,
-            firstName: item.firstName,
-            score: item.score,
-            scoreApprove:
-                item.scoreApprove === 0
-                    ? "Хоосон"
-                    : item.scoreApprove === 1
-                    ? "Тэнцсэн"
+                unitShortName: item.unitShortName,
+                lastName: item.lastName,
+                firstName: item.firstName,
+                score: item.score,
+                scoreApprove:
+                    item.scoreApprove === 0
+                        ? "Хоосон"
+                        : item.scoreApprove === 1
+                        ? "Тэнцсэн"
                         : "Тэнцээгүй",
-             practice:
-                item.practice === 0
-                    ? "Хоосон"
-                    : item.practice === 1
-                    ? "Тэнцсэн"
+                practice:
+                    item.practice === 0
+                        ? "Хоосон"
+                        : item.practice === 1
+                        ? "Тэнцсэн"
                         : "Тэнцээгүй",
-              Finally:
-                item.Finally === 0
-                    ? "Хоосон"
-                    : item.Finally === 1
-                    ? "Тэнцсэн"
-                    : "Тэнцээгүй",
-
-        }));
+                Finally:
+                    item.Finally === 0
+                        ? "Хоосон"
+                        : item.Finally === 1
+                        ? "Тэнцсэн"
+                        : "Тэнцээгүй",
+            }));
         }
-
     }
     renderCsvData() {
         if (this.props.isOfficerMainExcelHeaders) {
             return this.props.excelDownloadData.map((item) => ({
-            missionName: item.missionName,
-            eeljName: item.eeljName,
-            comandlalShortName: item.comandlalShortName,
+                missionName: item.missionName,
+                eeljName: item.eeljName,
+                comandlalShortName: item.comandlalShortName,
 
-            unitShortName: item.unitShortName,
-            shortRank: item.shortRank,
-            rd: item.rd,
-            lastName: item.lastName,
-            firstName: item.firstName,
-            age: item.age,
-            genderName: item.genderName,
-            documentsMainApprove:
-                item.documentsMainApprove === 0
-                    ? "Шийдвэрлээгүй"
-                    : item.documentsMainApprove === 1
-                    ? "Зөвшөөрөгдсөн"
-                    : "Татгалзсан",
-            healthApprove:
-                item.healthApprove === 0
-                    ? "Ороогүй"
-                    : item.healthApprove === 1
-                    ? "Тэнцсэн"
-                    : "Тэнцээгүй",
-            alcpt_score: item.alcpt_score === 0 ? "Өгөөгүй" : item.alcpt_score,
-            sportScore:
-                item.languageScore === 0.0 ? "Өгөөгүй" : item.languageScore,
-            sportScore: item.sportScore === 0 ? "Өгөөгүй" : item.sportScore,
+                unitShortName: item.unitShortName,
+                shortRank: item.shortRank,
+                rd: item.rd,
+                lastName: item.lastName,
+                firstName: item.firstName,
+                age: item.age,
+                genderName: item.genderName,
+                documentsMainApprove:
+                    item.documentsMainApprove === 0
+                        ? "Шийдвэрлээгүй"
+                        : item.documentsMainApprove === 1
+                        ? "Зөвшөөрөгдсөн"
+                        : "Татгалзсан",
+                healthApprove:
+                    item.healthApprove === 0
+                        ? "Ороогүй"
+                        : item.healthApprove === 1
+                        ? "Тэнцсэн"
+                        : "Тэнцээгүй",
+                alcpt_score:
+                    item.alcpt_score === 0 ? "Өгөөгүй" : item.alcpt_score,
+                sportScore:
+                    item.languageScore === 0.0 ? "Өгөөгүй" : item.languageScore,
+                sportScore: item.sportScore === 0 ? "Өгөөгүй" : item.sportScore,
 
-            driverApprove:
-                item.driverApprove === 0
-                    ? "Өгөөгүй"
-                    : item.driverApprove === 1
-                    ? "Тэнцсэн"
-                    : "Тэнцээгүй",
+                driverApprove:
+                    item.driverApprove === 0
+                        ? "Өгөөгүй"
+                        : item.driverApprove === 1
+                        ? "Тэнцсэн"
+                        : "Тэнцээгүй",
 
-            skillScore: item.skillScore === 0 ? "Өгөөгүй" : item.skillScore,
-        }));
+                skillScore: item.skillScore === 0 ? "Өгөөгүй" : item.skillScore,
+            }));
         }
-
     }
 
     render() {
@@ -128,12 +126,13 @@ class CustomToolbar extends React.Component {
                         alignItems: "center",
                     }}
                 >
-
                     <CSVLink
                         data={
                             this.props.isOfficerMainExcelHeaders
                                 ? csvData
-                                : this.props.isOfficerDriverExcelHeaders ? csvData2 : this.props.excelDownloadData
+                                : this.props.isOfficerDriverExcelHeaders
+                                ? csvData2
+                                : this.props.excelDownloadData
                         }
                         headers={this.props.excelHeaders}
                         title="Excel файл татах"
@@ -146,7 +145,6 @@ class CustomToolbar extends React.Component {
                             }}
                         ></ExcelIcon>
                     </CSVLink>
-
                 </div>
                 {/* Header title shuuu */}
                 <div

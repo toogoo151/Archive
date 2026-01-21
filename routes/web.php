@@ -13,6 +13,15 @@ use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\HumrugController;
 use App\Http\Controllers\DansController;
 use App\Http\Controllers\BaingaIltController;
+use App\Http\Controllers\SedevZuiController;
+use App\Http\Controllers\JagsaaltController;
+use App\Http\Controllers\BaingaIltChildController;
+
+use Illuminate\Support\Facades\DB;
+
+
+
+
 
 
 
@@ -43,6 +52,9 @@ use App\Models\Huthereg;
 use App\Models\Humrug;
 use App\Models\Dansburtgel;
 use App\Models\BaingaIlt;
+// use App\Models\BaingaNuuts;
+
+
 // Туслах моделууд
 use App\Models\jagsaaltZuilDugaar;
 use App\Models\SedevZuiModel;
@@ -236,7 +248,7 @@ Route::post("/edit/dans", [DansController::class, "EditDans"])
     ->middleware('auth');
 //Данс бүртгэл end
 
-// Байнга хадгалах Илт
+// Байнга хадгалах Илт start
 Route::get("/get/BaingaIlt", function () {
     $baingaIlt = new BaingaIlt();
     return $baingaIlt->getBaingaIlt();
@@ -247,8 +259,48 @@ Route::get("/get/Dansburtgel/{humrugID}", function ($humrugID) {
     return $baingaIlt->getDansburtgelByHumrug($humrugID);
 });
 Route::post("/delete/BaingaIlt", [BaingaIltController::class, "DeleteBaingIlt"]);
+Route::post("/new/BaingaIlt", [BaingaIltController::class, "NewBaingIlt"])
+    ->middleware('auth');
+Route::post("/edit/BaingaIlt", [BaingaIltController::class, "EditBaingIlt"])
+    ->middleware('auth');
+// Байнга хадгалах Илт end
+
+//Childtable Байнга хадгалах барим бичиг start
+Route::post("/get/baingaIltsChild", [BaingaIltChildController::class, "ChildBaingIlt"]);
+Route::post("/delete/baingaIltChild", [BaingaIltChildController::class, "DeleteChildBaingIlt"]);
+Route::post("/new/baingaIltChild", [BaingaIltChildController::class, "NewChildBaingIlt"])
+    ->middleware('auth');
+Route::post("/edit/baingaIltChild", [BaingaIltChildController::class, "EditChildBaingIlt"])
+    ->middleware('auth');
+Route::post("/delete/baingaIltChildFile", [BaingaIltChildController::class, "DeleteChildFile"]);
+//Childtable Байнга хадгалах барим бичиг end
 
 
+// Байнга хадгалах Нууц start
+// Route::get("/get/BaingaNuuts", function () {
+//     $baingaNuuts = new BaingaNuuts();
+//     return $baingaNuuts->BaingaNuuts();
+// });
+
+// Route::get("/get/Dansburtgel/{humrugID}", function ($humrugID) {
+//     $baingaIlt = new BaingaIlt();
+//     return $baingaIlt->getDansburtgelByHumrug($humrugID);
+// });
+// Route::post("/delete/BaingaIlt", [BaingaIltController::class, "DeleteBaingIlt"]);
+// Route::post("/new/BaingaIlt", [BaingaIltController::class, "NewBaingIlt"])
+//     ->middleware('auth');
+// Route::post("/edit/BaingaIlt", [BaingaIltController::class, "EditBaingIlt"])
+//     ->middleware('auth');
+// Байнга хадгалах Нууц end
+
+
+
+
+
+
+
+
+//Childtable Байнга хадгалах барим бичиг end
 
 
 // GANBAT NEMSEN START
@@ -259,11 +311,11 @@ Route::get("/get/jagsaalt", function () {
     return $dans->getJagsaalt();
 });
 Route::post("new/jagsaalt", [JagsaaltController::class, "NewJagsaalt"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 Route::post("edit/jagsaalt", [JagsaaltController::class, "EditJagsaalt"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 Route::post("delete/jagsaalt", [JagsaaltController::class, "DeleteJagsaalt"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 // Jagsaalt end
 
 // Sedev zui zaagch start
@@ -272,11 +324,11 @@ Route::get("/get/sedevzuils", function () {
     return $sedev->getSedevZui();
 });
 Route::post("new/sedevzui", [SedevZuiController::class, "NewSedevZui"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 Route::post("edit/sedevzui", [SedevZuiController::class, "EditSedevZui"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 Route::post("delete/sedevzui", [SedevZuiController::class, "DeleteSedevZui"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 // Sedev zui zaagch end
 
 
@@ -286,11 +338,11 @@ Route::get("/get/tovchlol", function () {
     return $arhivtovchlol->getTovchlol();
 });
 Route::post("new/tovchlol", [\App\Http\Controllers\ArhivTovchlolController::class, "NewTovchlol"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 Route::post("edit/tovchlol", [\App\Http\Controllers\ArhivTovchlolController::class, "EditTovchlol"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 Route::post("delete/tovchlol", [\App\Http\Controllers\ArhivTovchlolController::class, "DeleteTovchlol"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 // Arhiv tovchlol  end
 
 
@@ -300,11 +352,11 @@ Route::get("/get/ashignoms", function () {
     return $ashignom->getNom();
 });
 Route::post("new/ashignom", [\App\Http\Controllers\AshigNomController::class, "NewNom"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 Route::post("edit/ashignom", [\App\Http\Controllers\AshigNomController::class, "EditNom"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 Route::post("delete/ashignom", [\App\Http\Controllers\AshigNomController::class, "DeleteNom"])
-    ->middleware('auth:sanctum');
+    ->middleware('auth');
 // Ashig nom  end
 
 // Jagsaalt TURUL START
