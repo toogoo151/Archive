@@ -21,7 +21,7 @@ const HumrugNew = (props) => {
         humrug_dugaar: Yup.string().required("Хөмрөг дугаар оруулна уу"),
         humrug_ner: Yup.string().required("Хөмрөгийн нэр оруулна уу"),
         humrug_zereglel: Yup.string().required("Хөмрөгийн зэрэглэл оруулна уу"),
-        anhnii_ognoo: Yup.string().required("Анхны огноо оруулна уу"),
+        anhnii_ognoo: Yup.string().nullable(),
         humrug_uurchlult: Yup.string().nullable(),
         uurchlult_ognoo: Yup.string().nullable(),
         humrug_tailbar: Yup.string().nullable(),
@@ -188,7 +188,7 @@ const HumrugNew = (props) => {
                                                 {getHumrug.map((el) => (
                                                     <option
                                                         key={el.id}
-                                                        value={el.id}
+                                                        value={el.HumName}
                                                     >
                                                         {el.HumName}
                                                     </option>

@@ -11,16 +11,23 @@ class Dansburtgel extends Model
 {
     use HasFactory;
     protected $table = 'db_arhivdans';
-    public $timestamps = true;
+    public $timestamps = false;
 
     public function getDans()
     {
         try {
-            $dans = DB::table("db_arhivdans")
-                ->join("db_humrug", "db_humrug.humrug_dugaar", "=", "db_arhivdans.humrugID")
-                ->join("retention_period", "retention_period.id", "=", "db_arhivdans.hadgalah_hugatsaa")
-                ->join("secret_type", "secret_type.id", "=", "db_arhivdans.dans_baidal")
-                ->select("db_arhivdans.*", "db_humrug.humrug_ner", "secret_type.Sname", "retention_period.RetName")
+
+            $dans = DB::table('db_arhivdans as d')
+                ->join('db_humrug as h', 'h.humrug_dugaar', '=', 'd.humrugID')
+                ->join('retention_period as r', 'r.RetName', '=', 'd.hadgalah_hugatsaa')
+                ->join('secret_type as s', 's.Sname', '=', 'd.dans_baidal')
+                ->select(
+                    'd.*',
+                    'h.humrug_ner',
+                    's.Sname',
+                    'r.RetName'
+                )
+                ->whereRaw('d.id IN (SELECT MIN(id) FROM db_arhivdans GROUP BY id)') // <--- Давхар мөр арилгах
                 ->get();
             return $dans;
         } catch (\Throwable $th) {

@@ -11,5 +11,5 @@ class BaingaIltChild extends Model
 {
     use HasFactory;
     protected $table = 'db_arhivbaingilt';
-    public $timestamps = true;
+    public $timestamps = false;
 }

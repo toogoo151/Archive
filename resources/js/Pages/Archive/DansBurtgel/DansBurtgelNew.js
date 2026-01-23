@@ -156,7 +156,7 @@ const DansBurtgelNew = ({ refreshDans, selectedHumrug, selectedRetention }) => {
                                                 {getSecType.map((el) => (
                                                     <option
                                                         key={el.id}
-                                                        value={el.id}
+                                                        value={el.Sname}
                                                     >
                                                         {el.Sname}
                                                     </option>

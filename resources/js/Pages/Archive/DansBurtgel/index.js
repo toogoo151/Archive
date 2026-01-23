@@ -22,7 +22,7 @@ const Index = () => {
     //select
     const [allDans, setAllDans] = useState([]); // анхны бүх дата
     const [selectedHumrug, setSelectedHumrug] = useState(0);
-    const [selectedRetention, setSelectedRetention] = useState(0);
+    const [selectedRetention, setSelectedRetention] = useState("");
     //select
 
     const [getRowsSelected, setRowsSelected] = useState([]);
@@ -36,21 +36,31 @@ const Index = () => {
     }, [selectedHumrug, selectedRetention]);
 
     const refreshDans = () => {
-        axios.get("/get/Dans").then((res) => {
-            setAllDans(res.data);
-
-            if (selectedHumrug !== 0 && selectedRetention !== 0) {
-                const filteredData = res.data.filter(
-                    (item) =>
-                        Number(item.humrugID) === Number(selectedHumrug) &&
-                        Number(item.hadgalah_hugatsaa) ===
-                            Number(selectedRetention)
+        axios
+            .get("/get/Dans")
+            .then((res) => {
+                // Давхар мөрийг зөвхөн 'id' дээр filter хийж авна
+                const uniqueDans = Array.from(
+                    new Map(res.data.map((item) => [item.id, item])).values()
                 );
-                setDans(filteredData);
-            } else {
-                setDans([]);
-            }
-        });
+
+                setAllDans(uniqueDans);
+
+                if (selectedHumrug !== 0 && selectedRetention !== "") {
+                    const filteredData = uniqueDans.filter(
+                        (item) =>
+                            String(item.humrugID) === String(selectedHumrug) &&
+                            String(item.hadgalah_hugatsaa) ===
+                                String(selectedRetention)
+                    );
+                    setDans(filteredData);
+                } else {
+                    setDans([]);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     // const handleAddClick = (e) => {
@@ -107,6 +117,8 @@ const Index = () => {
             setclickedRowData(getDans[getRowsSelected[0]]);
         }
     }, [getRowsSelected, getDans]);
+    console.log(selectedHumrug);
+    console.log(selectedRetention);
 
     // useEffect(() => {
     //     if (selectedHumrug === 0 || selectedRetention === 0) {
@@ -227,10 +239,10 @@ const Index = () => {
                                     className="form-control"
                                     value={selectedRetention}
                                     onChange={(e) => {
-                                        const value = Number(e.target.value);
+                                        const value = e.target.value; // STRING
                                         setSelectedRetention(value);
 
-                                        if (value === 0) {
+                                        if (value === "") {
                                             Swal.fire({
                                                 icon: "warning",
                                                 title: "Анхаар!",
@@ -239,9 +251,9 @@ const Index = () => {
                                         }
                                     }}
                                 >
-                                    <option value={0}>Сонгоно уу</option>
+                                    <option value="">Сонгоно уу</option>
                                     {getRetention.map((el) => (
-                                        <option key={el.id} value={el.id}>
+                                        <option key={el.id} value={el.RetName}>
                                             {el.RetName}
                                         </option>
                                     ))}
@@ -251,7 +263,6 @@ const Index = () => {
                         {/* TABLE */}
                         <MUIDatatable
                             data={getDans}
-                            setdata={setDans}
                             columns={columns}
                             costumToolbar={
                                 <CustomToolbar
@@ -259,7 +270,7 @@ const Index = () => {
                                     modelType="modal"
                                     dataTargetID={
                                         selectedHumrug !== 0 &&
-                                        selectedRetention !== 0
+                                        selectedRetention !== ""
                                             ? "#dansNew"
                                             : null
                                     }
@@ -324,6 +335,7 @@ const Index = () => {
                             changeDataRow={clickedRowData}
                             isEditBtnClick={isEditBtnClick}
                         /> */}
+                        {/* console.log(res.data[0]) console.log(selectedRetention) */}
                     </div>
                 </div>
             </div>
@@ -364,7 +376,7 @@ const columns = [
         },
     },
     {
-        name: "Sname",
+        name: "dans_baidal",
         label: "Нууцын зэрэг",
         options: {
             filter: true,

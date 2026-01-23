@@ -67,10 +67,6 @@ const HumrugEdit = (props) => {
             Swal.fire("Хөмрөг зэрэглэл оруулна уу.");
             return;
         }
-        if (anhnii_ognoo == "" || anhnii_ognoo == null) {
-            Swal.fire("Анхны огноо оруулна уу.");
-            return;
-        }
 
         axios
             .post("/edit/humrug", {
@@ -263,7 +259,7 @@ const HumrugEdit = (props) => {
                                             {getHumrug.map((el) => (
                                                 <option
                                                     key={el.id}
-                                                    value={el.id}
+                                                    value={el.HumName}
                                                 >
                                                     {el.HumName}
                                                 </option>

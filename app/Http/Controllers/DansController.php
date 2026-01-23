@@ -40,7 +40,7 @@ class DansController extends Controller
 
         $req->validate([
             'humrugID' => 'required|integer',
-            'hadgalah_hugatsaa' => 'required|integer',
+            // 'hadgalah_hugatsaa' => 'required|integer',
             'dans_dugaar' => 'required',
             'dans_ner' => 'required',
             'dans_baidal' => 'required',

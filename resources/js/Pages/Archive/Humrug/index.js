@@ -311,7 +311,7 @@ const columns = [
     },
 
     {
-        name: "HumName",
+        name: "humrug_uurchlult",
         label: "Хөмрөгийн өөрчлөлт",
         options: {
             filter: true,

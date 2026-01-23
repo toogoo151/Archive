@@ -11,7 +11,7 @@ class Humrug extends Model
 {
     use HasFactory;
     protected $table = 'db_humrug';
-    public $timestamps = true;
+    public $timestamps = false;
 
     public function getHumrug()
     {
