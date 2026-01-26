@@ -39,8 +39,9 @@ class BaingaIlt extends Model
         try {
             $dans = DB::table("db_arhivdans")
                 ->join("db_humrug", "db_humrug.humrug_dugaar", "=", "db_arhivdans.humrugID")
-                ->join("retention_period", "retention_period.id", "=", "db_arhivdans.hadgalah_hugatsaa")
-                ->join("secret_type", "secret_type.id", "=", "db_arhivdans.dans_baidal")
+                ->join('retention_period', 'retention_period.RetName', '=', 'db_arhivdans.hadgalah_hugatsaa')
+                // ->join("retention_period", "retention_period.id", "=", "db_arhivdans.hadgalah_hugatsaa")
+                ->join("secret_type", "secret_type.Sname", "=", "db_arhivdans.dans_baidal")
                 ->where("db_arhivdans.humrugID", $humrugID)
                 ->select(
                     "db_arhivdans.*",
@@ -54,7 +55,9 @@ class BaingaIlt extends Model
         } catch (\Throwable $th) {
             return response([
                 "status" => "error",
-                "msg" => "Данс татаж чадсангүй"
+                "message" => $th->getMessage(),
+                "file" => $th->getFile(),
+                "line" => $th->getLine(),
             ], 500);
         }
     }

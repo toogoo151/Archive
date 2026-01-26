@@ -328,7 +328,7 @@ const Index = () => {
                             changeDataRow={clickedRowData}
                             isEditBtnClick={isEditBtnClick}
                         />
-                        *{/* <DansBurtgelNew refreshDans={refreshDans} /> */}
+                        {/* <DansBurtgelNew refreshDans={refreshDans} /> */}
                         {/* <HumrugEdit
                             setRowsSelected={setRowsSelected}
                             refreshDans={refreshDans}
