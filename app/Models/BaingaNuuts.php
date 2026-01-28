@@ -7,49 +7,71 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class BaingaIlt extends Model
+class BaingaNuuts extends Model
 {
     use HasFactory;
-    protected $table = 'db_arhivbaingahad';
+    protected $table = 'db_arhivhnnuuts';
     public $timestamps = false;
 
-    public function getBaingaIlt()
+    // public function getBaingaNuuts()
+    // {
+    //     try {
+    //         $baingaNuuts = DB::table("db_arhivhnnuuts")
+    //             ->join("db_humrug", "db_humrug.humrug_dugaar", "=", "db_arhivhnnuuts.humrug_id")
+    //             ->leftjoin("db_arhivdans", "db_arhivdans.dans_dugaar", "=", "db_arhivhnnuuts.dans_id")
+    //             ->select("db_arhivhnnuuts.*", "db_humrug.humrug_ner", "db_arhivdans.dans_ner")
+    //             ->get();
+    //         return $baingaNuuts;
+    //     } catch (\Throwable $th) {
+    //         return response(
+    //             array(
+    //                 "status" => "error",
+    //                 "msg" => "татаж чадсангүй."
+    //             ),
+    //             500
+    //         );
+    //     }
+    // }
+
+    public function getBaingaNuuts()
     {
         try {
-            $baingaIlt = DB::table("db_arhivbaingahad")
-                ->join("db_humrug", "db_humrug.humrug_dugaar", "=", "db_arhivbaingahad.humrug_id")
-                ->leftJoin("db_arhivdans", "db_arhivdans.dans_dugaar", "=", "db_arhivbaingahad.dans_id")
+            $baingaNuuts = DB::table("db_arhivhnnuuts")
                 ->select(
-                    "db_arhivbaingahad.*",
-                    "db_humrug.humrug_ner",
-                    "db_arhivdans.dans_ner"
+                    "db_arhivhnnuuts.*",
+
+                    // humrug нэрийг 1 ширхэгээр авах
+                    DB::raw("(SELECT humrug_ner 
+                          FROM db_humrug 
+                          WHERE db_humrug.humrug_dugaar = db_arhivhnnuuts.humrug_id 
+                          LIMIT 1) as humrug_ner"),
+
+                    // dans нэрийг 1 ширхэгээр авах
+                    DB::raw("(SELECT dans_ner 
+                          FROM db_arhivdans 
+                          WHERE db_arhivdans.dans_dugaar = db_arhivhnnuuts.dans_id 
+                          LIMIT 1) as dans_ner")
                 )
-                ->where(function ($query) {
-                    $query->whereNull("ustgasan_temdeglel")
-                        ->orWhere("ustgasan_temdeglel", "");
-                })
                 ->get();
 
-            return $baingaIlt;
+            return $baingaNuuts;
         } catch (\Throwable $th) {
-            return response(
-                array(
-                    "status" => "error",
-                    "msg" => "татаж чадсангүй."
-                ),
-                500
-            );
+            return response([
+                "status" => "error",
+                "msg" => "татаж чадсангүй.",
+                "error" => $th->getMessage()
+            ], 500);
         }
     }
 
 
-    public function getDansburtgelByHumrug($humrugID)
+    public function getDansburtgelByNuutsHumrug($humrugID)
     {
         try {
             $dans = DB::table("db_arhivdans")
                 ->join("db_humrug", "db_humrug.humrug_dugaar", "=", "db_arhivdans.humrugID")
                 ->where("db_arhivdans.hadgalah_hugatsaa", "Байнга хадгалагдах")
-                ->where("db_arhivdans.dans_baidal", "Илт")
+                ->where("db_arhivdans.dans_baidal", "Нууц")
                 ->where("db_arhivdans.humrugID", $humrugID)
                 ->select(
                     "db_arhivdans.id",
@@ -79,7 +101,6 @@ class BaingaIlt extends Model
                     "db_arhivdans.dans_tailbar",
                     "db_arhivdans.dans_baidal",
                     "db_arhivdans.hadgalah_hugatsaa",
-
                 )
                 ->get();
 

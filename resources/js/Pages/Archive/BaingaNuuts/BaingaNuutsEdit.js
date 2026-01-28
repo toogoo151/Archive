@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "../../../AxiosUser";
 
-const BaingaIltsEdit = ({
-    refreshBaingaIlt,
+const BaingaNuutsEdit = ({
+    refreshBaingaNuuts,
     selectedHumrug,
     selectedDans,
     changeDataRow,
@@ -11,10 +11,11 @@ const BaingaIltsEdit = ({
     setRowsSelected,
 }) => {
     const [showModal, setShowModal] = useState("");
-    const [hadgalamj_dugaar, sethadgalamj_dugaar] = useState("");
-    const [hadgalamj_garchig, sethadgalamj_garchig] = useState("");
-    const [hadgalamj_zbn, sethadgalamj_zbn] = useState("");
-    const [hergiin_indeks, sethergiin_indeks] = useState("");
+    const [hn_dd, sethn_dd] = useState("");
+    const [hn_zbn, sethn_zbn] = useState("");
+    const [hereg_burgtel, sethereg_burgtel] = useState("");
+    const [hn_garchig, sethn_garchig] = useState("");
+    const [nuuts_zereglel, setnuuts_zereglel] = useState("");
     const [harya_on, setharya_on] = useState("");
     const [on_ehen, setOnehen] = useState("");
     const [on_suul, setOnsuul] = useState("");
@@ -37,10 +38,11 @@ const BaingaIltsEdit = ({
             setOnehen(formatDateForInput(changeDataRow.on_ehen));
             setOnsuul(formatDateForInput(changeDataRow.on_suul));
 
-            sethadgalamj_dugaar(changeDataRow.hadgalamj_dugaar);
-            sethadgalamj_garchig(changeDataRow.hadgalamj_garchig);
-            sethadgalamj_zbn(changeDataRow.hadgalamj_zbn);
-            sethergiin_indeks(changeDataRow.hergiin_indeks);
+            sethn_dd(changeDataRow.hn_dd);
+            sethn_zbn(changeDataRow.hn_zbn);
+            sethereg_burgtel(changeDataRow.hereg_burgtel);
+            sethn_garchig(changeDataRow.hn_garchig);
+            setnuuts_zereglel(changeDataRow.nuuts_zereglel);
             setharya_on(changeDataRow.harya_on);
             sethuudas_too(changeDataRow.huudas_too);
             sethabsralt_too(changeDataRow.habsralt_too ?? "");
@@ -59,14 +61,15 @@ const BaingaIltsEdit = ({
         setRowsSelected([]);
 
         axios
-            .post("/edit/BaingaIlt", {
+            .post("/edit/BaingaNuuts", {
                 humrug_id: selectedHumrug,
                 dans_id: selectedDans,
                 id: changeDataRow.id,
-                hadgalamj_dugaar: hadgalamj_dugaar,
-                hadgalamj_garchig: hadgalamj_garchig,
-                hadgalamj_zbn: hadgalamj_zbn,
-                hergiin_indeks: hergiin_indeks,
+                hn_dd: hn_dd,
+                hn_zbn: hn_zbn,
+                hereg_burgtel: hereg_burgtel,
+                hn_garchig: hn_garchig,
+                nuuts_zereglel: nuuts_zereglel,
                 harya_on: harya_on,
                 on_ehen: on_ehen,
                 on_suul: on_suul,
@@ -77,10 +80,11 @@ const BaingaIltsEdit = ({
             })
             .then((res) => {
                 Swal.fire(res.data.msg);
-                sethadgalamj_dugaar("");
-                sethadgalamj_garchig("");
-                sethadgalamj_zbn("");
-                sethergiin_indeks("");
+                sethn_dd("");
+                sethn_zbn("");
+                sethereg_burgtel("");
+                sethn_garchig("");
+                setnuuts_zereglel("");
                 setharya_on("");
                 setOnehen("");
                 setOnsuul("");
@@ -89,10 +93,10 @@ const BaingaIltsEdit = ({
                 setjagsaalt_zuildugaar("");
                 sethn_tailbar("");
                 if (window.$) {
-                    window.$("#baingaIltedit").modal("hide");
+                    window.$("#baingaNuutsedit").modal("hide");
                 }
 
-                refreshBaingaIlt();
+                refreshBaingaNuuts();
             })
             .catch((err) => {
                 Swal.fire(err.response.data.msg);
@@ -100,17 +104,20 @@ const BaingaIltsEdit = ({
     };
 
     const changeHadgalamjDugaar = (e) => {
-        sethadgalamj_dugaar(e.target.value);
+        sethn_dd(e.target.value);
     };
-    const changeHadgarchig = (e) => {
-        sethadgalamj_garchig(e.target.value);
+    const changeZbn = (e) => {
+        sethn_zbn(e.target.value);
     };
-    const changeHadZbn = (e) => {
-        sethadgalamj_zbn(e.target.value);
+    const changeHeregBurtgel = (e) => {
+        sethereg_burgtel(e.target.value);
     };
 
-    const changeIndex = (e) => {
-        sethergiin_indeks(e.target.value);
+    const changeHngarchig = (e) => {
+        sethn_garchig(e.target.value);
+    };
+    const changeNuuts = (e) => {
+        setnuuts_zereglel(e.target.value);
     };
     const changeHarya = (e) => {
         setharya_on(e.target.value);
@@ -136,7 +143,7 @@ const BaingaIltsEdit = ({
 
     return (
         <>
-            <div className="modal" id="baingaIltedit">
+            <div className="modal" id="baingaNuutsedit">
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -166,7 +173,7 @@ const BaingaIltsEdit = ({
                                             type="number"
                                             className="form-control"
                                             onChange={changeHadgalamjDugaar}
-                                            value={hadgalamj_dugaar}
+                                            value={hn_dd}
                                         />
                                     </div>
                                 </div>
@@ -175,13 +182,13 @@ const BaingaIltsEdit = ({
                                     <div className="input-group mb-2">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
-                                                Хадгаламжийн нэгжийн гарчиг:
+                                                ЗБ нэгжийн нэр:
                                             </span>
                                         </div>
                                         <input
                                             className="form-control"
-                                            onChange={changeHadgarchig}
-                                            value={hadgalamj_garchig}
+                                            onChange={changeZbn}
+                                            value={hn_zbn}
                                         />
                                     </div>
                                 </div>
@@ -192,13 +199,13 @@ const BaingaIltsEdit = ({
                                     <div className="input-group mb-2">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
-                                                ЗБ нэгжийн нэр:
+                                                Хэрэг,данс бүртгэл:
                                             </span>
                                         </div>
                                         <input
                                             className="form-control"
-                                            onChange={changeHadZbn}
-                                            value={hadgalamj_zbn}
+                                            onChange={changeHeregBurtgel}
+                                            value={hereg_burgtel}
                                         />
                                     </div>
                                 </div>
@@ -207,14 +214,49 @@ const BaingaIltsEdit = ({
                                     <div className="input-group mb-2">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
-                                                Хэргийн индекс:
+                                                Хэрэг бүртгэлийн он:
                                             </span>
                                         </div>
 
                                         <input
                                             className="form-control"
-                                            onChange={changeIndex}
-                                            value={hergiin_indeks}
+                                            onChange={changeHarya}
+                                            value={harya_on}
+                                            readOnly
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row clearfix">
+                                <div className="col-md-6">
+                                    <div className="input-group mb-2">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text">
+                                                Хэрэг данс бүртгэлийн нэр:
+                                            </span>
+                                        </div>
+                                        <input
+                                            className="form-control"
+                                            onChange={changeHngarchig}
+                                            value={hn_garchig}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="col-md-6">
+                                    <div className="input-group mb-2">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text">
+                                                Нууцын зэрэглэл:
+                                            </span>
+                                        </div>
+
+                                        <input
+                                            className="form-control"
+                                            onChange={changeNuuts}
+                                            value={nuuts_zereglel}
+                                            readOnly
                                         />
                                     </div>
                                 </div>
@@ -260,49 +302,6 @@ const BaingaIltsEdit = ({
                                     <div className="input-group mb-2">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">
-                                                Харьяа он:
-                                            </span>
-                                        </div>
-                                        <input
-                                            className="form-control"
-                                            onChange={changeHarya}
-                                            value={harya_on}
-                                            readOnly
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="col-md-6">
-                                    <div className="input-group mb-2">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">
-                                                Хуудасны тоо:
-                                            </span>
-                                        </div>
-
-                                        {/* <input
-                                            type="number"
-                                            {...register("habsralt_too", {
-                                                valueAsNumber: true,
-                                            })}
-                                            className="form-control"
-                                        /> */}
-
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            onChange={changeHuudas}
-                                            value={huudas_too}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="row clearfix">
-                                <div className="col-md-6">
-                                    <div className="input-group mb-2">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">
                                                 Хавсралтын тоо:
                                             </span>
                                         </div>
@@ -316,6 +315,25 @@ const BaingaIltsEdit = ({
                                     </div>
                                 </div>
 
+                                <div className="col-md-6">
+                                    <div className="input-group mb-2">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text">
+                                                Хуудасны тоо:
+                                            </span>
+                                        </div>
+
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            onChange={changeHuudas}
+                                            value={huudas_too}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row clearfix">
                                 <div className="col-md-6">
                                     <div className="input-group mb-2">
                                         <div className="input-group-prepend">
@@ -358,20 +376,20 @@ const BaingaIltsEdit = ({
                                         />
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="row">
-                                <div className="input-group mb-3">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text">
-                                            Тайлбар:
-                                        </span>
+                                <div className="col-md-6">
+                                    <div className="input-group mb-2">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text">
+                                                Тайлбар:
+                                            </span>
+                                        </div>
+                                        <input
+                                            className="form-control"
+                                            onChange={changeTailbar}
+                                            value={hn_tailbar}
+                                        />
                                     </div>
-                                    <input
-                                        className="form-control"
-                                        onChange={changeTailbar}
-                                        value={hn_tailbar}
-                                    />
                                 </div>
                             </div>
                         </div>
@@ -401,4 +419,4 @@ const BaingaIltsEdit = ({
     );
 };
 
-export default BaingaIltsEdit;
+export default BaingaNuutsEdit;

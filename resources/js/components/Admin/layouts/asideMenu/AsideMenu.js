@@ -69,7 +69,7 @@ export default function AsideMenu() {
                 // },
                 {
                     name: "Нууц",
-                    url: "/get/tovchililsonUgs",
+                    url: "/get/BaingaNuutss",
                     icon: "fa fa-list",
                 },
                 {
@@ -115,7 +115,7 @@ export default function AsideMenu() {
                 //     ],
                 // },
                 // GANBAT NEMSEN START
-                  {
+                {
                     name: "Товчилсон үгийн жагсаалт",
                     url: "/get/tovchilsonug",
                     icon: "fa fa-list",
@@ -135,7 +135,6 @@ export default function AsideMenu() {
                     name: "Хадгалах хугацааны зүйлийн жагсаалт",
                     url: "/get/jagsaaltZuils",
                     icon: "fa fa-boxes",
-
                 },
                 // GANBAT NEMSEN END
             ],

@@ -16,6 +16,12 @@ use App\Http\Controllers\BaingaIltController;
 use App\Http\Controllers\SedevZuiController;
 use App\Http\Controllers\JagsaaltController;
 use App\Http\Controllers\BaingaIltChildController;
+use App\Http\Controllers\BaingaNuutsController;
+use App\Http\Controllers\BaingaNuutsChildController;
+
+
+
+
 
 use Illuminate\Support\Facades\DB;
 
@@ -52,7 +58,7 @@ use App\Models\Huthereg;
 use App\Models\Humrug;
 use App\Models\Dansburtgel;
 use App\Models\BaingaIlt;
-// use App\Models\BaingaNuuts;
+use App\Models\BaingaNuuts;
 
 
 // Туслах моделууд
@@ -276,22 +282,36 @@ Route::post("/delete/baingaIltChildFile", [BaingaIltChildController::class, "Del
 //Childtable Байнга хадгалах барим бичиг end
 
 
-// Байнга хадгалах Нууц start
-// Route::get("/get/BaingaNuuts", function () {
-//     $baingaNuuts = new BaingaNuuts();
-//     return $baingaNuuts->BaingaNuuts();
-// });
+///Байнга хадгалах Нууц start
+Route::get("/get/BaingaNuuts", function () {
+    $baingaNuuts = new BaingaNuuts();
+    return $baingaNuuts->getBaingaNuuts();
+});
 
-// Route::get("/get/Dansburtgel/{humrugID}", function ($humrugID) {
-//     $baingaIlt = new BaingaIlt();
-//     return $baingaIlt->getDansburtgelByHumrug($humrugID);
-// });
-// Route::post("/delete/BaingaIlt", [BaingaIltController::class, "DeleteBaingIlt"]);
-// Route::post("/new/BaingaIlt", [BaingaIltController::class, "NewBaingIlt"])
-//     ->middleware('auth');
-// Route::post("/edit/BaingaIlt", [BaingaIltController::class, "EditBaingIlt"])
-//     ->middleware('auth');
-// Байнга хадгалах Нууц end
+Route::get("/get/DansburtgelNuuts/{humrugID}", function ($humrugID) {
+    $baingaNuuts = new BaingaNuuts();
+    return $baingaNuuts->getDansburtgelByNuutsHumrug($humrugID);
+});
+Route::post("/delete/BaingaNuuts", [BaingaNuutsController::class, "DeleteBaingaNuuts"]);
+Route::post("/new/BaingaNuuts", [BaingaNuutsController::class, "NewBaingaNuuts"])
+    ->middleware('auth');
+Route::post("/edit/BaingaNuuts", [BaingaNuutsController::class, "EditBaingaNuuts"])
+    ->middleware('auth');
+//Байнга хадгалах Нууц end
+
+//Байнга хадгалах нууц баримт бичиг child start
+Route::post("/get/baingaNuutsChild", [BaingaNuutsChildController::class, "ChildBaingaNuuts"]);
+Route::post("/delete/baingaNuutsChild", [BaingaNuutsChildController::class, "DeleteChildBaingaNuuts"]);
+Route::post("/new/baingaNuutsChild", [BaingaNuutsChildController::class, "NewChildBaingNuuts"])
+    ->middleware('auth');
+Route::post("/edit/baingaNuutsChild", [BaingaNuutsChildController::class, "EditChildBaingaNuuts"])
+    ->middleware('auth');
+Route::post("/delete/baingaNuutsChildFile", [BaingaNuutsChildController::class, "DeleteNuutsChildFile"]);
+
+//Байнга хадгалах нууц баримт бичиг child end
+
+
+
 
 
 

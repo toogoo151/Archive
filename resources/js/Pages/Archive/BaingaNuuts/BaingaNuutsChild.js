@@ -4,11 +4,11 @@ import "../../../../styles/muidatatable.css";
 import axios from "../../../AxiosUser";
 import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
 import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIDatatable";
-import BaingaIltsChildEdit from "./BaingaIltsChildEdit";
-import BaingaIltsChildNew from "./BaingaIltsChildNew";
+import BaingaNuutsChildEdit from "./BaingaNuutsChildEdit";
+import BaingaNuutsChildNew from "./BaingaNuutsChildNew";
 
-const BaingaIltsChild = (props) => {
-    const [getbaingaIltsChild, setbaingaIltsChild] = useState([]);
+const BaingaNuutsChild = (props) => {
+    const [getbaingaNuutsChild, setbaingaNuutsChild] = useState([]);
     const [getRowsSelected, setRowsSelected] = useState([]);
     const [clickedRowData, setclickedRowData] = useState([]);
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
@@ -16,12 +16,12 @@ const BaingaIltsChild = (props) => {
     const [showModal] = useState("modal");
 
     // useEffect(() => {
-    //     refreshbaingaIltsChild(props.changeDataRow.id);
+    //     refreshbaingaNuutsChild(props.changeDataRow.id);
     // }, []);
 
     useEffect(() => {
         // Parent мөр өөрчлөгдөх үед child table refresh хийнэ
-        refreshbaingaIltsChild(props.changeDataRow.id);
+        refreshbaingaNuutsChild(props.changeDataRow.id);
 
         // 🔥 Edit mode болон сонгогдсон row-ийг reset хийнэ
         setclickedRowData([]);
@@ -36,7 +36,7 @@ const BaingaIltsChild = (props) => {
         }
 
         const rowIndex = getRowsSelected[0];
-        const rowData = getbaingaIltsChild[rowIndex];
+        const rowData = getbaingaNuutsChild[rowIndex];
 
         setclickedRowData(rowData); // 🔥 ЭНД өгөгдөл дамжуулна
         setIsEditBtnClick(true);
@@ -86,17 +86,17 @@ const BaingaIltsChild = (props) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .post("/delete/baingaIltChild", {
-                        id: getbaingaIltsChild[getRowsSelected[0]].id,
+                    .post("/delete/baingaNuutsChild", {
+                        id: getbaingaNuutsChild[getRowsSelected[0]].id,
                     })
                     .then((res) => {
                         Swal.fire(res.data.msg);
 
-                        // 🔥 selection цэвэрлэнэ
+                        //  selection цэвэрлэнэ
                         setRowsSelected([]);
 
-                        // 🔥 дахин татна
-                        refreshbaingaIltsChild(props.changeDataRow.id);
+                        //  дахин татна
+                        refreshbaingaNuutsChild(props.changeDataRow.id);
                     })
                     .catch((err) => {
                         Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
@@ -104,14 +104,14 @@ const BaingaIltsChild = (props) => {
             }
         });
     };
-    const refreshbaingaIltsChild = (id) => {
+    const refreshbaingaNuutsChild = (id) => {
         axios
-            .post("get/baingaIltsChild", {
+            .post("get/baingaNuutsChild", {
                 _parentID: id,
             })
             .then((res) => {
                 // console.log(res.data);
-                setbaingaIltsChild(res.data);
+                setbaingaNuutsChild(res.data);
             })
             .catch((err) => {
                 console.log(err);
@@ -147,66 +147,6 @@ const BaingaIltsChild = (props) => {
         setGetDataRowLenght(rowIndex);
     };
 
-    //     {
-    //         text: "№",
-    //         key: "id",
-    //         cell: (row, index) => {
-    //             if (index === 0) {
-    //                 if (changeDataRow.id === row.id && getDataRowLenght > -1) {
-    //                     return (
-    //                         <div className="bg-success position-static mt-2 rounded text-center p-1 pointer-on-hover">
-    //                             <span hidden={true}>{parseInt(index) + 1}</span>
-    //                             <i className="fa fa-check text-white"></i>
-    //                         </div>
-    //                     );
-    //                 }
-    //                 return (
-    //                     <div className="text-center pointer-on-hover">
-    //                         {parseInt(index) + 1}
-    //                     </div>
-    //                 );
-    //             } else {
-    //                 if (changeDataRow.id === row.id && getDataRowLenght > -1) {
-    //                     return (
-    //                         <div className="bg-success position-static mt-2 rounded text-center p-1 pointer-on-hover">
-    //                             <span hidden={true}>{parseInt(index) + 1}</span>
-    //                             <i className="fa fa-check text-white"></i>
-    //                         </div>
-    //                     );
-    //                 }
-    //                 return (
-    //                     <div className="text-center pointer-on-hover">
-    //                         {parseInt(index) + 1}
-    //                     </div>
-    //                 );
-    //             }
-    //         },
-    //         align: "center",
-    //         sortable: true,
-    //         className: "small-column-id",
-    //     },
-
-    //     {
-    //         text: "Нэр",
-    //         key: "way_child",
-    //         align: "center",
-    //         sortable: true,
-    //     },
-    //     {
-    //         text: "Төлөв",
-    //         key: "status",
-    //         cell: (row) => {
-    //             if (row.status === 1) {
-    //                 return "Харуулсан";
-    //             } else {
-    //                 return "Нуусан";
-    //             }
-    //         },
-
-    //         align: "center",
-    //         sortable: true,
-    //     },
-    // ];
     return (
         <>
             <div className="row clearfix">
@@ -214,29 +154,29 @@ const BaingaIltsChild = (props) => {
                     <div className="col-md-12">
                         <h1 className="text-center">БАРИМТ БИЧИГ</h1>
                         <MUIDatatable
-                            data={getbaingaIltsChild}
-                            setdata={setbaingaIltsChild}
+                            data={getbaingaNuutsChild}
+                            setdata={setbaingaNuutsChild}
                             columns={columns}
                             onRowClick={(rowData, rowMeta) => {
                                 const selectedRow =
-                                    getbaingaIltsChild[rowMeta.dataIndex];
+                                    getbaingaNuutsChild[rowMeta.dataIndex];
                                 setclickedRowData(selectedRow); // 🔥 ЭНД гол set
                             }}
                             costumToolbar={
                                 <CustomToolbar
                                     btnClassName={"btn btn-success"}
                                     modelType={"modal"}
-                                    dataTargetID={"#baingaIltsChildNew"}
+                                    dataTargetID={"#baingaNuutsChildNew"}
                                     spanIconClassName={"fas fa-solid fa-plus"}
                                     buttonName={"НЭМЭХ"}
-                                    excelDownloadData={getbaingaIltsChild}
+                                    excelDownloadData={getbaingaNuutsChild}
                                     excelHeaders={excelHeaders}
                                     isHideInsert={true}
                                 />
                             }
                             btnEdit={btnEdit}
                             modelType={showModal}
-                            editdataTargetID={"#baingaIltsChildEdit"}
+                            editdataTargetID={"#baingaNuutsChildEdit"}
                             btnDelete={btnDelete}
                             avgColumnIndex={-1}
                             avgColumnName={"email"}
@@ -245,15 +185,14 @@ const BaingaIltsChild = (props) => {
                             setRowsSelected={setRowsSelected}
                             isHideDelete={true}
                             isHideEdit={true}
-                            showArchive={false}
                         />
-                        <BaingaIltsChildNew
+                        <BaingaNuutsChildNew
                             _parentID={props.changeDataRow.id}
-                            refreshbaingaIltsChild={refreshbaingaIltsChild}
+                            refreshbaingaNuutsChild={refreshbaingaNuutsChild}
                         />
-                        <BaingaIltsChildEdit
+                        <BaingaNuutsChildEdit
                             setRowsSelected={setRowsSelected}
-                            refreshbaingaIltsChild={refreshbaingaIltsChild}
+                            refreshbaingaNuutsChild={refreshbaingaNuutsChild}
                             changeDataRow={clickedRowData}
                             parentID={props.changeDataRow.id}
                             isEditBtnClick={isEditBtnClick}
@@ -265,7 +204,7 @@ const BaingaIltsChild = (props) => {
     );
 };
 
-export default BaingaIltsChild;
+export default BaingaNuutsChild;
 const columns = [
     {
         name: "id",

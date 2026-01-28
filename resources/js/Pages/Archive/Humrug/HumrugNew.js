@@ -104,6 +104,7 @@ const HumrugNew = (props) => {
                                                 </span>
                                             </div>
                                             <input
+                                                type="number"
                                                 {...register("humrug_dugaar")}
                                                 className="form-control"
                                             />

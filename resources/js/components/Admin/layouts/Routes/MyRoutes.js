@@ -1,7 +1,10 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Angi from "../../../../Pages/Archive/Angi/index";
+import BaingaIlts from "../../../../Pages/Archive/BaingaIlts/index";
+import BaingaNuuts from "../../../../Pages/Archive/BaingaNuuts/index";
 import Comandlal from "../../../../Pages/Archive/Comandlal/index";
+import DansBurtgel from "../../../../Pages/Archive/DansBurtgel/index";
 import Graphic from "../../../../Pages/Archive/Graphic/Graphic";
 import Statistic from "../../../../Pages/Archive/Graphic/Statistic";
 import Hadgalamj from "../../../../Pages/Archive/Hadgalamj/index";
@@ -10,13 +13,11 @@ import Huthereg from "../../../../Pages/Archive/Huthereg/index";
 import Salbar from "../../../../Pages/Archive/Salbar/index";
 import TovchilsonUg from "../../../../Pages/Archive/TovchilsonUg/index";
 import User from "../../../../Pages/Archive/User/index";
-import DansBurtgel from "../../../../Pages/Archive/DansBurtgel/index";
-import BaingaIlts from "../../../../Pages/Archive/BaingaIlts/index";
 
 // Туслах санд нэмэх
+import AshigNom from "../../../../Pages/Archive/AshigNom/index";
 import JagsaaltZuil from "../../../../Pages/Archive/JagsaaltZuil/index";
 import SedevZui from "../../../../Pages/Archive/SedevZui/index";
-import AshigNom from "../../../../Pages/Archive/AshigNom/index";
 import Tovchlol from "../../../../Pages/Archive/TovchilsonUg/index";
 
 import Home from "../../../../Pages/OptionFund/Home/Home";
@@ -50,13 +51,14 @@ const MyRoutes = (props) => {
             <Route path="/get/DansBurtgels" element={<DansBurtgel />} />
             <Route path="/get/tovchililsonUgs" element={<TovchilsonUg />} />
             <Route path="/get/BaingaIlts" element={<BaingaIlts />} />
+            <Route path="/get/BaingaNuutss" element={<BaingaNuuts />} />
 
             {/* Туслах санд нэмэх */}
             <Route path="/get/jagsaaltZuils" element={<JagsaaltZuil />} />
             <Route path="/get/sedevZuilzaagch" element={<SedevZui />} />
-            <Route path="/get/dictonaries"element={<AshigNom />} />
+            <Route path="/get/dictonaries" element={<AshigNom />} />
             <Route path="/get/tovchilsonug" element={<Tovchlol />} />
-             {/* Туслах сан дуусах*/}
+            {/* Туслах сан дуусах*/}
 
             {/* 404 */}
             <Route path="*" element={<h1>Хуудас олдсонгүй</h1>} />

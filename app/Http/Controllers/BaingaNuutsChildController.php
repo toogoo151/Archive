@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\BaingaIltChild;
+use App\Models\BaingaNuutsChild;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -16,78 +16,27 @@ use Illuminate\Support\Facades\Storage;
 
 
 
-class BaingaIltChildController extends Controller
+class BaingaNuutsChildController extends Controller
 {
 
-    public function ChildBaingIlt(Request $req)
+    public function ChildBaingaNuuts(Request $req)
     {
         try {
-            $baingaIltChild = BaingaIltChild::where("hnID", "=", $req->_parentID)
+            $baingaNuutsChild = BaingaNuutsChild::where("hnID", "=", $req->_parentID)
                 ->orderBy('id', 'desc')
-                // $baingaIltChild = DB::table("db_arhivbaingilt")
+                // $BaingaNuutsChild = DB::table("db_arhivbaingilt")
                 // ->where("way_parent", "=", $req->_parentID)
                 ->get();
-            return $baingaIltChild;
+            return $baingaNuutsChild;
         } catch (\Throwable $th) {
             // throw $th;
         }
     }
 
-    // public function DeleteChildFile(Request $req)
-    // {
-    //     try {
-    //         $row = BaingaIltChild::find($req->id);
-
-    //         if (!$row) {
-    //             return response([
-    //                 "status" => "error",
-    //                 "msg" => "Мэдээлэл олдсонгүй"
-    //             ], 404);
-    //         }
-
-    //         $fileUrl = $req->file_url;   // устгах файл
-
-    //         // 1. Storage path гаргаж авна
-    //         $path = str_replace(asset(''), '', $fileUrl); // url → storage/...
-
-    //         // 2. Файлыг серверээс устгана
-    //         if (Storage::exists($path)) {
-    //             Storage::delete($path);
-    //         }
-
-    //         // 3. DB дээрх file_ner-ээс уг файлыг арилгана
-    //         $files = explode(';', $row->file_ner);
-    //         $newFiles = [];
-
-    //         foreach ($files as $f) {
-    //             if ($f != "" && $f != $fileUrl) {
-    //                 $newFiles[] = $f;
-    //             }
-    //         }
-
-    //         $row->file_ner = implode(';', $newFiles);
-    //         if ($row->file_ner != "") {
-    //             $row->file_ner .= ';';
-    //         }
-
-    //         $row->save();
-
-    //         return response([
-    //             "status" => "success",
-    //             "msg" => "Файл амжилттай устгагдлаа"
-    //         ], 200);
-    //     } catch (\Throwable $th) {
-    //         return response([
-    //             "status" => "error",
-    //             "msg" => "Файл устгах үед алдаа гарлаа"
-    //         ], 500);
-    //     }
-    // }
-
-    public function DeleteChildFile(Request $req)
+    public function DeleteNuutsChildFile(Request $req)
     {
         try {
-            $row = BaingaIltChild::find($req->id);
+            $row = BaingaNuutsChild::find($req->id);
 
             if (!$row) {
                 return response([
@@ -101,11 +50,11 @@ class BaingaIltChildController extends Controller
             // 🔥 1. URL-ээс зөв relative path гаргаж авна
             $parsed = parse_url($fileUrl);
             $relativePath = ltrim($parsed['path'], '/');
-            // одоо: doc/BaingaIlt/4/abc.pdf
+            // одоо: doc/BaingaNuuts/4/abc.pdf
 
             // 🔥 2. public path дээр бүрэн зам үүсгэнэ
             $fullPath = public_path($relativePath);
-            // C:/.../public/doc/BaingaIlt/4/abc.pdf
+            // C:/.../public/doc/BaingaNuuts/4/abc.pdf
 
             // 🔥 3. Файлыг устгана
             if (File::exists($fullPath)) {
@@ -142,10 +91,10 @@ class BaingaIltChildController extends Controller
     }
 
 
-    public function DeleteChildBaingIlt(Request $req)
+    public function DeleteChildBaingaNuuts(Request $req)
     {
         try {
-            $delete = BaingaIltChild::find($req->id);
+            $delete = BaingaNuutsChild::find($req->id);
 
             if (!$delete) {
                 return response([
@@ -167,13 +116,13 @@ class BaingaIltChildController extends Controller
 
                     if (!isset($parsedUrl['path'])) continue;
 
-                    // /storage/doc/BaingaIlt/5/123/file1.pdf
+                    // /storage/doc/BaingaNuuts/5/123/file1.pdf
                     $relativePath = $parsedUrl['path'];
 
                     // 🔥 /storage/ гэдгийг тасдана
                     $relativePath = str_replace('/storage/', '', $relativePath);
 
-                    // public/doc/BaingaIlt/5/123/file1.pdf
+                    // public/doc/BaingaNuuts/5/123/file1.pdf
                     $storagePath = 'public/' . $relativePath;
 
                     if (Storage::exists($storagePath)) {
@@ -196,10 +145,10 @@ class BaingaIltChildController extends Controller
         }
     }
 
-    public function NewChildBaingIlt(Request $req)
+    public function NewChildBaingNuuts(Request $req)
     {
         $userId = Auth::id();
-        $userFolder = "public/doc/BaingaIlt/{$userId}";
+        $userFolder = "public/doc/BaingaNuuts/{$userId}";
         $fullURL = "";
 
         if (!Storage::exists($userFolder)) {
@@ -236,12 +185,12 @@ class BaingaIltChildController extends Controller
                 Storage::put($path, $pdfContent, 'public');
                 $savedFiles[] = $path;
 
-                $getPDFUrl = 'storage/doc/BaingaIlt/' . $userId . '/' . $setPDFPathID;
+                $getPDFUrl = 'storage/doc/BaingaNuuts/' . $userId . '/' . $setPDFPathID;
                 $fullURL .= asset($getPDFUrl) . ';';
             }
 
             // 2b. DB-д хадгалах
-            $insertBainga = new BaingaIltChild();
+            $insertBainga = new BaingaNuutsChild();
             $insertBainga->hnID = $req->hnID;
             $insertBainga->barimt_ner = $req->barimt_ner;
             $insertBainga->barimt_ognoo = $req->barimt_ognoo;
@@ -282,10 +231,10 @@ class BaingaIltChildController extends Controller
         }
     }
 
-    public function EditChildBaingIlt(Request $req)
+    public function EditChildBaingaNuuts(Request $req)
     {
         $userId = Auth::id();
-        $userFolder = "public/doc/BaingaIlt/{$userId}";
+        $userFolder = "public/doc/BaingaNuuts/{$userId}";
         $fullURL = "";
 
         if (!Storage::exists($userFolder)) {
@@ -345,12 +294,12 @@ class BaingaIltChildController extends Controller
                     // Storage руу хадгалах
                     Storage::put($path, $pdfContent, 'public');
 
-                    $fullURL .= asset('storage/doc/BaingaIlt/' . $userId . '/' . $filename) . ';';
+                    $fullURL .= asset('storage/doc/BaingaNuuts/' . $userId . '/' . $filename) . ';';
                 }
             }
 
             /* 3️⃣ DB update */
-            $edit = BaingaIltChild::find($req->id);
+            $edit = BaingaNuutsChild::find($req->id);
             if (!$edit) {
                 return response([
                     "status" => "error",
@@ -394,7 +343,7 @@ class BaingaIltChildController extends Controller
     // {
     //     $userId = Auth::id();
 
-    //     $userFolder = "public/doc/BaingaIlt/{$userId}";
+    //     $userFolder = "public/doc/BaingaNuuts/{$userId}";
     //     $fullURL = "";
 
     //     if (!Storage::exists($userFolder)) {
@@ -429,13 +378,13 @@ class BaingaIltChildController extends Controller
 
     //             Storage::put($path, $pdfContent, 'public');
 
-    //             $getPDFUrl = 'storage/doc/BaingaIlt/' . $userId . '/' . $setPDFPathID;
+    //             $getPDFUrl = 'storage/doc/BaingaNuuts/' . $userId . '/' . $setPDFPathID;
     //             $fullURL .= asset($getPDFUrl) . ';';
     //         }
     //     }
 
     //     try {
-    //         $edit = BaingaIltChild::find($req->id);
+    //         $edit = BaingaNuutsChild::find($req->id);
 
     //         $edit->hnID = $req->hnID;
     //         $edit->barimt_ner = $req->barimt_ner;

@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import * as Yup from "yup";
 import axios from "../../../AxiosUser";
 
-const BaingaIltsChildNew = ({ _parentID, refreshbaingaIltsChild }) => {
+const BaingaNuutsChildNew = ({ _parentID, refreshbaingaNuutsChild }) => {
     const formSchema = Yup.object().shape({
         barimt_ner: Yup.string().required("Баримт нэр оруулна уу"),
         barimt_ognoo: Yup.string().required("Баримт огноо оруулна уу"),
@@ -38,7 +38,7 @@ const BaingaIltsChildNew = ({ _parentID, refreshbaingaIltsChild }) => {
     const [previewFile, setPreviewFile] = useState(null);
 
     useEffect(() => {
-        refreshbaingaIltsChild(_parentID);
+        refreshbaingaNuutsChild(_parentID);
     }, [_parentID]);
 
     const convertToBase64 = (e) => {
@@ -100,7 +100,7 @@ const BaingaIltsChildNew = ({ _parentID, refreshbaingaIltsChild }) => {
 
     const onSubmit = (data) => {
         axios
-            .post("/new/baingaIltChild", {
+            .post("/new/baingaNuutsChild", {
                 hnID: _parentID,
                 barimt_ner: data.barimt_ner,
                 barimt_ognoo: data.barimt_ognoo,
@@ -145,7 +145,7 @@ const BaingaIltsChildNew = ({ _parentID, refreshbaingaIltsChild }) => {
                 if (fileInputRef.current) {
                     fileInputRef.current.value = null; // 🔥 input цэвэрлэнэ
                 }
-                refreshbaingaIltsChild(_parentID);
+                refreshbaingaNuutsChild(_parentID);
             })
             .catch((err) => {
                 Swal.fire(err.response.data.msg);
@@ -154,7 +154,7 @@ const BaingaIltsChildNew = ({ _parentID, refreshbaingaIltsChild }) => {
 
     return (
         <>
-            <div className="modal" id="baingaIltsChildNew">
+            <div className="modal" id="baingaNuutsChildNew">
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         {/* Modal Header */}
@@ -541,4 +541,4 @@ const BaingaIltsChildNew = ({ _parentID, refreshbaingaIltsChild }) => {
     );
 };
 
-export default BaingaIltsChildNew;
+export default BaingaNuutsChildNew;

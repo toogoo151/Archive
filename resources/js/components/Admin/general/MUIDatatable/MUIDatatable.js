@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
-import MUIDataTable from "mui-datatables";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import clsx from "clsx";
+import MUIDataTable from "mui-datatables";
 import { withStyles } from "tss-react/mui";
-import { ThemeProvider } from "@mui/material/styles";
-import { createTheme } from "@mui/material/styles";
 import CustomToolbarSelect from "./CustomToolbarSelect";
 
+import TableCell from "@mui/material/TableCell";
 import TableFooter from "@mui/material/TableFooter";
 import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
 // import "../../../../../../public/css/print.css";
 
 const customStyles = (theme) => ({
@@ -226,6 +224,8 @@ const MUIDatatable = (props) => {
                     isHideDelete={props.isHideDelete}
                     isHideEdit={props.isHideEdit}
                     isUnitApproveButton={props.isUnitApproveButton}
+                    showArchive={props.showArchive} // 🔥 ЭНЭ
+                    btnArchiveClick={props.btnArchiveClick} // 🔥 ЭНЭ
                 />
             </>
         ),
@@ -487,6 +487,7 @@ const MUIDatatable = (props) => {
                     isHideDelete={props.isHideDelete}
                     isHideEdit={props.isHideEdit}
                     isUnitApproveButton={props.isUnitApproveButton}
+                    btnArchiveClick={props.showArchive}
                 />
             </>
         ),

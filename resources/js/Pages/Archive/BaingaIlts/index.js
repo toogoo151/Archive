@@ -35,6 +35,7 @@ const Index = () => {
 
     useEffect(() => {
         refreshBaingaIlt();
+        console.log(getDans);
     }, [selectedHumrug, selectedDans]);
 
     const refreshBaingaIlt = () => {
@@ -50,6 +51,31 @@ const Index = () => {
                 setBaingaIlt(filteredData);
             } else {
                 setBaingaIlt([]);
+            }
+        });
+    };
+
+    const btnArchive = () => {
+        if (!clickedRowData) return;
+
+        Swal.fire({
+            title: "Архивт шилжүүлэх үү?",
+            showCancelButton: true,
+            confirmButtonText: "Тийм",
+            cancelButtonText: "Үгүй",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios
+                    .post("/archive/BaingaIlt", {
+                        id: clickedRowData.id,
+                    })
+                    .then((res) => {
+                        Swal.fire(res.data.msg || "Архивт шилжлээ");
+                        refreshBaingaIlt();
+                    })
+                    .catch((err) => {
+                        Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
+                    });
             }
         });
     };
@@ -79,6 +105,7 @@ const Index = () => {
             .get(`/get/Dansburtgel/${selectedHumrug}`)
             .then((res) => {
                 setDans(res.data);
+                console.log("DANS RESPONSE:", res.data);
             })
             .catch((err) => {
                 console.log(err);
@@ -312,10 +339,12 @@ const Index = () => {
                             modelType={showModal}
                             editdataTargetID="#baingaIltedit"
                             btnDelete={btnDelete}
+                            btnArchiveClick={btnArchive}
                             getRowsSelected={getRowsSelected}
                             setRowsSelected={setRowsSelected}
                             isHideDelete={true}
                             isHideEdit={true}
+                            showArchive={true}
                         />
                         <BaingaIltsNew
                             refreshBaingaIlt={refreshBaingaIlt}
@@ -323,6 +352,14 @@ const Index = () => {
                             selectedDans={selectedDans}
                         />
                         <BaingaIltsEdit
+                            setRowsSelected={setRowsSelected}
+                            refreshBaingaIlt={refreshBaingaIlt}
+                            selectedHumrug={selectedHumrug}
+                            selectedDans={selectedDans}
+                            changeDataRow={clickedRowData}
+                            isEditBtnClick={isEditBtnClick}
+                        />
+                        <BaingaIltShiljuuleh
                             setRowsSelected={setRowsSelected}
                             refreshBaingaIlt={refreshBaingaIlt}
                             selectedHumrug={selectedHumrug}

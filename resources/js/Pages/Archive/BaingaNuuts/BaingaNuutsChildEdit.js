@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "../../../AxiosUser";
 
-const BaingaIltsChildEdit = (props) => {
+const BaingaNuutsChildEdit = (props) => {
     const [showModal, setShowModal] = useState("");
     const [barimt_ner, setBarimt_ner] = useState("");
     const [barimt_ognoo, setBarimt_ognoo] = useState("");
@@ -27,48 +27,47 @@ const BaingaIltsChildEdit = (props) => {
 
     useEffect(() => {
         if (
-            props.isEditBtnClick &&
+            props.changeDataRow &&
             Object.keys(props.changeDataRow).length > 0
         ) {
-            setBarimt_ner(props.changeDataRow.barimt_ner);
+            setBarimt_ner(props.changeDataRow.barimt_ner || "");
             setBarimt_ognoo(
                 props.changeDataRow.barimt_ognoo
                     ? props.changeDataRow.barimt_ognoo.split(" ")[0]
                     : ""
             );
-            setBarimt_dugaar(props.changeDataRow.barimt_dugaar);
-            setIrsen_dugaar(props.changeDataRow.irsen_dugaar);
-            setYabsan_dugaar(props.changeDataRow.yabsan_dugaar);
-            setUild_gazar(props.changeDataRow.uild_gazar);
-            setHuudas_too(props.changeDataRow.huudas_too);
-            setHabsralt_too(props.changeDataRow.habsralt_too);
-            setHuudas_dugaar(props.changeDataRow.huudas_dugaar);
-            setAguulga(props.changeDataRow.aguulga);
-            setBichsen_ner(props.changeDataRow.bichsen_ner);
+            setBarimt_dugaar(props.changeDataRow.barimt_dugaar || "");
+            setIrsen_dugaar(props.changeDataRow.irsen_dugaar || "");
+            setYabsan_dugaar(props.changeDataRow.yabsan_dugaar || "");
+            setUild_gazar(props.changeDataRow.uild_gazar || "");
+            setHuudas_too(props.changeDataRow.huudas_too || "");
+            setHabsralt_too(props.changeDataRow.habsralt_too || "");
+            setHuudas_dugaar(props.changeDataRow.huudas_dugaar || "");
+            setAguulga(props.changeDataRow.aguulga || "");
+            setBichsen_ner(props.changeDataRow.bichsen_ner || "");
             setBichsen_ognoo(
                 props.changeDataRow.bichsen_ognoo
                     ? props.changeDataRow.bichsen_ognoo.split(" ")[0]
                     : ""
             );
-            setData_url(props.changeDataRow.data_url);
+            setData_url(props.changeDataRow.data_url || "");
+
             if (props.changeDataRow.file_ner) {
                 const files = props.changeDataRow.file_ner
                     .split(";")
                     .filter((f) => f !== "")
-                    .map((url, index) => {
-                        const name = url.split("/").pop();
-                        return {
-                            id: "old_" + index,
-                            filename: name,
-                            url: url,
-                        };
-                    });
+                    .map((url, index) => ({
+                        id: "old_" + index,
+                        filename: url.split("/").pop(),
+                        url: url,
+                    }));
 
                 setOldFiles(files);
             } else {
                 setOldFiles([]);
             }
-            SetSelectedFile([]); // шинэ upload-д зориулж цэвэрхэн эхлэнэ
+
+            SetSelectedFile([]);
         }
     }, [props.changeDataRow]);
 
@@ -137,7 +136,7 @@ const BaingaIltsChildEdit = (props) => {
     const saveComand = () => {
         props.setRowsSelected([]);
         axios
-            .post("/edit/baingaIltChild", {
+            .post("/edit/baingaNuutsChild", {
                 id: props.changeDataRow.id,
                 barimt_ner: barimt_ner,
                 barimt_ognoo: barimt_ognoo,
@@ -173,10 +172,10 @@ const BaingaIltsChildEdit = (props) => {
                     fileInputRef.current.value = null; // 🔥 input цэвэрлэнэ
                 }
                 if (window.$) {
-                    window.$("#baingaIltsChildEdit").modal("hide");
+                    window.$("#baingaNuutsChildEdit").modal("hide");
                 }
 
-                props.refreshbaingaIltsChild(props.parentID);
+                props.refreshbaingaNuutsChild(props.parentID);
             })
             .catch((err) => {
                 Swal.fire(err.response.data.msg);
@@ -234,7 +233,7 @@ const BaingaIltsChildEdit = (props) => {
     //     }).then((result) => {
     //         if (result.isConfirmed) {
     //             axios
-    //                 .post("/delete/baingaIltChildFile", {
+    //                 .post("/delete/baingaNuutsChildFile", {
     //                     id: props.changeDataRow.id,
     //                     file_url: file.url,
     //                 })
@@ -268,7 +267,7 @@ const BaingaIltsChildEdit = (props) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .post("/delete/baingaIltChildFile", {
+                    .post("/delete/baingaNuutsChildFile", {
                         id: props.changeDataRow.id,
                         file_url: file.url,
                     })
@@ -287,7 +286,7 @@ const BaingaIltsChildEdit = (props) => {
                         );
 
                         // parent list дахин ачаална
-                        props.refreshbaingaIltsChild(props.parentID);
+                        props.refreshbaingaNuutsChild(props.parentID);
                     })
                     .catch((err) => {
                         Swal.fire({
@@ -301,13 +300,14 @@ const BaingaIltsChildEdit = (props) => {
             }
         });
     };
+
     const changeDataurl = (e) => {
         setData_url(e.target.value);
     };
 
     return (
         <>
-            <div className="modal" id="baingaIltsChildEdit">
+            <div className="modal" id="baingaNuutsChildEdit">
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -717,4 +717,4 @@ const BaingaIltsChildEdit = (props) => {
     );
 };
 
-export default BaingaIltsChildEdit;
+export default BaingaNuutsChildEdit;

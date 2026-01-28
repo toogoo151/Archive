@@ -5,11 +5,15 @@ import Swal from "sweetalert2";
 import * as Yup from "yup";
 import axios from "../../../AxiosUser";
 
-const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
+const BaingaNuutsNew = ({
+    refreshBaingaNuuts,
+    selectedHumrug,
+    selectedDans,
+}) => {
     // 🔥 MODAL НЭЭГДЭХ ҮЕД ШАЛГАХ
     // ===============================
     useEffect(() => {
-        const modalEl = document.getElementById("BaingaNew");
+        const modalEl = document.getElementById("BaingaNuutsNew");
         if (!modalEl) return;
 
         const handleShow = () => {
@@ -36,18 +40,6 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
     }, [selectedHumrug, selectedDans]);
 
     const formSchema = Yup.object().shape({
-        hadgalamj_dugaar: Yup.string().required("Дугаар оруулна уу"),
-        hadgalamj_garchig: Yup.string().required("Гарчиг оруулна уу"),
-        hadgalamj_zbn: Yup.string().required("ЗБ нэгжийн нэр оруулна уу"),
-        hergiin_indeks: Yup.string().required("Хэргийн индекс оруулна уу"),
-        harya_on: Yup.string().required("Харьяа он оруулна уу"),
-        on_ehen: Yup.string().required("Эхэлсэн он,сар,өдөр оруулна уу"),
-        on_suul: Yup.string().required("Дууссан он,сар,өдөр оруулна уу"),
-        huudas_too: Yup.string().required("Хуудасны тоо оруулна уу"),
-        habsralt_too: Yup.string().required("Хавсралтын тоо оруулна уу"),
-        jagsaalt_zuildugaar: Yup.string().required(
-            "Хадгалах хугацааны жагсаалтын зүйлийн дугаар оруулна уу"
-        ),
         hn_tailbar: Yup.string().nullable(),
     });
     const {
@@ -73,13 +65,14 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
 
     const onSubmit = (data) => {
         axios
-            .post("/new/BaingaIlt", {
+            .post("/new/BaingaNuuts", {
                 humrug_id: selectedHumrug,
                 dans_id: selectedDans,
-                hadgalamj_dugaar: data.hadgalamj_dugaar,
-                hadgalamj_garchig: data.hadgalamj_garchig,
-                hadgalamj_zbn: data.hadgalamj_zbn,
-                hergiin_indeks: data.hergiin_indeks,
+                hn_dd: data.hn_dd,
+                hn_zbn: data.hn_zbn,
+                hereg_burgtel: data.hereg_burgtel,
+                hn_garchig: data.hn_garchig,
+                nuuts_zereglel: data.nuuts_zereglel,
                 harya_on: data.harya_on,
                 on_ehen: data.on_ehen,
                 on_suul: data.on_suul,
@@ -92,10 +85,13 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
                 Swal.fire(res.data.msg);
                 reset(
                     {
-                        hadgalamj_dugaar: "",
-                        hadgalamj_garchig: "",
-                        hadgalamj_zbn: "",
-                        hergiin_indeks: "",
+                        hn_dd: "",
+                        hn_zbn: "",
+                        hereg_burgtel: "",
+                        hn_garchig: "",
+                        nuuts_zereglel: "",
+                        hn_garchig: "",
+                        nuuts_zereglel: "",
                         harya_on: "",
                         on_ehen: "",
                         on_suul: "",
@@ -111,7 +107,7 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
                         keepSubmitCount: false,
                     }
                 );
-                refreshBaingaIlt();
+                refreshBaingaNuuts();
             })
             .catch((err) => {
                 Swal.fire(err.response.data.msg);
@@ -120,7 +116,7 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
 
     return (
         <>
-            <div className="modal" id="BaingaNew">
+            <div className="modal" id="BaingaNuutsNew">
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         {/* Modal Header */}
@@ -151,40 +147,14 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
 
                                             <input
                                                 type="number"
-                                                {...register(
-                                                    "hadgalamj_dugaar",
-                                                    {
-                                                        valueAsNumber: true,
-                                                    }
-                                                )}
+                                                {...register("hn_dd", {
+                                                    valueAsNumber: true,
+                                                })}
                                                 className="form-control"
                                             />
                                         </div>
-                                        <p className="alerts">
-                                            {errors.hadgalamj_dugaar?.message}
-                                        </p>
                                     </div>
 
-                                    <div className="col-md-6">
-                                        <div className="input-group mb-2">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text">
-                                                    Хадгаламжийн нэгжийн гарчиг:
-                                                </span>
-                                            </div>
-                                            <input
-                                                {...register(
-                                                    "hadgalamj_garchig"
-                                                )}
-                                                className="form-control"
-                                            />
-                                        </div>
-                                        <p className="alerts">
-                                            {errors.hadgalamj_garchig?.message}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="row">
                                     <div className="col-md-6">
                                         <div className="input-group mb-2">
                                             <div className="input-group-prepend">
@@ -193,30 +163,70 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
                                                 </span>
                                             </div>
                                             <input
-                                                {...register("hadgalamj_zbn")}
+                                                {...register("hn_zbn")}
                                                 className="form-control"
                                             />
                                         </div>
-                                        <p className="alerts">
-                                            {errors.hadgalamj_zbn?.message}
-                                        </p>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <div className="input-group mb-2">
+                                            <div className="input-group-prepend">
+                                                <span className="input-group-text">
+                                                    Хэрэг,данс бүртгэл:
+                                                </span>
+                                            </div>
+                                            <input
+                                                {...register("hereg_burgtel")}
+                                                className="form-control"
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="col-md-6">
                                         <div className="input-group mb-2">
                                             <div className="input-group-prepend">
                                                 <span className="input-group-text">
-                                                    Хэргийн индекс:
+                                                    Хэрэг бүртгэлийн он:
                                                 </span>
                                             </div>
                                             <input
-                                                {...register("hergiin_indeks")}
+                                                {...register("harya_on")}
+                                                className="form-control"
+                                                readOnly
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <div className="input-group mb-2">
+                                            <div className="input-group-prepend">
+                                                <span className="input-group-text">
+                                                    Хэрэг данс бүртгэлийн нэр:
+                                                </span>
+                                            </div>
+                                            <input
+                                                {...register("hn_garchig")}
                                                 className="form-control"
                                             />
                                         </div>
-                                        <p className="alerts">
-                                            {errors.hergiin_indeks?.message}
-                                        </p>
+                                    </div>
+
+                                    <div className="col-md-6">
+                                        <div className="input-group mb-2">
+                                            <div className="input-group-prepend">
+                                                <span className="input-group-text">
+                                                    Нууцын зэрэглэл:
+                                                </span>
+                                            </div>
+                                            <input
+                                                {...register("nuuts_zereglel")}
+                                                className="form-control"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -252,9 +262,6 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
                                                 className="form-control"
                                             />
                                         </div>
-                                        <p className="alerts">
-                                            {errors.on_suul?.message}
-                                        </p>
                                     </div>
                                 </div>
 
@@ -263,18 +270,17 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
                                         <div className="input-group mb-2">
                                             <div className="input-group-prepend">
                                                 <span className="input-group-text">
-                                                    Харьяа он:
+                                                    Хавсралтын тоо:
                                                 </span>
                                             </div>
                                             <input
-                                                {...register("harya_on")}
+                                                type="number"
+                                                {...register("habsralt_too", {
+                                                    valueAsNumber: true,
+                                                })}
                                                 className="form-control"
-                                                readOnly
                                             />
                                         </div>
-                                        <p className="alerts">
-                                            {errors.harya_on?.message}
-                                        </p>
                                     </div>
 
                                     <div className="col-md-6">
@@ -284,7 +290,6 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
                                                     Хуудасны тоо:
                                                 </span>
                                             </div>
-
                                             <input
                                                 type="number"
                                                 {...register("huudas_too", {
@@ -293,34 +298,10 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
                                                 className="form-control"
                                             />
                                         </div>
-                                        <p className="alerts">
-                                            {errors.huudas_too?.message}
-                                        </p>
                                     </div>
                                 </div>
 
                                 <div className="row clearfix">
-                                    <div className="col-md-6">
-                                        <div className="input-group mb-2">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text">
-                                                    Хавсралтын тоо:
-                                                </span>
-                                            </div>
-
-                                            <input
-                                                type="number"
-                                                {...register("habsralt_too", {
-                                                    valueAsNumber: true,
-                                                })}
-                                                className="form-control"
-                                            />
-                                        </div>
-                                        <p className="alerts">
-                                            {errors.habsralt_too?.message}
-                                        </p>
-                                    </div>
-
                                     <div className="col-md-6">
                                         <div className="input-group mb-2">
                                             <div className="input-group-prepend">
@@ -364,30 +345,22 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
                                                 className="form-control"
                                             />
                                         </div>
-                                        <p className="alerts">
-                                            {
-                                                errors.jagsaalt_zuildugaar
-                                                    ?.message
-                                            }
-                                        </p>
+                                        <p className="alerts"></p>
                                     </div>
-                                </div>
 
-                                <div className="row">
-                                    <div className="input-group mb-3">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">
-                                                Тайлбар:
-                                            </span>
+                                    <div className="col-md-6">
+                                        <div className="input-group mb-2">
+                                            <div className="input-group-prepend">
+                                                <span className="input-group-text">
+                                                    Тайлбар:
+                                                </span>
+                                            </div>
+                                            <input
+                                                {...register("hn_tailbar")}
+                                                className="form-control"
+                                            />
                                         </div>
-                                        <input
-                                            {...register("hn_tailbar")}
-                                            className="form-control"
-                                        />
                                     </div>
-                                    <p className="alerts">
-                                        {errors.hn_tailbar?.message}
-                                    </p>
                                 </div>
                             </div>
 
@@ -416,4 +389,4 @@ const BaingaIltsNew = ({ refreshBaingaIlt, selectedHumrug, selectedDans }) => {
     );
 };
 
-export default BaingaIltsNew;
+export default BaingaNuutsNew;

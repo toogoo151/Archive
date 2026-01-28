@@ -185,6 +185,7 @@ const HumrugEdit = (props) => {
                                             </span>
                                         </div>
                                         <input
+                                            type="number"
                                             className="form-control"
                                             onChange={changeHumrugDugaar}
                                             value={humrug_dugaar}

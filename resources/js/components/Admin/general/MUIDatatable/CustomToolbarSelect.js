@@ -1,9 +1,6 @@
-import React from "react";
-import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import EditButton from "@mui/icons-material/Edit";
+import React from "react";
 import { withStyles } from "tss-react/mui";
-import TrashButton from "@mui/icons-material/Delete";
 import MUIButtonShowModel from "../ButtonShowModel/MUIButtonShowModel";
 const defaultToolbarSelectStyles = {
     iconButton: {},
@@ -31,6 +28,7 @@ class CustomToolbarSelect extends React.Component {
 
     render() {
         const { classes } = this.props;
+        console.log("showArchive =", this.props.showArchive);
 
         return (
             <div className={classes.iconContainer}>
@@ -58,7 +56,6 @@ class CustomToolbarSelect extends React.Component {
                         </>
                     </Tooltip>
                 )}
-
                 {this.props.isHideDelete && (
                     <Tooltip title={"Устгах"}>
                         <>
@@ -80,7 +77,18 @@ class CustomToolbarSelect extends React.Component {
                         </>
                     </Tooltip>
                 )}
-
+                {this.props.showArchive === true && (
+                    <Tooltip title={"Архивт шилжүүлэх"}>
+                        <MUIButtonShowModel
+                            style={{ marginLeft: 10 }}
+                            btnClassName="btn btn-info"
+                            spanIconClassName="fas fa-solid fa-archive"
+                            buttonName="АРХИВ ШИЛЖҮҮЛЭХ"
+                            clickHeaderOpenModal={this.props.btnArchiveClick}
+                            disabled={!this.props.clickedRowData}
+                        />
+                    </Tooltip>
+                )}
                 {this.props.isHideHuman && (
                     <Tooltip title={"Хүний нөөцөд"}>
                         <>
