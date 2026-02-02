@@ -27,6 +27,35 @@ const ArhivBNuutsChild = (props) => {
         setIsEditBtnClick(false);
     }, [props.changeDataRow.id]);
 
+    const btnDelete = () => {
+        if (!getRowsSelected.length) return;
+
+        Swal.fire({
+            title: "Та устгахдаа итгэлтэй байна уу?",
+            showCancelButton: true,
+            confirmButtonText: "Тийм",
+            cancelButtonText: "Үгүй",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios
+                    .post("/delete/baingaIltChild", {
+                        id: getbaingaIltsChild[getRowsSelected[0]].id,
+                    })
+                    .then((res) => {
+                        Swal.fire(res.data.msg);
+
+                        // 🔥 selection цэвэрлэнэ
+                        setRowsSelected([]);
+
+                        // 🔥 дахин татна
+                        refreshbaingaNuutsChild(props.changeDataRow.id);
+                    })
+                    .catch((err) => {
+                        Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
+                    });
+            }
+        });
+    };
     const btnEdit = () => {
         if (!getRowsSelected.length) {
             Swal.fire("Засах мөр сонгоно уу!");
@@ -141,7 +170,7 @@ const ArhivBNuutsChild = (props) => {
                                     buttonName={"НЭМЭХ"}
                                     excelDownloadData={getbaingaNuutsChild}
                                     excelHeaders={excelHeaders}
-                                    isHideInsert={true}
+                                    isHideInsert={false}
                                 />
                             }
                             btnEdit={btnEdit}

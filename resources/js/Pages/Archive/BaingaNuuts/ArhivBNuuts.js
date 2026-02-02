@@ -52,6 +52,30 @@ const ArhivBNuuts = () => {
             }
         });
     };
+    const btnDelete = () => {
+        if (!getRowsSelected.length) return;
+
+        Swal.fire({
+            title: "Та устгахдаа итгэлтэй байна уу?",
+            showCancelButton: true,
+            confirmButtonText: "Тийм",
+            cancelButtonText: "Үгүй",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios
+                    .post("/delete/BaingaIlt", {
+                        id: getArchiveBaingaIlt[getRowsSelected[0]].id,
+                    })
+                    .then((res) => {
+                        Swal.fire(res.data.msg);
+                        refreshArchiveBaingaIlt();
+                    })
+                    .catch((err) => {
+                        Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
+                    });
+            }
+        });
+    };
 
     useEffect(() => {
         axios
@@ -283,6 +307,7 @@ const ArhivBNuuts = () => {
                             }
                             modelType={showModal}
                             editdataTargetID="#baingaNuutsedit"
+                            btnDelete={btnDelete}
                             getRowsSelected={getRowsSelected}
                             setRowsSelected={setRowsSelected}
                             isHideDelete={false}
