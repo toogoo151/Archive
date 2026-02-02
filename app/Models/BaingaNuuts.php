@@ -33,25 +33,127 @@ class BaingaNuuts extends Model
     //     }
     // }
 
+    public function getArchiveBaingNuuts()
+    {
+        try {
+
+            $ArchivebaingaNuuts = DB::table("db_arhivhnnuuts")
+                ->select(
+                    "db_arhivhnnuuts.*",
+
+                    // humrug нэрийг 1 ширхэгээр авах
+                    DB::raw("(SELECT humrug_ner 
+              FROM db_humrug 
+              WHERE db_humrug.humrug_dugaar = db_arhivhnnuuts.humrug_id 
+              LIMIT 1) as humrug_ner"),
+
+                    // dans нэрийг 1 ширхэгээр авах
+                    DB::raw("(SELECT dans_ner 
+              FROM db_arhivdans 
+              WHERE db_arhivdans.dans_dugaar = db_arhivhnnuuts.dans_id 
+              LIMIT 1) as dans_ner"),
+
+                    // db_arhivdans доторх dans_baidal утгыг нэмэх
+                    "db_arhivdans.dans_baidal",
+
+                    // db_arhivdans доторх hadgalah_hugatsaa утгыг нэмэх
+                    "db_arhivdans.hadgalah_hugatsaa"
+                )
+                ->leftJoin("db_arhivdans", "db_arhivdans.dans_dugaar", "=", "db_arhivhnnuuts.dans_id")
+                ->whereNotNull("db_arhivhnnuuts.ustgasan_temdeglel")
+                ->where("db_arhivhnnuuts.ustgasan_temdeglel", "!=", "")
+
+                ->orderByDesc("db_arhivhnnuuts.id")
+                ->get();
+
+            return $ArchivebaingaNuuts;
+
+
+
+            // $ArchivebaingaNuuts = DB::table("db_arhivhnnuuts")
+            //     ->join(
+            //         "db_humrug",
+            //         "db_humrug.humrug_dugaar",
+            //         "=",
+            //         "db_arhivhnnuuts.humrug_id"
+            //     )
+            //     ->leftJoin(
+            //         "db_arhivdans",
+            //         "db_arhivdans.dans_dugaar",
+            //         "=",
+            //         "db_arhivhnnuuts.dans_id"
+            //     )
+            //     ->select(
+            //         "db_arhivhnnuuts.*",
+            //         "db_humrug.humrug_ner",
+            //         "db_arhivdans.dans_ner",
+            //         "db_arhivdans.dans_baidal",
+            //         "db_arhivdans.hadgalah_hugatsaa"
+            //     )
+            //     ->whereNotNull("db_arhivhnnuuts.ustgasan_temdeglel")
+            //     ->where("db_arhivhnnuuts.ustgasan_temdeglel", "!=", "")
+            //     ->get();
+
+            // return $ArchivebaingaNuuts;
+        } catch (\Throwable $th) {
+            return response([
+                "status" => "error",
+                "msg" => "татаж чадсангүй."
+            ], 500);
+        }
+    }
+
     public function getBaingaNuuts()
     {
         try {
+
+            //   $baingaIlt = DB::table("db_arhivhnnuuts")
+            //         ->join("db_humrug", "db_humrug.humrug_dugaar", "=", "db_arhivbaingahad.humrug_id")
+            //         ->leftJoin("db_arhivdans", "db_arhivdans.dans_dugaar", "=", "db_arhivbaingahad.dans_id")
+            //         ->select(
+            //             "db_arhivbaingahad.*",
+            //             "db_humrug.humrug_ner",
+            //             "db_arhivdans.dans_ner",
+            //             "db_arhivdans.dans_baidal",
+            //             "db_arhivdans.hadgalah_hugatsaa"
+            //         )
+            //         ->where(function ($query) {
+            //             $query->whereNull("ustgasan_temdeglel")
+            //                 ->orWhere("ustgasan_temdeglel", "");
+            //         })
+            //         ->orderByDesc("db_arhivbaingahad.id")
+
+            //         ->get();
+
+            //     return $baingaIlt;
             $baingaNuuts = DB::table("db_arhivhnnuuts")
                 ->select(
                     "db_arhivhnnuuts.*",
 
                     // humrug нэрийг 1 ширхэгээр авах
                     DB::raw("(SELECT humrug_ner 
-                          FROM db_humrug 
-                          WHERE db_humrug.humrug_dugaar = db_arhivhnnuuts.humrug_id 
-                          LIMIT 1) as humrug_ner"),
+              FROM db_humrug 
+              WHERE db_humrug.humrug_dugaar = db_arhivhnnuuts.humrug_id 
+              LIMIT 1) as humrug_ner"),
 
                     // dans нэрийг 1 ширхэгээр авах
                     DB::raw("(SELECT dans_ner 
-                          FROM db_arhivdans 
-                          WHERE db_arhivdans.dans_dugaar = db_arhivhnnuuts.dans_id 
-                          LIMIT 1) as dans_ner")
+              FROM db_arhivdans 
+              WHERE db_arhivdans.dans_dugaar = db_arhivhnnuuts.dans_id 
+              LIMIT 1) as dans_ner"),
+
+                    // db_arhivdans доторх dans_baidal утгыг нэмэх
+                    "db_arhivdans.dans_baidal",
+
+                    // db_arhivdans доторх hadgalah_hugatsaa утгыг нэмэх
+                    "db_arhivdans.hadgalah_hugatsaa"
                 )
+                ->leftJoin("db_arhivdans", "db_arhivdans.dans_dugaar", "=", "db_arhivhnnuuts.dans_id")
+                ->where(function ($query) {
+                    $query->whereNull("ustgasan_temdeglel")
+                        ->orWhere("ustgasan_temdeglel", "");
+                })
+                ->orderByDesc("db_arhivhnnuuts.id")
                 ->get();
 
             return $baingaNuuts;

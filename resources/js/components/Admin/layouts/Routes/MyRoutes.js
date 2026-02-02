@@ -1,7 +1,9 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Angi from "../../../../Pages/Archive/Angi/index";
+import ArhivBIlts from "../../../../Pages/Archive/BaingaIlts/ArhivBIlts";
 import BaingaIlts from "../../../../Pages/Archive/BaingaIlts/index";
+import ArhivBNuuts from "../../../../Pages/Archive/BaingaNuuts/ArhivBNuuts";
 import BaingaNuuts from "../../../../Pages/Archive/BaingaNuuts/index";
 import Comandlal from "../../../../Pages/Archive/Comandlal/index";
 import DansBurtgel from "../../../../Pages/Archive/DansBurtgel/index";
@@ -52,6 +54,8 @@ const MyRoutes = (props) => {
             <Route path="/get/tovchililsonUgs" element={<TovchilsonUg />} />
             <Route path="/get/BaingaIlts" element={<BaingaIlts />} />
             <Route path="/get/BaingaNuutss" element={<BaingaNuuts />} />
+            <Route path="/get/ArhivBIlts" element={<ArhivBIlts />} />
+            <Route path="/get/ArhivBNuutss" element={<ArhivBNuuts />} />
 
             {/* Туслах санд нэмэх */}
             <Route path="/get/jagsaaltZuils" element={<JagsaaltZuil />} />

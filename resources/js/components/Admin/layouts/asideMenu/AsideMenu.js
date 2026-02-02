@@ -72,11 +72,28 @@ export default function AsideMenu() {
                     url: "/get/BaingaNuutss",
                     icon: "fa fa-list",
                 },
+
                 {
                     name: "Архивт шилжүүлсэн",
-                    url: "/get/tovchililsonUgs",
-                    icon: "fa fa-list",
+                    icon: "fa fa-folder",
+                    children: [
+                        {
+                            name: "Илт",
+                            url: "/get/ArhivBIlts",
+                            icon: "fa fa-file-text",
+                        },
+                        {
+                            name: "Нууц",
+                            url: "/get/ArhivBNuutss",
+                            icon: "fa fa-file-text",
+                        },
+                    ],
                 },
+                // {
+                //     name: "Архивт шилжүүлсэн",
+                //     url: "/get/tovchililsonUgs",
+                //     icon: "fa fa-list",
+                // },
             ],
         },
 

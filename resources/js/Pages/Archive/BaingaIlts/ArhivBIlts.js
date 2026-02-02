@@ -5,20 +5,16 @@ import "../../../../styles/muidatatable.css";
 import axios from "../../../AxiosUser";
 import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
 import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIDatatable";
-import BaingaHadgalahHugatsaa from "../BaingaIlts/BaingaHadgalahHugatsaa";
-import BaingaIltNuutsShiljuuleh from "./BaingaIltNuutsShiljuuleh";
-import BaingaNuutsChild from "./BaingaNuutsChild";
-import BaingaNuutsEdit from "./BaingaNuutsEdit";
-import BaingaNuutsNew from "./BaingaNuutsNew";
+import ArhivBIltsChild from "./ArhivBIltsChild";
 
-const Index = () => {
+const ArhivBIlts = () => {
     const today = new Date();
     const defaultStart = format(subDays(today, 30), "yyyy-MM-dd");
     const defaultEnd = format(today, "yyyy-MM-dd");
 
     // const [isFilterActive, setIsFilterActive] = useState(false);
 
-    const [getBaingaNuuts, setBaingaNuuts] = useState([]);
+    const [getArchiveBaingaIlt, setArchiveBaingaIlt] = useState([]);
     const [getHumrug, setHumrug] = useState([]);
     const [getDans, setDans] = useState([]);
 
@@ -31,17 +27,22 @@ const Index = () => {
     const [getRowsSelected, setRowsSelected] = useState([]);
     const [clickedRowData, setclickedRowData] = useState(null); // анх null
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
+    const [showArchiveModal, setShowArchiveModal] = useState(false);
+    // const [showShiljuuleh, setShowShiljuuleh] = useState(false);
+    // const [comment, setComment] = useState("");
+    // const [shiljuulehMode, setShiljuulehMode] = useState(null);
+
     const [showShiljuulehModal, setShowShiljuulehModal] = useState(false);
 
     const [showModal] = useState("modal");
 
     useEffect(() => {
-        refreshBaingaNuuts();
+        refreshArchiveBaingaIlt();
+        console.log(getDans);
     }, [selectedHumrug, selectedDans]);
 
-    const refreshBaingaNuuts = () => {
-        axios.get("/get/BaingaNuuts").then((res) => {
-            const reversed = [...res.data].reverse();
+    const refreshArchiveBaingaIlt = () => {
+        axios.get("/get/ArchiveBaingaIlt").then((res) => {
             setAllDans(res.data);
 
             if (selectedHumrug !== 0 && selectedDans !== 0) {
@@ -50,11 +51,18 @@ const Index = () => {
                         Number(item.humrug_id) === Number(selectedHumrug) &&
                         Number(item.dans_id) === Number(selectedDans)
                 );
-                setBaingaNuuts(filteredData);
+                setArchiveBaingaIlt(filteredData);
             } else {
-                setBaingaNuuts([]);
+                setArchiveBaingaIlt([]);
             }
         });
+    };
+
+    const btnArchive = () => {
+        if (!clickedRowData) return;
+
+        setShowArchiveModal(true);
+        // setShowShiljuuleh(false);
     };
 
     useEffect(() => {
@@ -79,9 +87,10 @@ const Index = () => {
         }
 
         axios
-            .get(`/get/DansburtgelNuuts/${selectedHumrug}`)
+            .get(`/get/Dansburtgel/${selectedHumrug}`)
             .then((res) => {
                 setDans(res.data);
+                console.log("DANS RESPONSE:", res.data);
             })
             .catch((err) => {
                 console.log(err);
@@ -97,64 +106,16 @@ const Index = () => {
     useEffect(() => {
         const rowIndex = getRowsSelected[0];
 
-        if (rowIndex !== undefined && getBaingaNuuts[rowIndex] !== undefined) {
+        if (
+            rowIndex !== undefined &&
+            getArchiveBaingaIlt[rowIndex] !== undefined
+        ) {
             setIsEditBtnClick(false);
-            setclickedRowData(getBaingaNuuts[rowIndex]);
+            setclickedRowData(getArchiveBaingaIlt[rowIndex]);
         } else {
             setclickedRowData(null);
         }
-    }, [getRowsSelected, getBaingaNuuts]);
-    //  ROW SELECT
-    // useEffect(() => {
-    //     if (getRowsSelected[0] !== undefined) {
-    //         setIsEditBtnClick(false);
-    //         setclickedRowData(getBaingaNuuts[getRowsSelected[0]]);
-    //     }
-    // }, [getRowsSelected, getBaingaNuuts]);
-
-    // useEffect(() => {
-    //     if (selectedHumrug === 0 || selectedDans === 0) {
-    //         setBaingaNuuts([]);
-    //         return;
-    //     }
-
-    //     const filteredData = allDans.filter(
-    //         (item) =>
-    //             Number(item.humrugID) === Number(selectedHumrug) &&
-    //             Number(item.hadgalah_hugatsaa) === Number(selectedDans)
-    //     );
-
-    //     setBaingaNuuts(filteredData);
-    // }, [selectedHumrug, selectedDans, allDans]);
-
-    // useEffect(() => {
-    //     let filteredData = allDans;
-
-    //     if (selectedHumrug !== 0) {
-    //         filteredData = filteredData.filter(
-    //             (item) => Number(item.humrugID) === Number(selectedHumrug)
-    //         );
-    //     }
-
-    //     if (selectedDans !== 0) {
-    //         filteredData = filteredData.filter(
-    //             (item) =>
-    //                 Number(item.hadgalah_hugatsaa) === Number(selectedDans)
-    //         );
-    //     }
-
-    //     setBaingaNuuts(filteredData);
-    // }, [selectedHumrug, selectedDans, allDans]);
-    // useEffect(() => {
-    //     if (!isFilterActive) {
-    //         setBaingaNuuts(allHumrug);
-    //         return;
-    //     }
-    // }, [allHumrug]);
-
-    const btnEdit = () => {
-        setIsEditBtnClick(true);
-    };
+    }, [getRowsSelected, getArchiveBaingaIlt]);
 
     const btnDelete = () => {
         if (!getRowsSelected.length) return;
@@ -167,12 +128,12 @@ const Index = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .post("/delete/BaingaNuuts", {
-                        id: getBaingaNuuts[getRowsSelected[0]].id,
+                    .post("/delete/BaingaIlt", {
+                        id: getArchiveBaingaIlt[getRowsSelected[0]].id,
                     })
                     .then((res) => {
                         Swal.fire(res.data.msg);
-                        refreshBaingaNuuts();
+                        refreshArchiveBaingaIlt();
                     })
                     .catch((err) => {
                         Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
@@ -188,8 +149,8 @@ const Index = () => {
                 <div className="info-box">
                     <div className="col-md-12">
                         <h1 className="text-center">
-                            Байнга хадгалагдах хадгаламжийн нэгж, баримт
-                            бичиг/нууц/{" "}
+                            Архивт шилжсэн байнга хадгалагдах хадгаламжийн нэгж,
+                            баримт бичиг/илт/{" "}
                         </h1>
                         {/* DATE FILTER */}
                         <div className="col-md-8 mb-3">
@@ -258,77 +219,12 @@ const Index = () => {
                                     ))}
                                 </select>
                                 <span className="mx-2"></span>
-                                <button
-                                    className="btn d-flex align-items-center gap-2 px-4 py-2 fw-bold"
-                                    disabled={
-                                        selectedHumrug === 0 ||
-                                        selectedDans === 0
-                                    }
-                                    onClick={() => {
-                                        if (
-                                            selectedHumrug === 0 ||
-                                            selectedDans === 0
-                                        ) {
-                                            Swal.fire({
-                                                icon: "warning",
-                                                title: "Анхаар!",
-                                                text: "Хөмрөг болон данс сонгоно уу",
-                                            });
-                                            return;
-                                        }
-
-                                        setShowShiljuulehModal(true); // modal-г state-ээр харуулна
-                                    }}
-                                    style={{
-                                        borderRadius: "0.6rem", // Булан тойруулж гаргах
-                                        background:
-                                            "linear-gradient(135deg, #1E90FF 0%, #0047AB 100%)",
-
-                                        color: "#fff",
-                                        border: "none",
-                                        boxShadow:
-                                            "0 4px 12px rgba(0,0,0,0.15)", // subtle shadow
-                                        transition: "all 0.3s ease", // smooth hover
-                                        cursor: "pointer",
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform =
-                                            "translateY(-2px)";
-                                        e.currentTarget.style.boxShadow =
-                                            "0 6px 16px rgba(0,0,0,0.2)";
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform =
-                                            "translateY(0)";
-                                        e.currentTarget.style.boxShadow =
-                                            "0 4px 12px rgba(0,0,0,0.15)";
-                                    }}
-                                >
-                                    <i className="fas fa-file-export"></i> 📂
-                                    АРХИВТ ШИЛЖҮҮЛЭХ
-                                </button>
-
-                                {/* <select
-                                    className="form-control"
-                                    value={selectedDans}
-                                    onChange={(e) =>
-                                        setselectedDans(Number(e.target.value))
-                                    }
-                                    disabled={!getDans.length}
-                                >
-                                    <option value={0}>Сонгоно уу</option>
-                                    {getDans.map((el) => (
-                                        <option key={el.id} value={el.id}>
-                                            {el.dans_ner}
-                                        </option>
-                                    ))}
-                                </select> */}
                             </div>
                         </div>
-                        {/* TABLE */}
+
                         <MUIDatatable
-                            data={getBaingaNuuts}
-                            setdata={setBaingaNuuts}
+                            data={getArchiveBaingaIlt}
+                            setdata={setArchiveBaingaIlt}
                             columns={columns}
                             costumToolbar={
                                 <CustomToolbar
@@ -337,12 +233,12 @@ const Index = () => {
                                     dataTargetID={
                                         selectedHumrug !== 0 &&
                                         selectedDans !== 0
-                                            ? "#BaingaNuutsNew"
+                                            ? "#BaingaNew"
                                             : null
                                     }
                                     spanIconClassName="fas fa-plus"
                                     buttonName="НЭМЭХ"
-                                    excelDownloadData={getBaingaNuuts}
+                                    excelDownloadData={getArchiveBaingaIlt}
                                     excelHeaders={excelHeaders}
                                     isHideInsert={true}
                                     onClick={() => {
@@ -361,29 +257,14 @@ const Index = () => {
                                     }}
                                 />
                             }
-                            btnEdit={btnEdit}
                             modelType={showModal}
-                            editdataTargetID="#baingaNuutsedit"
+                            editdataTargetID="#baingaIltedit"
                             btnDelete={btnDelete}
                             getRowsSelected={getRowsSelected}
                             setRowsSelected={setRowsSelected}
-                            isHideDelete={true}
-                            isHideEdit={true}
+                            isHideDelete={false}
+                            isHideEdit={false}
                         />
-                        <BaingaNuutsNew
-                            refreshBaingaNuuts={refreshBaingaNuuts}
-                            selectedHumrug={selectedHumrug}
-                            selectedDans={selectedDans}
-                        />
-                        <BaingaNuutsEdit
-                            setRowsSelected={setRowsSelected}
-                            refreshBaingaNuuts={refreshBaingaNuuts}
-                            selectedHumrug={selectedHumrug}
-                            selectedDans={selectedDans}
-                            changeDataRow={clickedRowData}
-                            isEditBtnClick={isEditBtnClick}
-                        />
-                        <BaingaHadgalahHugatsaa />
                     </div>
                 </div>
             </div>
@@ -391,28 +272,16 @@ const Index = () => {
                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div className="card2">
                         {clickedRowData && (
-                            <BaingaNuutsChild changeDataRow={clickedRowData} />
+                            <ArhivBIltsChild changeDataRow={clickedRowData} />
                         )}
                     </div>
                 </div>
             </div>
-            {showShiljuulehModal && getBaingaNuuts.length > 0 && (
-                <BaingaIltNuutsShiljuuleh
-                    selectedHumrug={selectedHumrug}
-                    selectedDans={selectedDans}
-                    getBaingaNuuts={getBaingaNuuts}
-                    getRowsSelected={getRowsSelected}
-                    setRowsSelected={setRowsSelected}
-                    // clickedRowData={getBaingaNuuts[0]} // Эхний мөрийг автоматаар дамжуулж байна
-                    onClose={() => setShowShiljuulehModal(false)}
-                    refreshBaingaNuuts={refreshBaingaNuuts}
-                />
-            )}
         </>
     );
 };
 
-export default Index;
+export default ArhivBIlts;
 
 const columns = [
     {
@@ -445,7 +314,7 @@ const columns = [
         },
     },
     {
-        name: "hn_dd",
+        name: "hadgalamj_dugaar",
         label: "Дугаар",
         options: {
             filter: true,
@@ -460,9 +329,24 @@ const columns = [
             },
         },
     },
-
     {
-        name: "hn_zbn",
+        name: "hadgalamj_garchig",
+        label: "Хадгаламжийн нэгжийн гарчиг",
+        options: {
+            filter: true,
+            sort: false,
+            setCellHeaderProps: (value) => {
+                return {
+                    style: {
+                        backgroundColor: "#5DADE2",
+                        color: "white",
+                    },
+                };
+            },
+        },
+    },
+    {
+        name: "hadgalamj_zbn",
         label: "Зохион байгуулалтын нэгжийн нэр",
         options: {
             filter: true,
@@ -477,10 +361,9 @@ const columns = [
             },
         },
     },
-
     {
-        name: "hereg_burgtel",
-        label: "Хэрэг,данс бүртгэлийн №",
+        name: "hergiin_indeks",
+        label: "Хэргийн индекс",
         options: {
             filter: true,
             sort: false,
@@ -496,7 +379,7 @@ const columns = [
     },
     {
         name: "harya_on",
-        label: "Хэрэг бүртгэлийн он",
+        label: "Харьяа он",
         options: {
             filter: true,
             sort: false,
@@ -510,41 +393,6 @@ const columns = [
             },
         },
     },
-
-    {
-        name: "hn_garchig",
-        label: "Хэрэг данс бүртгэлийн нэр",
-        options: {
-            filter: true,
-            sort: false,
-            setCellHeaderProps: (value) => {
-                return {
-                    style: {
-                        backgroundColor: "#5DADE2",
-                        color: "white",
-                    },
-                };
-            },
-        },
-    },
-
-    {
-        name: "nuuts_zereglel",
-        label: "Нууцын зэрэглэл",
-        options: {
-            filter: true,
-            sort: false,
-            setCellHeaderProps: (value) => {
-                return {
-                    style: {
-                        backgroundColor: "#5DADE2",
-                        color: "white",
-                    },
-                };
-            },
-        },
-    },
-
     {
         name: "on_ehen",
         label: "Эхэлсэн он,сар,өдөр",
@@ -656,14 +504,30 @@ const columns = [
             },
         },
     },
+    {
+        name: "ustgasan_temdeglel",
+        label: "Архивт шилжүүлсэн тухай тэмдэглэл",
+        options: {
+            filter: true,
+            sort: false,
+            setCellHeaderProps: (value) => {
+                return {
+                    style: {
+                        backgroundColor: "#5DADE2",
+                        color: "white",
+                    },
+                };
+            },
+        },
+    },
 ];
 
 const excelHeaders = [
-    { label: "Дугаар", key: "hn_dd" },
-    { label: "Зохион байгуулалтын нэгжийн нэр", key: "hn_zbn" },
-    { label: "Хэрэг,данс бүотгэлийн №", key: "hergiin_indeks" },
-    { label: "Хэрэг данс бүртгэлийн нэр", key: "harya_on" },
-    { label: "Нууцын зэрэглэл ", key: "nuuts_zereglel" },
+    { label: "Дугаар", key: "hadgalamj_dugaar" },
+    { label: "Хадгаламжийн нэгжийн гарчиг", key: "hadgalamj_garchig" },
+    { label: "Зохион байгуулалтын нэгжийн нэр", key: "hadgalamj_zbn" },
+    { label: "Хэргийн индекс", key: "hergiin_indeks" },
+    { label: "Харьяа он ", key: "harya_on" },
     { label: "Эхэлсэн он,сар,өдөр", key: "on_ehen" },
     { label: "Дууссан он,сар,өдөр", key: "on_suul" },
     { label: "Хуудасны тоо", key: "huudas_too" },

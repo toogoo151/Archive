@@ -1,0 +1,281 @@
+.top-inputs {
+    display: grid;
+    grid-template-columns: 100mm auto 55mm;
+    gap: 8mm;
+    margin-bottom: 8mm;
+}
+
+/* ЗҮҮН */
+.left-box {
+    border: 1px solid #000;
+    display: flex;
+    flex-direction: column;
+}
+
+.left-box textarea {
+    border: none;
+    border-bottom: 1px solid #000;
+    height: 20mm;
+    resize: none;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* ГОЛ */
+.center-box {
+    border: 1px solid #000;
+    padding: 6mm;
+    display: flex;
+    flex-direction: column;
+    gap: 4mm;
+    text-align: center;
+}
+
+.center-box input {
+    border: none;
+    border-bottom: 1px solid #000;
+    font-size: 12pt;
+    text-align: center;
+}
+
+/* БАРУУН */
+.right-box {
+    border: 1px solid #000;
+}
+
+.right-box textarea {
+    border: none;
+    resize: none;
+    height: 100%;
+    font-weight: bold;
+    text-align: center;
+}
+/* доор */
+.bottom-section {
+    width: 100%;
+    display: block;
+    margin-top: 8mm;
+}
+
+.bottom-text {
+    width: 200mm; /* ⭐ яг хүссэн өргөн */
+    max-width: 200mm;
+    display: block;
+
+    min-height: 45mm;
+    max-height: 120mm;
+
+    padding: 5mm;
+    border: 1px solid #000;
+    box-sizing: border-box;
+
+    margin: 0 auto; /* ⭐ modal дотор төвд */
+}
+.bottom-section {
+    flex: 0 0 auto;
+}
+@media print {
+    * {
+        font-family: "Times New Roman", Times, serif !important;
+        font-size: 12pt !important;
+        color: #000 !important;
+    }
+
+    @page {
+        size: A4;
+        margin: 20mm 20mm 20mm 25mm;
+    }
+
+    body {
+        background: none !important;
+    }
+
+    .modal,
+    .modal-header,
+    .modal-footer,
+    button {
+        display: none !important;
+    }
+
+    #printable-content {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    textarea,
+    input {
+        border: none !important;
+        outline: none !important;
+        resize: none;
+    }
+}
+
+/* Doc ehleh */
+.doc-top {
+    display: grid;
+    grid-template-columns: 55mm auto 55mm;
+    gap: 8mm;
+    margin-bottom: 8mm;
+}
+.doc-box {
+    border: 1px solid #000;
+    display: flex;
+    flex-direction: column;
+    height: 40mm; /* бага зэрэг нэмэв */
+}
+
+.doc-title {
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #000;
+    padding: 2mm 0;
+}
+
+/* CENTER BLOCK */
+.doc-center {
+    border: 1px solid #000;
+    padding: 6mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    row-gap: 3mm; /* ⭐ ШИНЭ */
+    background: #f5f5f5;
+}
+
+/* INPUT STYLE */
+.doc-input {
+    border: none;
+    border-bottom: 1px solid #000;
+    text-align: center;
+    font-size: 12pt;
+    height: 8mm; /* ⭐ ШИНЭ */
+    line-height: 8mm;
+}
+
+.doc-input.bold {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* TEXTAREA STYLE */
+.doc-textarea {
+    border: none;
+    resize: none;
+    flex: 1;
+    padding: 3mm;
+    font-size: 12pt;
+}
+
+.center-area {
+    border-top: 1px solid #000;
+    margin-top: 2mm;
+    min-height: 14mm; /* ⭐ ШИНЭ */
+}
+
+/* PRINT */
+@media print {
+    input,
+    textarea {
+        outline: none;
+    }
+}
+
+/* =============================
+   CENTER TEXT
+============================= */
+.top-center {
+    border: 1px solid #000;
+    padding: 6mm;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.center-line {
+    font-size: 12pt;
+    margin-bottom: 3mm;
+}
+
+.center-line.bold {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* =============================
+   TABLE
+============================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    border: 1px solid #000;
+    padding: 4px 6px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 12pt;
+}
+
+table th {
+    font-weight: bold;
+}
+
+/* column widths (A4 таарсан) */
+table th:nth-child(1),
+table td:nth-child(1) {
+    width: 35mm;
+}
+
+table th:nth-child(2),
+table td:nth-child(2) {
+    width: 10mm;
+}
+
+table th:nth-child(3),
+table td:nth-child(3) {
+    width: 55mm;
+}
+
+table th:nth-child(4),
+table th:nth-child(5),
+table td:nth-child(4),
+table td:nth-child(5) {
+    width: 15mm;
+}
+
+table th:nth-child(6),
+table td:nth-child(6) {
+    width: 30mm;
+}
+
+table th:nth-child(7),
+table th:nth-child(8),
+table td:nth-child(7),
+table td:nth-child(8) {
+    width: 15mm;
+}
+
+table th:nth-child(9),
+table td:nth-child(9) {
+    width: 25mm;
+}
+
+/* header давтагдах */
+@media print {
+    table thead {
+        display: table-header-group;
+    }
+}
+
+/* =============================
+   GROUP ROW
+============================= */
+td[colspan] {
+    background: #eee;
+    font-weight: bold;
+    text-align: left;
+}

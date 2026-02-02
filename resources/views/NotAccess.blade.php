@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>СЭТГЭЛ ЗҮЙ</title>
+        <title>АРХИВ ПРОГРАММ</title>
         <link href="{{url("images/Soldier.png")}}" rel="icon" />
         <link
       rel="stylesheet"

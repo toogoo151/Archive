@@ -77,7 +77,7 @@ class CustomToolbarSelect extends React.Component {
                         </>
                     </Tooltip>
                 )}
-                {this.props.showArchive === true && (
+                {/* {this.props.showArchive === true && (
                     <Tooltip title={"Архивт шилжүүлэх"}>
                         <MUIButtonShowModel
                             style={{ marginLeft: 10 }}
@@ -86,6 +86,17 @@ class CustomToolbarSelect extends React.Component {
                             buttonName="АРХИВ ШИЛЖҮҮЛЭХ"
                             clickHeaderOpenModal={this.props.btnArchiveClick}
                             disabled={!this.props.clickedRowData}
+                        />
+                    </Tooltip>
+                )} */}
+                {this.props.showArchive === true && (
+                    <Tooltip title={"Архивт шилжүүлэх"}>
+                        <MUIButtonShowModel
+                            style={{ marginLeft: 10 }}
+                            btnClassName="btn btn-info"
+                            spanIconClassName="fas fa-solid fa-archive"
+                            buttonName="АРХИВ ШИЛЖҮҮЛЭХ"
+                            clickHeaderOpenModal={this.props.btnArchiveClick}
                         />
                     </Tooltip>
                 )}

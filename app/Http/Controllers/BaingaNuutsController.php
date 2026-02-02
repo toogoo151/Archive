@@ -12,6 +12,30 @@ use Illuminate\Support\Str;
 
 class BaingaNuutsController extends Controller
 {
+
+    public function ArchiveBaingNuuts(Request $req)
+    {
+        try {
+            foreach ($req->data as $item) {
+                $archive = BaingaNuuts::find($item['id']);
+                if ($archive) {
+                    $archive->ustgasan_temdeglel = $item['ustgasan_temdeglel'];
+                    $archive->save();
+                }
+            }
+
+            return response([
+                "status" => "success",
+                "msg" => "Сонгосон баримтууд амжилттай архивлагдлаа."
+            ], 200);
+        } catch (\Throwable $th) {
+            return response([
+                "status" => "error",
+                "msg" => "Алдаа гарлаа."
+            ], 500);
+        }
+    }
+
     public function DeleteBaingaNuuts(Request $req)
     {
         try {

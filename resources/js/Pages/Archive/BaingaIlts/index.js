@@ -8,6 +8,7 @@ import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIData
 import BaingaHadgalahHugatsaa from "./BaingaHadgalahHugatsaa";
 import BaingaIltsChild from "./BaingaIltsChild";
 import BaingaIltsEdit from "./BaingaIltsEdit";
+import BaingaIltShiljuuleh from "./BaingaIltShiljuuleh";
 import BaingaIltsNew from "./BaingaIltsNew";
 
 const Index = () => {
@@ -30,6 +31,12 @@ const Index = () => {
     const [getRowsSelected, setRowsSelected] = useState([]);
     const [clickedRowData, setclickedRowData] = useState(null); // анх null
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
+    const [showArchiveModal, setShowArchiveModal] = useState(false);
+    // const [showShiljuuleh, setShowShiljuuleh] = useState(false);
+    // const [comment, setComment] = useState("");
+    // const [shiljuulehMode, setShiljuulehMode] = useState(null);
+
+    const [showShiljuulehModal, setShowShiljuulehModal] = useState(false);
 
     const [showModal] = useState("modal");
 
@@ -40,6 +47,7 @@ const Index = () => {
 
     const refreshBaingaIlt = () => {
         axios.get("/get/BaingaIlt").then((res) => {
+            const reversed = [...res.data].reverse();
             setAllDans(res.data);
 
             if (selectedHumrug !== 0 && selectedDans !== 0) {
@@ -58,26 +66,8 @@ const Index = () => {
     const btnArchive = () => {
         if (!clickedRowData) return;
 
-        Swal.fire({
-            title: "Архивт шилжүүлэх үү?",
-            showCancelButton: true,
-            confirmButtonText: "Тийм",
-            cancelButtonText: "Үгүй",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                axios
-                    .post("/archive/BaingaIlt", {
-                        id: clickedRowData.id,
-                    })
-                    .then((res) => {
-                        Swal.fire(res.data.msg || "Архивт шилжлээ");
-                        refreshBaingaIlt();
-                    })
-                    .catch((err) => {
-                        Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
-                    });
-            }
-        });
+        setShowArchiveModal(true);
+        // setShowShiljuuleh(false);
     };
 
     useEffect(() => {
@@ -128,53 +118,11 @@ const Index = () => {
             setclickedRowData(null);
         }
     }, [getRowsSelected, getBaingaIlt]);
-    //  ROW SELECT
     // useEffect(() => {
-    //     if (getRowsSelected[0] !== undefined) {
-    //         setIsEditBtnClick(false);
-    //         setclickedRowData(getBaingaIlt[getRowsSelected[0]]);
+    //     if (showShiljuuleh) {
+    //         setComment("");
     //     }
-    // }, [getRowsSelected, getBaingaIlt]);
-
-    // useEffect(() => {
-    //     if (selectedHumrug === 0 || selectedDans === 0) {
-    //         setBaingaIlt([]);
-    //         return;
-    //     }
-
-    //     const filteredData = allDans.filter(
-    //         (item) =>
-    //             Number(item.humrugID) === Number(selectedHumrug) &&
-    //             Number(item.hadgalah_hugatsaa) === Number(selectedDans)
-    //     );
-
-    //     setBaingaIlt(filteredData);
-    // }, [selectedHumrug, selectedDans, allDans]);
-
-    // useEffect(() => {
-    //     let filteredData = allDans;
-
-    //     if (selectedHumrug !== 0) {
-    //         filteredData = filteredData.filter(
-    //             (item) => Number(item.humrugID) === Number(selectedHumrug)
-    //         );
-    //     }
-
-    //     if (selectedDans !== 0) {
-    //         filteredData = filteredData.filter(
-    //             (item) =>
-    //                 Number(item.hadgalah_hugatsaa) === Number(selectedDans)
-    //         );
-    //     }
-
-    //     setBaingaIlt(filteredData);
-    // }, [selectedHumrug, selectedDans, allDans]);
-    // useEffect(() => {
-    //     if (!isFilterActive) {
-    //         setBaingaIlt(allHumrug);
-    //         return;
-    //     }
-    // }, [allHumrug]);
+    // }, [showShiljuuleh]);
 
     const btnEdit = () => {
         setIsEditBtnClick(true);
@@ -281,25 +229,99 @@ const Index = () => {
                                         </option>
                                     ))}
                                 </select>
-
-                                {/* <select
-                                    className="form-control"
-                                    value={selectedDans}
-                                    onChange={(e) =>
-                                        setselectedDans(Number(e.target.value))
+                                <span className="mx-2"></span>
+                                <button
+                                    className="btn d-flex align-items-center gap-2 px-4 py-2 fw-bold"
+                                    disabled={
+                                        selectedHumrug === 0 ||
+                                        selectedDans === 0
                                     }
-                                    disabled={!getDans.length}
+                                    onClick={() => {
+                                        if (
+                                            selectedHumrug === 0 ||
+                                            selectedDans === 0
+                                        ) {
+                                            Swal.fire({
+                                                icon: "warning",
+                                                title: "Анхаар!",
+                                                text: "Хөмрөг болон данс сонгоно уу",
+                                            });
+                                            return;
+                                        }
+
+                                        setShowShiljuulehModal(true); // modal-г state-ээр харуулна
+                                    }}
+                                    style={{
+                                        borderRadius: "0.6rem", // Булан тойруулж гаргах
+                                        background:
+                                            "linear-gradient(135deg, #1E90FF 0%, #0047AB 100%)",
+
+                                        color: "#fff",
+                                        border: "none",
+                                        boxShadow:
+                                            "0 4px 12px rgba(0,0,0,0.15)", // subtle shadow
+                                        transition: "all 0.3s ease", // smooth hover
+                                        cursor: "pointer",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.transform =
+                                            "translateY(-2px)";
+                                        e.currentTarget.style.boxShadow =
+                                            "0 6px 16px rgba(0,0,0,0.2)";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform =
+                                            "translateY(0)";
+                                        e.currentTarget.style.boxShadow =
+                                            "0 4px 12px rgba(0,0,0,0.15)";
+                                    }}
                                 >
-                                    <option value={0}>Сонгоно уу</option>
-                                    {getDans.map((el) => (
-                                        <option key={el.id} value={el.id}>
-                                            {el.dans_ner}
-                                        </option>
-                                    ))}
-                                </select> */}
+                                    <i className="fas fa-file-export"></i> 📂
+                                    АРХИВТ ШИЛЖҮҮЛЭХ
+                                </button>
                             </div>
                         </div>
-                        {/* TABLE */}
+                        {/* <div className="px-4 py-3 bg-light border-bottom d-flex flex-wrap gap-3 align-items-center">
+                            <span>
+                                <b>Хөмрөг:</b>{" "}
+                                {getBaingaIlt.length
+                                    ? getBaingaIlt[0].humrug_ner
+                                    : selectedHumrug
+                                    ? getHumrug.find(
+                                          (h) =>
+                                              h.humrug_dugaar === selectedHumrug
+                                      )?.humrug_ner
+                                    : "-"}
+                            </span>
+                            <span>|</span>
+                            <span>
+                                <b>Данс:</b>{" "}
+                                {getBaingaIlt.length
+                                    ? getBaingaIlt[0].dans_ner
+                                    : selectedDans
+                                    ? getDans.find(
+                                          (d) => d.dans_dugaar === selectedDans
+                                      )?.dans_ner
+                                    : "-"}
+                            </span>
+                            <span>|</span>
+                            <span>
+                                <b>ХН төрөл:</b>{" "}
+                                {getBaingaIlt.length
+                                    ? getBaingaIlt[0].dans_baidal || "-"
+                                    : "-"}
+                            </span>
+                            <span>|</span>
+                            <span>
+                                <b>Нууцын зэрэг:</b>{" "}
+                                <span className="badge bg-warning text-dark">
+                                    {getBaingaIlt.length
+                                        ? getBaingaIlt[0].hadgalah_hugatsaa ||
+                                          "-"
+                                        : "-"}
+                                </span>
+                            </span>
+                        </div> */}
                         <MUIDatatable
                             data={getBaingaIlt}
                             setdata={setBaingaIlt}
@@ -344,7 +366,7 @@ const Index = () => {
                             setRowsSelected={setRowsSelected}
                             isHideDelete={true}
                             isHideEdit={true}
-                            showArchive={true}
+                            showArchive={false}
                         />
                         <BaingaIltsNew
                             refreshBaingaIlt={refreshBaingaIlt}
@@ -359,14 +381,15 @@ const Index = () => {
                             changeDataRow={clickedRowData}
                             isEditBtnClick={isEditBtnClick}
                         />
-                        <BaingaIltShiljuuleh
+
+                        {/* <BaingaIltShiljuuleh
                             setRowsSelected={setRowsSelected}
                             refreshBaingaIlt={refreshBaingaIlt}
                             selectedHumrug={selectedHumrug}
                             selectedDans={selectedDans}
                             changeDataRow={clickedRowData}
                             isEditBtnClick={isEditBtnClick}
-                        />
+                        /> */}
                         <BaingaHadgalahHugatsaa />
                     </div>
                 </div>
@@ -380,6 +403,275 @@ const Index = () => {
                     </div>
                 </div>
             </div>
+            {showShiljuulehModal && getBaingaIlt.length > 0 && (
+                <BaingaIltShiljuuleh
+                    selectedHumrug={selectedHumrug}
+                    selectedDans={selectedDans}
+                    getBaingaIlt={getBaingaIlt}
+                    getRowsSelected={getRowsSelected}
+                    setRowsSelected={setRowsSelected}
+                    // clickedRowData={getBaingaIlt[0]} // Эхний мөрийг автоматаар дамжуулж байна
+                    onClose={() => setShowShiljuulehModal(false)}
+                    refreshBaingaIlt={refreshBaingaIlt}
+                />
+            )}
+            {/* {showArchiveModal && clickedRowData && (
+                <div
+                    className="modal fade show"
+                    style={{
+                        display: "block",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        backdropFilter: "blur(3px)",
+                    }}
+                >
+                    <div className="modal-dialog modal-lg modal-dialog-centered">
+                        <div className="modal-content rounded shadow-lg border-0">
+                            <div className="modal-header bg-gradient-primary text-white">
+                                <h5 className="modal-title fw-bold">
+                                    📂 Архивт шилжүүлэх
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="btn-close btn-close-white"
+                                    onClick={() => setShowArchiveModal(false)}
+                                />
+                            </div>
+
+                            <div className="px-4 py-3 bg-light border-bottom d-flex flex-wrap gap-3 align-items-center">
+                                <span>
+                                    <b>Хөмрөг:</b> {clickedRowData.humrug_ner}
+                                </span>
+                                <span>|</span>
+                                <span>
+                                    <b>Данс:</b> {clickedRowData.dans_ner}
+                                </span>
+                                <span>|</span>
+                                <span>
+                                    <b>ХН төрөл:</b>{" "}
+                                    {clickedRowData.dans_baidal || "-"}
+                                </span>
+                                <span>|</span>
+                                <span>
+                                    <b>Нууцын зэрэг:</b>{" "}
+                                    <span className="badge bg-warning text-dark">
+                                        {clickedRowData.hadgalah_hugatsaa ||
+                                            "-"}
+                                    </span>
+                                </span>
+                            </div>
+
+                            <div
+                                className="px-4 py-3"
+                                style={{
+                                    maxHeight: "300px",
+                                    overflowY: "auto",
+                                }}
+                            >
+                                <div className="table-responsive">
+                                    <table className="table table-striped table-hover table-sm align-middle mb-0">
+                                        <thead className="table-dark">
+                                            <tr>
+                                                <th style={{ width: "35%" }}>
+                                                    Талбар
+                                                </th>
+                                                <th>Утга</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Хадгаламжийн дугаар</td>
+                                                <td>
+                                                    {clickedRowData.hadgalamj_dugaar ||
+                                                        "-"}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Хадгаламжийн гарчиг</td>
+                                                <td>
+                                                    {clickedRowData.hadgalamj_garchig ||
+                                                        "-"}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Зохион байгуулалтын нэгжийн
+                                                    нэр
+                                                </td>
+                                                <td>
+                                                    {clickedRowData.hadgalamj_zbn ||
+                                                        "-"}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Хэргийн индекс</td>
+                                                <td>
+                                                    {clickedRowData.hergiin_indeks ||
+                                                        "-"}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Харьяа он</td>
+                                                <td>
+                                                    {clickedRowData.harya_on ||
+                                                        "-"}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Хуудасны тоо</td>
+                                                <td>
+                                                    {clickedRowData.huudas_too ||
+                                                        "-"}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div className="px-4 pb-4 d-flex flex-wrap gap-2 justify-content-end">
+                                {!showShiljuuleh ? (
+                                    <>
+                                        <button
+                                            className="btn btn-outline-danger d-flex align-items-center gap-2"
+                                            onClick={() => {
+                                                setShiljuulehMode("delete");
+                                                setShowShiljuuleh(true);
+                                            }}
+                                        >
+                                            <i className="fas fa-trash-alt"></i>
+                                            Устгах жагсаалт болон акт үүсгэх
+                                        </button>
+
+                                        <button
+                                            className="btn btn-success d-flex align-items-center gap-2"
+                                            onClick={() =>
+                                                setShowShiljuuleh(true)
+                                            }
+                                        >
+                                            <i className="fas fa-file-export"></i>{" "}
+                                            Архивт шилжүүлэх болон устгах
+                                        </button>
+
+                                        <button
+                                            className="btn btn-outline-secondary d-flex align-items-center gap-2"
+                                            onClick={() =>
+                                                setShowArchiveModal(false)
+                                            }
+                                        >
+                                            <i className="fas fa-times"></i>{" "}
+                                            Болих
+                                        </button>
+                                    </>
+                                ) : null}
+                            </div>
+
+                            {showShiljuuleh && (
+                                <div className="px-4 pb-4">
+                                    <div className="mb-3">
+                                        <label
+                                            htmlFor="commentInput"
+                                            className="form-label"
+                                        >
+                                            Устгасан буюу архивт шилжүүлсэн
+                                            тухай тэмдэглэл оруулах:
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="commentInput"
+                                            className="form-control"
+                                            placeholder="Тэмдэглэл оруулна уу"
+                                            value={comment}
+                                            onChange={(e) =>
+                                                setComment(e.target.value)
+                                            }
+                                        />
+                                    </div>
+
+                                    <div className="d-flex gap-2 justify-content-end">
+                                        <button
+                                            className="btn btn-success"
+                                            onClick={() => {
+                                                if (!comment.trim()) {
+                                                    Swal.fire({
+                                                        icon: "error",
+                                                        title: "Анхаар!",
+                                                        text: "Тэмдэглэл хоосон байна",
+                                                    });
+                                                    return;
+                                                }
+
+                                                if (!clickedRowData?.id) return;
+
+                                                axios
+                                                    .post(
+                                                        "/archive/BaingaIlt",
+                                                        {
+                                                            id: clickedRowData.id,
+                                                            ustgasan_temdeglel:
+                                                                comment.trim(),
+                                                        }
+                                                    )
+                                                    .then((res) => {
+                                                        Swal.fire({
+                                                            icon: "success",
+                                                            title:
+                                                                res.data.msg ||
+                                                                "Амжилттай хадгалагдлаа",
+                                                        });
+                                                        setShowShiljuuleh(
+                                                            false
+                                                        );
+                                                        setComment("");
+                                                        setShowArchiveModal(
+                                                            false
+                                                        ); // modal хаах
+                                                        refreshBaingaIlt();
+                                                    })
+                                                    .catch((err) => {
+                                                        Swal.fire({
+                                                            icon: "error",
+                                                            title: "Алдаа гарлаа",
+                                                            text:
+                                                                err.response
+                                                                    ?.data
+                                                                    ?.msg || "",
+                                                        });
+                                                    });
+                                            }}
+                                        >
+                                            Хадгалах
+                                        </button>
+
+                                        <button
+                                            className="btn btn-outline-secondary"
+                                            onClick={() =>
+                                                setShowShiljuuleh(false)
+                                            }
+                                        >
+                                            <i className="fas fa-times"></i>{" "}
+                                            Болих
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="modal-body">
+                                {showShiljuuleh && (
+                                    <BaingaIltShiljuuleh
+                                        setRowsSelected={setRowsSelected}
+                                        refreshBaingaIlt={refreshBaingaIlt}
+                                        selectedHumrug={selectedHumrug}
+                                        selectedDans={selectedDans}
+                                        changeDataRow={clickedRowData}
+                                        isEditBtnClick={true}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            )} */}
         </>
     );
 };

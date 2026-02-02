@@ -22,12 +22,16 @@ class BaingaIlt extends Model
                 ->select(
                     "db_arhivbaingahad.*",
                     "db_humrug.humrug_ner",
-                    "db_arhivdans.dans_ner"
+                    "db_arhivdans.dans_ner",
+                    "db_arhivdans.dans_baidal",
+                    "db_arhivdans.hadgalah_hugatsaa"
                 )
                 ->where(function ($query) {
                     $query->whereNull("ustgasan_temdeglel")
                         ->orWhere("ustgasan_temdeglel", "");
                 })
+                ->orderByDesc("db_arhivbaingahad.id")
+
                 ->get();
 
             return $baingaIlt;
@@ -39,6 +43,42 @@ class BaingaIlt extends Model
                 ),
                 500
             );
+        }
+    }
+
+    public function getArchiveBaingIlt()
+    {
+        try {
+            $ArchivebaingaIlt = DB::table("db_arhivbaingahad")
+                ->join(
+                    "db_humrug",
+                    "db_humrug.humrug_dugaar",
+                    "=",
+                    "db_arhivbaingahad.humrug_id"
+                )
+                ->leftJoin(
+                    "db_arhivdans",
+                    "db_arhivdans.dans_dugaar",
+                    "=",
+                    "db_arhivbaingahad.dans_id"
+                )
+                ->select(
+                    "db_arhivbaingahad.*",
+                    "db_humrug.humrug_ner",
+                    "db_arhivdans.dans_ner",
+                    "db_arhivdans.dans_baidal",
+                    "db_arhivdans.hadgalah_hugatsaa"
+                )
+                ->whereNotNull("db_arhivbaingahad.ustgasan_temdeglel")
+                ->where("db_arhivbaingahad.ustgasan_temdeglel", "!=", "")
+                ->get();
+
+            return $ArchivebaingaIlt;
+        } catch (\Throwable $th) {
+            return response([
+                "status" => "error",
+                "msg" => "татаж чадсангүй."
+            ], 500);
         }
     }
 

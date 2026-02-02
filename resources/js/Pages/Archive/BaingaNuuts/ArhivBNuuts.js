@@ -5,20 +5,16 @@ import "../../../../styles/muidatatable.css";
 import axios from "../../../AxiosUser";
 import CustomToolbar from "../../../components/Admin/general/MUIDatatable/CustomToolbar";
 import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIDatatable";
-import BaingaHadgalahHugatsaa from "../BaingaIlts/BaingaHadgalahHugatsaa";
-import BaingaIltNuutsShiljuuleh from "./BaingaIltNuutsShiljuuleh";
-import BaingaNuutsChild from "./BaingaNuutsChild";
-import BaingaNuutsEdit from "./BaingaNuutsEdit";
-import BaingaNuutsNew from "./BaingaNuutsNew";
+import ArhivBNuutsChild from "./ArhivBNuutsChild";
 
-const Index = () => {
+const ArhivBNuuts = () => {
     const today = new Date();
     const defaultStart = format(subDays(today, 30), "yyyy-MM-dd");
     const defaultEnd = format(today, "yyyy-MM-dd");
 
     // const [isFilterActive, setIsFilterActive] = useState(false);
 
-    const [getBaingaNuuts, setBaingaNuuts] = useState([]);
+    const [getarchivebaingaNuuts, setarchiveBaingaNuuts] = useState([]);
     const [getHumrug, setHumrug] = useState([]);
     const [getDans, setDans] = useState([]);
 
@@ -40,7 +36,7 @@ const Index = () => {
     }, [selectedHumrug, selectedDans]);
 
     const refreshBaingaNuuts = () => {
-        axios.get("/get/BaingaNuuts").then((res) => {
+        axios.get("/get/archiveBaingaNuuts").then((res) => {
             const reversed = [...res.data].reverse();
             setAllDans(res.data);
 
@@ -50,9 +46,9 @@ const Index = () => {
                         Number(item.humrug_id) === Number(selectedHumrug) &&
                         Number(item.dans_id) === Number(selectedDans)
                 );
-                setBaingaNuuts(filteredData);
+                setarchiveBaingaNuuts(filteredData);
             } else {
-                setBaingaNuuts([]);
+                setarchiveBaingaNuuts([]);
             }
         });
     };
@@ -97,24 +93,27 @@ const Index = () => {
     useEffect(() => {
         const rowIndex = getRowsSelected[0];
 
-        if (rowIndex !== undefined && getBaingaNuuts[rowIndex] !== undefined) {
+        if (
+            rowIndex !== undefined &&
+            getarchivebaingaNuuts[rowIndex] !== undefined
+        ) {
             setIsEditBtnClick(false);
-            setclickedRowData(getBaingaNuuts[rowIndex]);
+            setclickedRowData(getarchivebaingaNuuts[rowIndex]);
         } else {
             setclickedRowData(null);
         }
-    }, [getRowsSelected, getBaingaNuuts]);
+    }, [getRowsSelected, getarchivebaingaNuuts]);
     //  ROW SELECT
     // useEffect(() => {
     //     if (getRowsSelected[0] !== undefined) {
     //         setIsEditBtnClick(false);
-    //         setclickedRowData(getBaingaNuuts[getRowsSelected[0]]);
+    //         setclickedRowData(getarchivebaingaNuuts[getRowsSelected[0]]);
     //     }
-    // }, [getRowsSelected, getBaingaNuuts]);
+    // }, [getRowsSelected, getarchivebaingaNuuts]);
 
     // useEffect(() => {
     //     if (selectedHumrug === 0 || selectedDans === 0) {
-    //         setBaingaNuuts([]);
+    //         setarchiveBaingaNuuts([]);
     //         return;
     //     }
 
@@ -124,7 +123,7 @@ const Index = () => {
     //             Number(item.hadgalah_hugatsaa) === Number(selectedDans)
     //     );
 
-    //     setBaingaNuuts(filteredData);
+    //     setarchiveBaingaNuuts(filteredData);
     // }, [selectedHumrug, selectedDans, allDans]);
 
     // useEffect(() => {
@@ -143,43 +142,14 @@ const Index = () => {
     //         );
     //     }
 
-    //     setBaingaNuuts(filteredData);
+    //     setarchiveBaingaNuuts(filteredData);
     // }, [selectedHumrug, selectedDans, allDans]);
     // useEffect(() => {
     //     if (!isFilterActive) {
-    //         setBaingaNuuts(allHumrug);
+    //         setarchiveBaingaNuuts(allHumrug);
     //         return;
     //     }
     // }, [allHumrug]);
-
-    const btnEdit = () => {
-        setIsEditBtnClick(true);
-    };
-
-    const btnDelete = () => {
-        if (!getRowsSelected.length) return;
-
-        Swal.fire({
-            title: "Та устгахдаа итгэлтэй байна уу?",
-            showCancelButton: true,
-            confirmButtonText: "Тийм",
-            cancelButtonText: "Үгүй",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                axios
-                    .post("/delete/BaingaNuuts", {
-                        id: getBaingaNuuts[getRowsSelected[0]].id,
-                    })
-                    .then((res) => {
-                        Swal.fire(res.data.msg);
-                        refreshBaingaNuuts();
-                    })
-                    .catch((err) => {
-                        Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
-                    });
-            }
-        });
-    };
 
     //RENDER
     return (
@@ -188,8 +158,8 @@ const Index = () => {
                 <div className="info-box">
                     <div className="col-md-12">
                         <h1 className="text-center">
-                            Байнга хадгалагдах хадгаламжийн нэгж, баримт
-                            бичиг/нууц/{" "}
+                            Архивт шилжсэн байнга хадгалагдах хадгаламжийн нэгж,
+                            баримт бичиг/нууц/{" "}
                         </h1>
                         {/* DATE FILTER */}
                         <div className="col-md-8 mb-3">
@@ -257,56 +227,6 @@ const Index = () => {
                                         </option>
                                     ))}
                                 </select>
-                                <span className="mx-2"></span>
-                                <button
-                                    className="btn d-flex align-items-center gap-2 px-4 py-2 fw-bold"
-                                    disabled={
-                                        selectedHumrug === 0 ||
-                                        selectedDans === 0
-                                    }
-                                    onClick={() => {
-                                        if (
-                                            selectedHumrug === 0 ||
-                                            selectedDans === 0
-                                        ) {
-                                            Swal.fire({
-                                                icon: "warning",
-                                                title: "Анхаар!",
-                                                text: "Хөмрөг болон данс сонгоно уу",
-                                            });
-                                            return;
-                                        }
-
-                                        setShowShiljuulehModal(true); // modal-г state-ээр харуулна
-                                    }}
-                                    style={{
-                                        borderRadius: "0.6rem", // Булан тойруулж гаргах
-                                        background:
-                                            "linear-gradient(135deg, #1E90FF 0%, #0047AB 100%)",
-
-                                        color: "#fff",
-                                        border: "none",
-                                        boxShadow:
-                                            "0 4px 12px rgba(0,0,0,0.15)", // subtle shadow
-                                        transition: "all 0.3s ease", // smooth hover
-                                        cursor: "pointer",
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform =
-                                            "translateY(-2px)";
-                                        e.currentTarget.style.boxShadow =
-                                            "0 6px 16px rgba(0,0,0,0.2)";
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform =
-                                            "translateY(0)";
-                                        e.currentTarget.style.boxShadow =
-                                            "0 4px 12px rgba(0,0,0,0.15)";
-                                    }}
-                                >
-                                    <i className="fas fa-file-export"></i> 📂
-                                    АРХИВТ ШИЛЖҮҮЛЭХ
-                                </button>
 
                                 {/* <select
                                     className="form-control"
@@ -327,8 +247,8 @@ const Index = () => {
                         </div>
                         {/* TABLE */}
                         <MUIDatatable
-                            data={getBaingaNuuts}
-                            setdata={setBaingaNuuts}
+                            data={getarchivebaingaNuuts}
+                            setdata={setarchiveBaingaNuuts}
                             columns={columns}
                             costumToolbar={
                                 <CustomToolbar
@@ -342,7 +262,7 @@ const Index = () => {
                                     }
                                     spanIconClassName="fas fa-plus"
                                     buttonName="НЭМЭХ"
-                                    excelDownloadData={getBaingaNuuts}
+                                    excelDownloadData={getarchivebaingaNuuts}
                                     excelHeaders={excelHeaders}
                                     isHideInsert={true}
                                     onClick={() => {
@@ -361,29 +281,13 @@ const Index = () => {
                                     }}
                                 />
                             }
-                            btnEdit={btnEdit}
                             modelType={showModal}
                             editdataTargetID="#baingaNuutsedit"
-                            btnDelete={btnDelete}
                             getRowsSelected={getRowsSelected}
                             setRowsSelected={setRowsSelected}
-                            isHideDelete={true}
-                            isHideEdit={true}
+                            isHideDelete={false}
+                            isHideEdit={false}
                         />
-                        <BaingaNuutsNew
-                            refreshBaingaNuuts={refreshBaingaNuuts}
-                            selectedHumrug={selectedHumrug}
-                            selectedDans={selectedDans}
-                        />
-                        <BaingaNuutsEdit
-                            setRowsSelected={setRowsSelected}
-                            refreshBaingaNuuts={refreshBaingaNuuts}
-                            selectedHumrug={selectedHumrug}
-                            selectedDans={selectedDans}
-                            changeDataRow={clickedRowData}
-                            isEditBtnClick={isEditBtnClick}
-                        />
-                        <BaingaHadgalahHugatsaa />
                     </div>
                 </div>
             </div>
@@ -391,28 +295,16 @@ const Index = () => {
                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div className="card2">
                         {clickedRowData && (
-                            <BaingaNuutsChild changeDataRow={clickedRowData} />
+                            <ArhivBNuutsChild changeDataRow={clickedRowData} />
                         )}
                     </div>
                 </div>
             </div>
-            {showShiljuulehModal && getBaingaNuuts.length > 0 && (
-                <BaingaIltNuutsShiljuuleh
-                    selectedHumrug={selectedHumrug}
-                    selectedDans={selectedDans}
-                    getBaingaNuuts={getBaingaNuuts}
-                    getRowsSelected={getRowsSelected}
-                    setRowsSelected={setRowsSelected}
-                    // clickedRowData={getBaingaNuuts[0]} // Эхний мөрийг автоматаар дамжуулж байна
-                    onClose={() => setShowShiljuulehModal(false)}
-                    refreshBaingaNuuts={refreshBaingaNuuts}
-                />
-            )}
         </>
     );
 };
 
-export default Index;
+export default ArhivBNuuts;
 
 const columns = [
     {
@@ -643,6 +535,22 @@ const columns = [
     {
         name: "hn_tailbar",
         label: "Тайлбар",
+        options: {
+            filter: true,
+            sort: false,
+            setCellHeaderProps: (value) => {
+                return {
+                    style: {
+                        backgroundColor: "#5DADE2",
+                        color: "white",
+                    },
+                };
+            },
+        },
+    },
+    {
+        name: "ustgasan_temdeglel",
+        label: "Архивт шилжүүлсэн тухай тэмдэглэл",
         options: {
             filter: true,
             sort: false,

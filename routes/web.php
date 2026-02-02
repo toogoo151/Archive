@@ -269,6 +269,16 @@ Route::post("/new/BaingaIlt", [BaingaIltController::class, "NewBaingIlt"])
     ->middleware('auth');
 Route::post("/edit/BaingaIlt", [BaingaIltController::class, "EditBaingIlt"])
     ->middleware('auth');
+
+//arvhive shiluuleh start
+Route::post("/archive/BaingaIlt", [BaingaIltController::class, "ArchiveBaingIlt"]);
+
+Route::get("/get/ArchiveBaingaIlt", function () {
+    $ArchiveBaingIlt = new BaingaIlt();
+    return $ArchiveBaingIlt->getArchiveBaingIlt();
+});
+//arhive shiljuuleh end
+
 // Байнга хадгалах Илт end
 
 //Childtable Байнга хадгалах барим бичиг start
@@ -298,6 +308,16 @@ Route::post("/new/BaingaNuuts", [BaingaNuutsController::class, "NewBaingaNuuts"]
 Route::post("/edit/BaingaNuuts", [BaingaNuutsController::class, "EditBaingaNuuts"])
     ->middleware('auth');
 //Байнга хадгалах Нууц end
+//nuuts archive shiljuuleh start
+Route::post("/archive/BaingaNuuts", [BaingaNuutsController::class, "ArchiveBaingNuuts"]);
+
+Route::get("/get/archiveBaingaNuuts", function () {
+    $ArchiveBaingNuuts = new BaingaNuuts();
+    return $ArchiveBaingNuuts->getArchiveBaingNuuts();
+});
+
+//nuuts archive shiljuuleh end
+
 
 //Байнга хадгалах нууц баримт бичиг child start
 Route::post("/get/baingaNuutsChild", [BaingaNuutsChildController::class, "ChildBaingaNuuts"]);

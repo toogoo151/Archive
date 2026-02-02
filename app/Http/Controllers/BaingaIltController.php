@@ -109,4 +109,27 @@ class BaingaIltController extends Controller
             ], 500);
         }
     }
+
+    public function ArchiveBaingIlt(Request $req)
+    {
+        try {
+            foreach ($req->data as $item) {
+                $archive = BaingaIlt::find($item['id']);
+                if ($archive) {
+                    $archive->ustgasan_temdeglel = $item['ustgasan_temdeglel'];
+                    $archive->save();
+                }
+            }
+
+            return response([
+                "status" => "success",
+                "msg" => "Сонгосон баримтууд амжилттай архивлагдлаа."
+            ], 200);
+        } catch (\Throwable $th) {
+            return response([
+                "status" => "error",
+                "msg" => "Алдаа гарлаа."
+            ], 500);
+        }
+    }
 }

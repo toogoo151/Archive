@@ -33,6 +33,8 @@ class BaingaNuutsChildController extends Controller
         }
     }
 
+
+
     public function DeleteNuutsChildFile(Request $req)
     {
         try {
