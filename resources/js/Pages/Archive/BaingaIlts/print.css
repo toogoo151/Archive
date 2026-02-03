@@ -103,11 +103,29 @@
         padding: 0;
     }
 
-    textarea,
-    input {
+    input,
+    textarea {
         border: none !important;
         outline: none !important;
-        resize: none;
+        resize: none !important;
+        background: transparent !important;
+        font-family: "Times New Roman";
+        font-size: 12pt;
+        white-space: pre-wrap; /* мөр таслал хадгална */
+    }
+
+    .word-text {
+        width: 100%;
+        display: block;
+    }
+
+    table {
+        page-break-inside: auto;
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
     }
 }
 
