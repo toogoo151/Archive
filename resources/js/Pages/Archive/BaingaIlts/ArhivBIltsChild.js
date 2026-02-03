@@ -229,7 +229,7 @@ const ArhivBIltsChild = (props) => {
                                     buttonName={"НЭМЭХ"}
                                     excelDownloadData={getbaingaIltsChild}
                                     excelHeaders={excelHeaders}
-                                    isHideInsert={true}
+                                    isHideInsert={false}
                                 />
                             }
                             btnEdit={btnEdit}
