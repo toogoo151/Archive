@@ -12,12 +12,26 @@ class jagsaaltZuilDugaar extends Model
     use HasFactory;
     protected $table = 'jagsaaltzuildugaar';
     public $timestamps = false;
+    protected $fillable = [
+        'userID',
+        'jagsaalt_turul',
+        'barimt_dd',
+        'barimt_turul',
+        'barimt_dedturul',
+        'barimt_ner',
+        'hugatsaa_turul',
+        'hugatsaa',
+        'tailbar',
+        'tobchlol',
+    ];
 
     public function getJagsaalt()
     {
         try {
             $jagsaalt = DB::table("jagsaaltzuildugaar")
-                ->join("jagsaalt_turul", "jagsaalt_turul.id", "=", "jagsaaltzuildugaar.jagsaalt_turul")
+                ->where("jagsaaltzuildugaar.userID", Auth::id())
+                ->orderByDesc("jagsaaltzuildugaar.id")
+                ->leftjoin("jagsaalt_turul", "jagsaalt_turul.id", "=", "jagsaaltzuildugaar.jagsaalt_turul")
                 ->join("retention_period", "retention_period.id", "=", "jagsaaltzuildugaar.hugatsaa_turul")
                 ->select("jagsaaltzuildugaar.*", "jagsaalt_turul.jName", "retention_period.RetName")
                 ->get();

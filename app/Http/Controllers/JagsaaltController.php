@@ -17,6 +17,7 @@ class JagsaaltController extends Controller
     {
         try {
             $insertJagsaalt = new jagsaaltZuilDugaar();
+            $insertJagsaalt->userID = Auth::id();
             $insertJagsaalt->jagsaalt_turul = $req->jagsaalt_turul;
             $insertJagsaalt->barimt_dd = $req->barimt_dd;
             $insertJagsaalt->barimt_turul = $req->barimt_turul;
@@ -47,7 +48,18 @@ class JagsaaltController extends Controller
     public function DeleteJagsaalt(Request $req)
     {
         try {
-            $delete = jagsaaltZuilDugaar::find($req->id);
+            $delete = jagsaaltZuilDugaar::where("id", $req->id)
+                ->where("userID", Auth::id())
+                ->first();
+            if (!$delete) {
+                return response(
+                    array(
+                        "status" => "error",
+                        "msg" => "Хандах эрхгүй."
+                    ),
+                    403
+                );
+            }
             $delete->delete();
             return response(
                 array(
@@ -70,7 +82,18 @@ class JagsaaltController extends Controller
     public function EditJagsaalt(Request $req)
     {
         try {
-            $edit = jagsaaltZuilDugaar::find($req->id);
+            $edit = jagsaaltZuilDugaar::where("id", $req->id)
+                ->where("userID", Auth::id())
+                ->first();
+            if (!$edit) {
+                return response(
+                    array(
+                        "status" => "error",
+                        "msg" => "Хандах эрхгүй."
+                    ),
+                    403
+                );
+            }
             $edit->jagsaalt_turul = $req->jagsaalt_turul;
             $edit->barimt_dd = $req->barimt_dd;
             $edit->barimt_turul = $req->barimt_turul;

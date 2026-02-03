@@ -17,15 +17,11 @@ class AshigNomController extends Controller
     {
         try {
             $insertAshigNom = new AshigNomModel();
+            $insertAshigNom->userID = Auth::id();
             $insertAshigNom->humrug_id = $req->humrug_id;
             $insertAshigNom->dans_id = $req->dans_id;
             $insertAshigNom->nom_dugaar = $req->nom_dugaar;
             $insertAshigNom->nom_ners = $req->nom_ners;
-            // $insertAshigNom->barimt_ner = $req->barimt_ner;
-            // $insertAshigNom->hugatsaa_turul = $req->hugatsaa_turul;
-            // $insertAshigNom->hugatsaa = $req->hugatsaa;
-            // $insertAshigNom->tailbar = $req->tailbar;
-            // $insertAshigNom->tobchlol = $req->tobchlol;
             $insertAshigNom->save();
             return response(
                 array(
@@ -47,7 +43,18 @@ class AshigNomController extends Controller
     public function DeleteNom(Request $req)
     {
         try {
-            $delete = AshigNomModel::find($req->id);
+            $delete = AshigNomModel::where("id", $req->id)
+                ->where("userID", Auth::id())
+                ->first();
+            if (!$delete) {
+                return response(
+                    array(
+                        "status" => "error",
+                        "msg" => "Хандах эрхгүй."
+                    ),
+                    403
+                );
+            }
             $delete->delete();
             return response(
                 array(
@@ -70,7 +77,18 @@ class AshigNomController extends Controller
     public function EditNom(Request $req)
     {
         try {
-            $edit = AshigNomModel::find($req->id);
+            $edit = AshigNomModel::where("id", $req->id)
+                ->where("userID", Auth::id())
+                ->first();
+            if (!$edit) {
+                return response(
+                    array(
+                        "status" => "error",
+                        "msg" => "Хандах эрхгүй."
+                    ),
+                    403
+                );
+            }
             $edit->humrug_id = $req->humrug_id;
             $edit->dans_id = $req->dans_id;
             $edit->nom_dugaar = $req->nom_dugaar;

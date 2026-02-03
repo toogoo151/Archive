@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CountUp from "react-countup";
-import { MdFolder, MdPeople, MdSchool } from "react-icons/md";
+import { MdBook, MdFolder, MdPeople, MdSchool, MdSearch, MdTimer, MdWidgets } from "react-icons/md";
 import axios from "../../../AxiosUser";
 
 const Statistic = () => {
@@ -9,6 +9,9 @@ const Statistic = () => {
     const [hutheregCount, setHutheregCount] = useState(0);
     // GANBAT
     const [jagsaaltCount, setJagsaaltCount] = useState(0);
+    const [sedevzuiCount, setSedevzuiCount] = useState(0);
+    const [nomCount, setNomCount] = useState(0);
+    const [tovchlolCount, setTovchlolCount] = useState(0);
 
     useEffect(() => {
         refreshStatic();
@@ -24,16 +27,28 @@ const Statistic = () => {
         axios
             .post("/get/JagsaaltCount")
             .then((res) => setJagsaaltCount(res.data));
+        axios
+            .post("/get/SedevZuiCount")
+            .then((res) => setSedevzuiCount(res.data));
+        axios
+            .post("/get/NomCount")
+            .then((res) => setNomCount(res.data));
+        axios
+            .post("/get/TovchCount")
+            .then((res) => setTovchlolCount(res.data));
     };
 
     // Card-ийн background өнгө
-    const cardBackgrounds = ["#f0f8ff", "#ffe4e1", "#e6ffe6", "#fff5e6", "#e6f7ff"];
+    const cardBackgrounds = ["#f0f8ff", "#ffe4e1", "#e6ffe6", "#fff5e6", "#e6f7ff", "#f3e8ff","#fffbe6","#e8fff8",];
     const iconGradients = [
         "linear-gradient(270deg, #ff416c, #ff4b2b, #ffcc33, #ff416c)",
         "linear-gradient(270deg, #4776E6, #8E54E9, #6a11cb, #4776E6)",
         "linear-gradient(270deg, #11998e, #38ef7d, #11998e, #11998e)",
         "linear-gradient(270deg, #f7971e, #ffd200, #f7971e, #ffd200)",
         "linear-gradient(270deg, #00c9ff, #92fe9d, #00c9ff, #00c9ff)",
+        "linear-gradient(270deg, #fc466b, #3f5efb, #6a11cb, #fc466b)",
+        "linear-gradient(270deg, #ee0979, #ff6a00, #ffd200, #ee0979)",
+        "linear-gradient(270deg, #56ab2f, #a8e063, #56ab2f, #a8e063)",
 
     ];
 
@@ -59,7 +74,7 @@ const Statistic = () => {
                 <div
                     style={{
                         flex: 1,
-                        whiteSpace: "nowrap",
+                        whiteSpace: "wrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                     }}
@@ -155,16 +170,30 @@ const Statistic = () => {
                  <StatCard
                     title="Нийт хадгалах хугацааны зүйл"
                     value={jagsaaltCount}
-                    icon={MdFolder}
+                    icon={MdTimer}
                     cardBg={cardBackgrounds[4]}
                     iconGradient={iconGradients[4]}
                 />
                 <StatCard
                     title="Нийт бүртгэгдсэн сэдэв зүйн заагч"
-                    value={1234}
-                    icon={MdFolder}
-                    cardBg={cardBackgrounds[3]}
-                    iconGradient={iconGradients[3]}
+                    value={sedevzuiCount}
+                    icon={MdWidgets}
+                    cardBg={cardBackgrounds[5]}
+                    iconGradient={iconGradients[5]}
+                />
+                <StatCard
+                    title="Нийт бүртгэгдсэн ашигласан ном"
+                    value={nomCount}
+                    icon={MdBook}
+                    cardBg={cardBackgrounds[6]}
+                    iconGradient={iconGradients[6]}
+                />
+                <StatCard
+                    title="Нийт бүртгэгдсэн товчилсон үгийн жагсаалт"
+                    value={tovchlolCount}
+                    icon={MdSearch}
+                    cardBg={cardBackgrounds[7]}
+                    iconGradient={iconGradients[7]}
                 />
                 {/* Ganbat nemsen end */}
 

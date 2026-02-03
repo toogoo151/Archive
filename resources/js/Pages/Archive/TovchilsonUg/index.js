@@ -8,41 +8,26 @@ import MUIDatatable from "../../../components/Admin/general/MUIDatatable/MUIData
 import TovchlolEdit from "./TovchlolEdit";
 import TovchlolNew from "./TovchlolNew";
 const Index = () => {
+
     // ================= FILTER CONTROL =================
     const [isFilterActive, setIsFilterActive] = useState(false);
 
     // ================= DATA =================
-    const [allTovchlol, setAllTovchlol] = useState([]);
+    const [allTovchlol, setallTovchlol] = useState([]);
     const [getTovchlol, setTovchlol] = useState([]);
-    const [getHumrug, setHumrug] = useState([]);
-    const [getDans, setDans] = useState([]);
 
     const [getRowsSelected, setRowsSelected] = useState([]);
-    const [clickedRowData, setclickedRowData] = useState([]);
+    const [clickedRowData, setclickedRowData] = useState(null);
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
+    const [editRequestId, setEditRequestId] = useState(0);
 
-    const [showModal] = useState("modal");
+    // Don't let Bootstrap auto-open the edit modal before React fills the form.
+    // We'll open it programmatically inside `TovchlolEdit`.
+    const [showModal] = useState(null);
 
     // FETCH
     useEffect(() => {
         refreshTovchlol();
-        axios
-            .get("/get/Humrug")
-            .then((res) => {
-                setHumrug(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-
-        axios
-            .get("/get/Dans")
-            .then((res) => {
-                setDans(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
     }, []);
 
     const refreshTovchlol = () => {
@@ -50,7 +35,7 @@ const Index = () => {
             .get("/get/tovchlol")
             .then((res) => {
                 setRowsSelected([]);
-                setAllTovchlol(res.data);
+                setallTovchlol(res.data);
                 setTovchlol(res.data); // анх бүх өгөгдөл
                 setIsFilterActive(false);
             })
@@ -74,9 +59,16 @@ const Index = () => {
             return;
         }
 
-    }, [isFilterActive, allTovchlol]);
+    }, [isFilterActive,  allTovchlol]);
+
     const btnEdit = () => {
+        // Ensure the edit modal gets the selected row immediately on first click
+        if (getRowsSelected[0] !== undefined) {
+            setclickedRowData(getTovchlol[getRowsSelected[0]]);
+        }
         setIsEditBtnClick(true);
+        // Trigger edit modal open every click (even if already edited once)
+        setEditRequestId((prev) => prev + 1);
     };
 
     const btnDelete = () => {
@@ -106,7 +98,7 @@ const Index = () => {
     const columns = [
     {
         name: "id",
-        label: "№",
+        label: " ",
         options: {
             filter: true,
             sort: true,
@@ -134,7 +126,7 @@ const Index = () => {
         },
     },
     {
-        name: "humrug_id",
+        name: "humrug_dugaar",
         label: "Хөмрөгийн дугаар",
         options: {
             filter: true,
@@ -147,16 +139,10 @@ const Index = () => {
                     },
                 };
             },
-            customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
-                if (!rowData || !rowData.humrug_id) return "-";
-                const humrug = getHumrug.find((el) => el.id == rowData.humrug_id);
-                return humrug?.humrug_dugaar || "-";
-            },
         },
     },
     {
-        name: "humrug_name",
+        name: "humrug_ner",
         label: "Хөмрөгийн нэр",
         options: {
             filter: true,
@@ -169,16 +155,10 @@ const Index = () => {
                     },
                 };
             },
-            customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
-                if (!rowData || !rowData.humrug_id) return "-";
-                const humrug = getHumrug.find((el) => el.id == rowData.humrug_id);
-                return humrug?.humrug_ner || "-";
-            },
         },
     },
     {
-        name: "dans_id",
+        name: "dans_dugaar",
         label: "Дансны дугаар",
         options: {
             filter: true,
@@ -191,16 +171,10 @@ const Index = () => {
                     },
                 };
             },
-            customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
-                if (!rowData || !rowData.dans_id) return "-";
-                const dans = getDans.find((el) => el.id == rowData.dans_id);
-                return dans?.dans_dugaar || "-";
-            },
         },
     },
     {
-        name: "dans_name",
+        name: "dans_ner",
         label: "Дансны нэр",
         options: {
             filter: true,
@@ -212,12 +186,6 @@ const Index = () => {
                         color: "white",
                     },
                 };
-            },
-            customBodyRenderLite: (dataIndex) => {
-                const rowData = getTovchlol[dataIndex];
-                if (!rowData || !rowData.dans_id) return "-";
-                const dans = getDans.find((el) => el.id == rowData.dans_id);
-                return dans?.dans_ner || "-";
             },
         },
     },
@@ -274,11 +242,13 @@ const Index = () => {
             <div className="row">
                 <div className="info-box">
                     <div className="col-md-12">
-                        <h1 className="text-center">Товчилсон үгийн жагсаалт</h1>
+                        <h1 className="text-center">Товчилсон үгийн жагсаалт </h1>
+
                         {/* TABLE */}
                         <MUIDatatable
                             data={getTovchlol}
                             setdata={setTovchlol}
+                            sortOrder={{ name: "id", direction: "desc" }}
                             columns={columns}
                             costumToolbar={
                                 <CustomToolbar
@@ -286,7 +256,7 @@ const Index = () => {
                                     modelType="modal"
                                     dataTargetID="#TovchlolNew"
                                     spanIconClassName="fas fa-plus"
-                                    buttonName="НЭМЭХ"
+                                    buttonName="Нэмэх"
                                     excelDownloadData={getTovchlol}
                                     excelHeaders={excelHeaders}
                                     isHideInsert={true}
@@ -308,6 +278,7 @@ const Index = () => {
                             refreshTovchlol={refreshTovchlol}
                             changeDataRow={clickedRowData}
                             isEditBtnClick={isEditBtnClick}
+                            editRequestId={editRequestId}
                         />
                     </div>
                 </div>
@@ -319,8 +290,9 @@ const Index = () => {
 export default Index;
 
 const excelHeaders = [
-    { label: "Хөмрөгийн дугаар", key: "humrug_id" },
-    { label: "Дансны дугаар", key: "dans_id" },
+    { label: "id", key: "id" },
+    { label: "Хөмрөгийн дугаар", key: "humrug_dugaar" },
+    { label: "Дансны дугаар", key: "dans_dugaar" },
     { label: "Товчлол", key: "tobchlol" },
     { label: "Тайлал", key: "tailal" },
 ];

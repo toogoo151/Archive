@@ -19,10 +19,13 @@ const Index = () => {
     const [getDans, setDans] = useState([]);
 
     const [getRowsSelected, setRowsSelected] = useState([]);
-    const [clickedRowData, setclickedRowData] = useState([]);
+    const [clickedRowData, setclickedRowData] = useState(null);
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
+    const [editRequestId, setEditRequestId] = useState(0);
 
-    const [showModal] = useState("modal");
+    // Don't let Bootstrap auto-open the edit modal before React fills the form.
+    // We'll open it programmatically inside `TovchlolEdit`.
+    const [showModal] = useState(null);
 
     // FETCH
     useEffect(() => {
@@ -78,7 +81,13 @@ const Index = () => {
     }, [isFilterActive,  allSedevzui]);
 
     const btnEdit = () => {
+          // Ensure the edit modal gets the selected row immediately on first click
+          if (getRowsSelected[0] !== undefined) {
+            setclickedRowData(getSedevzui[getRowsSelected[0]]);
+        }
         setIsEditBtnClick(true);
+        // Trigger edit modal open every click
+        setEditRequestId((prev) => prev + 1);
     };
 
     const btnDelete = () => {
@@ -108,7 +117,7 @@ const Index = () => {
     const columns = [
     {
         name: "id",
-        label: "№",
+        label: " ",
         options: {
             filter: true,
             sort: true,
@@ -158,7 +167,7 @@ const Index = () => {
         },
     },
     {
-        name: "humrug_name",
+        name: "humrug_ner",
         label: "Хөмрөгийн нэр",
         options: {
             filter: true,
@@ -202,7 +211,7 @@ const Index = () => {
         },
     },
     {
-        name: "dans_name",
+        name: "dans_ner",
         label: "Дансны нэр",
         options: {
             filter: true,
@@ -269,27 +278,29 @@ const Index = () => {
     },
 
     ];
-
+        // Checking
+    console.log(getDans);
     //RENDER
     return (
         <>
             <div className="row">
                 <div className="info-box">
                     <div className="col-md-12">
-                        <h1 className="text-center">Сэдэв зүйн заагч 1</h1>
+                        <h1 className="text-center">Сэдэв зүйн заагч </h1>
 
                         {/* TABLE */}
                         <MUIDatatable
                             data={getSedevzui}
                             setdata={setSedevzui}
                             columns={columns}
+                            sortOrder={{ name: "id", direction: "desc" }}
                             costumToolbar={
                                 <CustomToolbar
                                     btnClassName="btn btn-success"
                                     modelType="modal"
                                     dataTargetID="#SedevNew"
                                     spanIconClassName="fas fa-plus"
-                                    buttonName="НЭМЭХ"
+                                    buttonName="Нэмэх"
                                     excelDownloadData={getSedevzui}
                                     excelHeaders={excelHeaders}
                                     isHideInsert={true}
@@ -311,6 +322,7 @@ const Index = () => {
                             refreshSedevzui={refreshSedevzui}
                             changeDataRow={clickedRowData}
                             isEditBtnClick={isEditBtnClick}
+                            editRequestId={editRequestId}
                         />
                     </div>
                 </div>
@@ -322,6 +334,7 @@ const Index = () => {
 export default Index;
 
 const excelHeaders = [
+    { label: "id", key: "id" },
     { label: "Хөмрөгийн дугаар", key: "humrug_id" },
     { label: "Дансны дугаар", key: "dans_id" },
     { label: "Товчлол", key: "zaagch_tobchlol" },

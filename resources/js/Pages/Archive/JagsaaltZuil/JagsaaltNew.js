@@ -49,9 +49,13 @@ const JagsaaltNew = (props) => {
     });
 
     const onSubmit = (data) => {
+        const selectedJagsaalt = getJagsaalt.find(
+            (el) => String(el.id) === String(data.jagsaalt_turul)
+        );
         axios
             .post("/new/jagsaalt", {
-                jagsaalt_turul: data.jagsaalt_turul,
+                // Save text (jName) but keep dropdown working with id
+                jagsaalt_turul: selectedJagsaalt?.jName ?? data.jagsaalt_turul,
                 barimt_dd: data.barimt_dd,
                 barimt_turul: data.barimt_turul,
                 barimt_dedturul: data.barimt_dedturul,
@@ -107,15 +111,15 @@ const JagsaaltNew = (props) => {
         let hugatsaaValue = "";
 
         switch (selected.RetName) {
-            case "Байнга хадгалах ХН":
+            case "Байнга хадгалагдах":
                 hugatsaaValue = "Байнга";
                 break;
 
-            case "70 жил хадгалагдах ХН":
+            case "70 жил хадгалагдах":
                 hugatsaaValue = "70 жил";
                 break;
 
-            case "Түр хадгалагдах ХН":
+            case "Түр хадгалагдах":
                 hugatsaaValue = "Жил";
                 break;
 
@@ -139,6 +143,7 @@ const JagsaaltNew = (props) => {
         const selectedJagsaalt = getJagsaalt.find(
             (el) => String(el.id) === String(jagsaaltId)
         );
+
         const selectedRetention = getHugatsaaTurul.find(
             (el) => String(el.id) === String(retentionId)
         );
@@ -185,6 +190,7 @@ const JagsaaltNew = (props) => {
         {  dalanJil: "70 жил" },
         {  jil: "Жил" },
     ];
+
     const TovchlolOptions = [
         {  VJbainga: "ҮЖ--Байнга" },
         {  VJdalanJil: "ҮЖ--70 жил" },
@@ -368,7 +374,7 @@ const JagsaaltNew = (props) => {
                                            <input
                                                 {...register("hugatsaa")}
                                                 className="form-control"
-                                                readOnly
+                                                // readOnly
                                             />
                                         </div>
                                         {/* <p className="alerts">
@@ -386,7 +392,7 @@ const JagsaaltNew = (props) => {
                                             <input
                                                 {...register("tobchlol")}
                                                 className="form-control"
-                                                readOnly
+                                                // readOnly
                                             />
                                         </div>
                                         {/* <p className="alerts">

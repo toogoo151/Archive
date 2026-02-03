@@ -13,37 +13,21 @@ const Index = () => {
     const [isFilterActive, setIsFilterActive] = useState(false);
 
     // ================= DATA =================
-    const [allBooks, setAllbooks] = useState([]);
-    const [getBooks, setBooks] = useState([]);
-    const [getHumrug, setHumrug] = useState([]);
-    const [getDans, setDans] = useState([]);
+    const [allNom, setallNom] = useState([]);
+    const [getNom, setNom] = useState([]);
 
     const [getRowsSelected, setRowsSelected] = useState([]);
-    const [clickedRowData, setclickedRowData] = useState([]);
+    const [clickedRowData, setclickedRowData] = useState(null);
     const [isEditBtnClick, setIsEditBtnClick] = useState(false);
+    const [editRequestId, setEditRequestId] = useState(0);
 
-    const [showModal] = useState("modal");
+    // Don't let Bootstrap auto-open the edit modal before React fills the form.
+    // We'll open it programmatically inside `NomEdit`.
+    const [showModal] = useState(null);
 
     // FETCH
     useEffect(() => {
         refreshNom();
-        axios
-            .get("/get/Humrug")
-            .then((res) => {
-                setHumrug(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-
-        axios
-            .get("/get/Dans")
-            .then((res) => {
-                setDans(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
     }, []);
 
     const refreshNom = () => {
@@ -51,8 +35,8 @@ const Index = () => {
             .get("/get/ashignoms")
             .then((res) => {
                 setRowsSelected([]);
-                setAllbooks(res.data);
-                setBooks(res.data); // анх бүх өгөгдөл
+                setallNom(res.data);
+                setNom  (res.data); // анх бүх өгөгдөл
                 setIsFilterActive(false);
             })
             .catch((err) => {
@@ -64,20 +48,26 @@ const Index = () => {
     useEffect(() => {
         if (getRowsSelected[0] !== undefined) {
             setIsEditBtnClick(false);
-            setclickedRowData(getBooks[getRowsSelected[0]]);
+            setclickedRowData(getNom[getRowsSelected[0]]);
         }
-    }, [getRowsSelected, getBooks]);
+    }, [getRowsSelected, getNom]);
 
     //  DATE FILTER
     useEffect(() => {
         if (!isFilterActive) {
-            setBooks(allBooks);
+            setNom(allNom);
             return;
         }
 
-    }, [isFilterActive, allBooks]);
+    }, [isFilterActive,  allNom]);
     const btnEdit = () => {
+        // Ensure the edit modal gets the selected row immediately on first click
+        if (getRowsSelected[0] !== undefined) {
+            setclickedRowData(getNom[getRowsSelected[0]]);
+        }
         setIsEditBtnClick(true);
+        // Trigger edit modal open every click (even if already edited once)
+        setEditRequestId((prev) => prev + 1);
     };
 
     const btnDelete = () => {
@@ -91,7 +81,7 @@ const Index = () => {
             if (result.isConfirmed) {
                 axios
                     .post("/delete/ashignom", {
-                        id: getBooks[getRowsSelected[0]].id,
+                        id: getNom[getRowsSelected[0]].id,
                     })
                     .then((res) => {
                         Swal.fire(res.data.msg);
@@ -107,7 +97,7 @@ const Index = () => {
     const columns = [
     {
         name: "id",
-        label: "№",
+        label: " ",
         options: {
             filter: true,
             sort: true,
@@ -135,7 +125,7 @@ const Index = () => {
         },
     },
     {
-        name: "humrug_id",
+        name: "humrug_dugaar",
         label: "Хөмрөгийн дугаар",
         options: {
             filter: true,
@@ -148,16 +138,10 @@ const Index = () => {
                     },
                 };
             },
-            customBodyRenderLite: (dataIndex) => {
-                const rowData = getBooks[dataIndex];
-                if (!rowData || !rowData.humrug_id) return "-";
-                const humrug = getHumrug.find((el) => el.id == rowData.humrug_id);
-                return humrug?.humrug_dugaar || "-";
-            },
         },
     },
     {
-        name: "humrug_name",
+        name: "humrug_ner",
         label: "Хөмрөгийн нэр",
         options: {
             filter: true,
@@ -170,16 +154,10 @@ const Index = () => {
                     },
                 };
             },
-            customBodyRenderLite: (dataIndex) => {
-                const rowData = getBooks[dataIndex];
-                if (!rowData || !rowData.humrug_id) return "-";
-                const humrug = getHumrug.find((el) => el.id == rowData.humrug_id);
-                return humrug?.humrug_ner || "-";
-            },
         },
     },
     {
-        name: "dans_id",
+        name: "dans_dugaar",
         label: "Дансны дугаар",
         options: {
             filter: true,
@@ -192,16 +170,10 @@ const Index = () => {
                     },
                 };
             },
-            customBodyRenderLite: (dataIndex) => {
-                const rowData = getBooks[dataIndex];
-                if (!rowData || !rowData.dans_id) return "-";
-                const dans = getDans.find((el) => el.id == rowData.dans_id);
-                return dans?.dans_dugaar || "-";
-            },
         },
     },
     {
-        name: "dans_name",
+        name: "dans_ner",
         label: "Дансны нэр",
         options: {
             filter: true,
@@ -213,12 +185,6 @@ const Index = () => {
                         color: "white",
                     },
                 };
-            },
-            customBodyRenderLite: (dataIndex) => {
-                const rowData = getBooks[dataIndex];
-                if (!rowData || !rowData.dans_id) return "-";
-                const dans = getDans.find((el) => el.id == rowData.dans_id);
-                return dans?.dans_ner || "-";
             },
         },
     },
@@ -275,11 +241,13 @@ const Index = () => {
             <div className="row">
                 <div className="info-box">
                     <div className="col-md-12">
-                        <h1 className="text-center">Ашигласан номын жагсаалт</h1>
+                        <h1 className="text-center">Ашигласан номын жагсаалт </h1>
+
                         {/* TABLE */}
                         <MUIDatatable
-                            data={getBooks}
-                            setdata={setBooks}
+                            data={getNom}
+                            setdata={setNom}
+                            sortOrder={{ name: "id", direction: "desc" }}
                             columns={columns}
                             costumToolbar={
                                 <CustomToolbar
@@ -287,8 +255,8 @@ const Index = () => {
                                     modelType="modal"
                                     dataTargetID="#NomNew"
                                     spanIconClassName="fas fa-plus"
-                                    buttonName="НЭМЭХ"
-                                    excelDownloadData={getBooks}
+                                    buttonName="Нэмэх"
+                                    excelDownloadData={getNom}
                                     excelHeaders={excelHeaders}
                                     isHideInsert={true}
                                 />
@@ -309,6 +277,7 @@ const Index = () => {
                             refreshNom={refreshNom}
                             changeDataRow={clickedRowData}
                             isEditBtnClick={isEditBtnClick}
+                            editRequestId={editRequestId}
                         />
                     </div>
                 </div>
@@ -320,8 +289,9 @@ const Index = () => {
 export default Index;
 
 const excelHeaders = [
-    { label: "Хөмрөгийн дугаар", key: "humrug_id" },
-    { label: "Дансны дугаар", key: "dans_id" },
+    { label: "id", key: "id" },
+    { label: "Хөмрөгийн дугаар", key: "humrug_dugaar" },
+    { label: "Дансны дугаар", key: "dans_dugaar" },
     { label: "Номын дугаар", key: "nom_dugaar" },
     { label: "Номын нэр", key: "nom_ners" },
 ];

@@ -18,3 +18,4 @@ mix-manifest.json
 /.vscode
 /public/js/app.js
 /public/css/app.css
+/vendor

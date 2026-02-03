@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +14,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class StatisticController extends Controller
 {
+    private function userId()
+    {
+        // All statistic endpoints should be user-scoped (auth middleware required)
+        return Auth::id();
+    }
 
 
 
@@ -28,19 +34,39 @@ class StatisticController extends Controller
     }
     public function HutheregCount(Request $req)
     {
-        $HutheregCount = DB::table("db_huthereg")->count();
+        $HutheregCount = DB::table("db_huthereg")
+            ->where("userID", $this->userId())
+            ->count();
         return $HutheregCount;
     }
     // GANBAT NEMSEN START
-     public function JagsaaltCount(Request $req)
+    public function JagsaaltCount(Request $req)
     {
-        $JagsaaltCount = DB::table("jagsaaltzuildugaar")->count();
+        $JagsaaltCount = DB::table("jagsaaltzuildugaar")
+            ->where("userID", $this->userId())
+            ->count();
         return $JagsaaltCount;
     }
     public function SedevZuiCount(Request $req)
     {
-        $SedevZuiCount = DB::table("arhivsedevzaagch")->count();
+        $SedevZuiCount = DB::table("arhivsedevzaagch")
+            ->where("userID", $this->userId())
+            ->count();
         return $SedevZuiCount;
+    }
+    public function NomCount(Request $req)
+    {
+        $NomCount = DB::table("arhivashignom")
+            ->where("userID", $this->userId())
+            ->count();
+        return $NomCount;
+    }
+    public function TovchCount(Request $req)
+    {
+        $TovchCount = DB::table("arhivtovchlol")
+            ->where("userID", $this->userId())
+            ->count();
+        return $TovchCount;
     }
     // GANBAT NEMSEN END
 
@@ -65,6 +91,7 @@ class StatisticController extends Controller
                 "month" => $cursor->format("Y-m"), // frontend-д ашиглагдана
                 "label" => $cursor->format("Y оны m-р сар"), // chart label
                 "total" => DB::table("db_huthereg")
+                    ->where("user_id", $this->userId())
                     ->whereBetween("created_at", [$monthStart, $monthEnd])
                     ->count(),
             ];
@@ -97,6 +124,7 @@ class StatisticController extends Controller
                 $results[] = [
                     "label" => $weekStart->format("m/d") . " - " . $weekEnd->format("m/d"),
                     "total" => DB::table("db_huthereg")
+                        ->where("user_id", $this->userId())
                         ->whereBetween("created_at", [$weekStart, $weekEnd])
                         ->count(),
                 ];
@@ -113,6 +141,7 @@ class StatisticController extends Controller
                 $results[] = [
                     "label" => $cursor->format("Y оны m-р сар"),
                     "total" => DB::table("db_huthereg")
+                        ->where("user_id", $this->userId())
                         ->whereBetween("created_at", [$monthStart, $monthEnd])
                         ->count(),
                 ];
@@ -145,6 +174,7 @@ class StatisticController extends Controller
                 ->count(),
 
             "huthereg" => DB::table("db_huthereg")
+                ->where("user_id", $this->userId())
                 ->whereBetween("created_at", [$startDate, $endDate])
                 ->count(),
         ]);

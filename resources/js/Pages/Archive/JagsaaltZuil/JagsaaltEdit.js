@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "../../../AxiosUser";
 
@@ -12,9 +12,9 @@ const JagsaaltEdit = (props) => {
     const [hugatsaa, setHugatsaa] = useState("");
     const [tailbar, setTailbar] = useState("");
     const [tobchlol, setTobchlol] = useState("");
-
     const [getJagsaalt, setJagsaalt] = useState([]);
     const [getHugatsaaTurul, setGetHugatsaaTurul] = useState([]);
+    const lastHandledEditRequestIdRef = useRef(0);
 
     useEffect(() => {
         axios
@@ -36,9 +36,29 @@ const JagsaaltEdit = (props) => {
             });
     }, []);
 
+    const resolveJagsaaltTurulId = (rowValue) => {
+        if (rowValue === null || rowValue === undefined || rowValue === "") return "";
+        // If rowValue is already an id, keep it.
+        const byId = getJagsaalt.find((el) => String(el.id) === String(rowValue));
+        if (byId) return String(byId.id);
+        // If rowValue is stored as text (jName), map it back to id for the dropdown.
+        const byName = getJagsaalt.find((el) => String(el.jName) === String(rowValue));
+        if (byName) return String(byName.id);
+        return String(rowValue);
+    };
+
     useEffect(() => {
-        if (props.isEditBtnClick && props.changeDataRow) {
-            setJagsaaltTurul(props.changeDataRow.jagsaalt_turul ?? "");
+        // Only open modal on explicit Edit button click.
+        // Row selection updates `changeDataRow`, but must NOT open the modal.
+        if (!props.isEditBtnClick) return;
+
+        // Only react to *new* edit requests (prevents modal opening on row select)
+        if (!props.editRequestId) return;
+        if (props.editRequestId === lastHandledEditRequestIdRef.current) return;
+        lastHandledEditRequestIdRef.current = props.editRequestId;
+
+        if (props.changeDataRow?.id) {
+            setJagsaaltTurul(resolveJagsaaltTurulId(props.changeDataRow.jagsaalt_turul));
             setBarimtDd(props.changeDataRow.barimt_dd ?? "");
             setBarimtTurul(props.changeDataRow.barimt_turul ?? "");
             setBarimtDedturul(props.changeDataRow.barimt_dedturul ?? "");
@@ -47,13 +67,13 @@ const JagsaaltEdit = (props) => {
             setHugatsaa(props.changeDataRow.hugatsaa ?? "");
             setTailbar(props.changeDataRow.tailbar ?? "");
             setTobchlol(props.changeDataRow.tobchlol ?? "");
-            
+
             // Open modal when edit button is clicked
             if (window.$) {
                 window.$("#jagsaaltedit").modal("show");
             }
         }
-    }, [props.isEditBtnClick, props.changeDataRow]);
+    }, [props.isEditBtnClick, props.editRequestId, props.changeDataRow, getJagsaalt]);
 
     const saveComand = () => {
         if (props.setRowsSelected) {
@@ -67,7 +87,10 @@ const JagsaaltEdit = (props) => {
         axios
             .post("/edit/jagsaalt", {
                 id: props.changeDataRow.id,
-                jagsaalt_turul: jagsaalt_turul,
+                // Save the text (jName) in DB, keep dropdown using id.
+                jagsaalt_turul:
+                    getJagsaalt.find((el) => String(el.id) === String(jagsaalt_turul))
+                        ?.jName ?? jagsaalt_turul,
                 barimt_dd: barimt_dd,
                 barimt_turul: barimt_turul,
                 barimt_dedturul: barimt_dedturul,
@@ -346,7 +369,7 @@ const JagsaaltEdit = (props) => {
                                             className="form-control"
                                             onChange={changeHugatsaa}
                                             value={hugatsaa}
-                                            readOnly
+                                            // readOnly
                                         />
                                     </div>
                                 </div>
@@ -361,7 +384,7 @@ const JagsaaltEdit = (props) => {
                                         <input
                                             className="form-control"
                                             value={tobchlol}
-                                            readOnly
+                                            // readOnly
                                         />
                                     </div>
                                 </div>

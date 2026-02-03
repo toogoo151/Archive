@@ -1,277 +1,254 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
 import axios from "../../../AxiosUser";
 
-const NomEdit = (props) => {
-    const [getHumrug, setHumrug] = useState([]);
-    const [getDans, setDans] = useState([]);
+const NomEdit = ({
+    refreshNom,
+    setRowsSelected,
+    changeDataRow,
+    isEditBtnClick,
+    editRequestId
+}) => {
 
-    useEffect(() => {
-        axios
-            .get("/get/Humrug")
-            .then((res) => {
-                setHumrug(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+    const [humrugList, setHumrugList] = useState([]);
+    const [dansList, setDansList] = useState([]);
+    const [isDansInitialized, setIsDansInitialized] = useState(false);
+    const openModalTimeoutRef = useRef(null);
+    const lastHandledEditRequestIdRef = useRef(0);
 
-        axios
-            .get("/get/Dans")
-            .then((res) => {
-                setDans(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }, []);
 
-    const formSchema = Yup.object().shape({
-        humrug_id: Yup.string().required("Хөмрөг дугаар оруулна уу"),
+    // ================= FORM =================
+    const schema = Yup.object().shape({
+        humrug_id: Yup.string().required("Хөмрөг сонгоно уу"),
+
     });
 
     const {
         register,
         handleSubmit,
-        formState: { errors },
-        reset,
         watch,
         setValue,
+        reset,
+        formState: { errors },
     } = useForm({
-        mode: "onTouched",
-        resolver: yupResolver(formSchema),
+        resolver: yupResolver(schema),
+        defaultValues: {
+            humrug_id: "",
+            dans_id: "",
+            nom_dugaar: "",
+            nom_ners: "",
+        },
     });
 
-    // Populate form when edit button is clicked
+    // ================= FETCH =================
     useEffect(() => {
-        if (props.isEditBtnClick && props.changeDataRow) {
-            setValue("humrug_id", props.changeDataRow.humrug_id || "");
-            setValue("dans_id", props.changeDataRow.dans_id || "");
-            setValue("nom_dugaar", props.changeDataRow.nom_dugaar || "");
-            setValue("nom_ners", props.changeDataRow.nom_ners || "");
+        axios.get("/get/Humrug").then(res => setHumrugList(res.data));
+        axios.get("/get/Dans").then(res => setDansList(res.data));
+    }, []);
 
-            // Open modal when edit button is clicked
+    // ================= WATCH =================
+    const selectedHumrugId = watch("humrug_id");
+    const selectedDansId = watch("dans_id");
+
+    // ================= FILTER DANS =================
+    const filteredDans = dansList.filter(
+        d => String(d.humrugID) === String(selectedHumrugId)
+    );
+
+    // ================= LOAD EDIT DATA =================
+    useEffect(() => {
+        if (!editRequestId) return;
+        if (editRequestId === lastHandledEditRequestIdRef.current) return;
+        lastHandledEditRequestIdRef.current = editRequestId;
+        if (!changeDataRow?.id) return;
+
+        setIsDansInitialized(false);
+
+        // Set values first...
+        reset({
+            humrug_id: String(changeDataRow.humrug_id ?? ""),
+            dans_id: String(changeDataRow.dans_id ?? ""),
+            nom_dugaar: changeDataRow.nom_dugaar ?? "",
+            nom_ners: changeDataRow.nom_ners ?? "",
+        });
+
+        // ...then open modal on next tick to avoid "double click" / empty first paint.
+        if (openModalTimeoutRef.current) {
+            clearTimeout(openModalTimeoutRef.current);
+        }
+        openModalTimeoutRef.current = setTimeout(() => {
             if (window.$) {
                 window.$("#NomEdit").modal("show");
             }
-        }
-    }, [props.isEditBtnClick, props.changeDataRow, setValue]);
+        }, 0);
+    }, [editRequestId, changeDataRow, reset]);
 
+    useEffect(() => {
+        return () => {
+            if (openModalTimeoutRef.current) {
+                clearTimeout(openModalTimeoutRef.current);
+            }
+        };
+    }, []);
+
+
+    // ================= RESET DANS ON HUMRUG CHANGE =================
+useEffect(() => {
+    if (
+        !isDansInitialized &&
+        changeDataRow &&
+        selectedHumrugId &&
+        filteredDans.length > 0
+    ) {
+        setValue("dans_id", changeDataRow.dans_id);
+        setIsDansInitialized(true);
+    }
+}, [selectedHumrugId, filteredDans]);
+
+
+    // ================= SUBMIT =================
     const onSubmit = (data) => {
-        axios
-            .post("/edit/ashignom", {
-                id: props.changeDataRow.id,
-                humrug_id: data.humrug_id,
-                dans_id: data.dans_id,
-                nom_dugaar: data.nom_dugaar,
-                nom_ners: data.nom_ners,
-            })
-            .then((res) => {
-                Swal.fire(res.data.msg);
-                reset(
-                    {
-                        humrug_id: "",
-                        dans_id: "",
-                        nom_dugaar: "",
-                        nom_ners: "",
-                    },
-                    {
-                        keepIsSubmitted: false,
-                        keepTouched: false,
-                        keepIsValid: false,
-                        keepSubmitCount: false,
-                    }
-                );
-                if (window.$) {
-                    window.$("#NomEdit").modal("hide");
-                }
-                if (props.setRowsSelected) {
-                    props.setRowsSelected([]);
-                }
-                if (props.refreshNom) {
-                    props.refreshNom();
-                }
-            })
-            .catch((err) => {
-                Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
-            });
+        axios.post("/edit/ashignom", {
+            id: changeDataRow.id,
+            ...data
+        })
+
+        .then(res => {
+            Swal.fire(res.data.msg);
+            reset();
+
+            window.$("#NomEdit").modal("hide");
+            setRowsSelected([]);
+            refreshNom();
+        })
+        .catch(err => {
+            Swal.fire(err.response?.data?.msg || "Алдаа гарлаа");
+        });
     };
 
     return (
-        <>
-            <div className="modal" id="NomEdit">
-                <div className="modal-dialog modal-lg">
-                    <div className="modal-content">
-                        {/* Modal Header */}
-                        <div className="modal-header">
-                            <h4 className="modal-title">ЗАСАХ</h4>
+        <div className="modal" id="NomEdit">
+            <div className="modal-dialog modal-lg">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h4 className="modal-title">Ном засах</h4>
+                        <button className="close" data-dismiss="modal">×</button>
+                    </div>
 
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="modal-body">
+                            {/* ================= HUMRUG ================= */}
+                            <div className="row">
+                                <div className="col-md-6">
+                                    <label>Хөмрөгийн дугаар</label>
+                                    <select
+                                        className="form-control"
+                                        {...register("humrug_id")}
+                                    >
+                                        <option value="">Сонгоно уу</option>
+                                        {humrugList.map(h => (
+                                            <option key={h.id} value={h.id}>
+                                                {h.humrug_dugaar}-{h.humrug_ner}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.humrug_id && (
+                                        <small className="text-danger">
+                                            {errors.humrug_id.message}
+                                        </small>
+                                    )}
+                                </div>
+                                <div className="col-md-6">
+                                    <label>Хөмрөгийн нэр</label>
+                                    <input
+                                        className="form-control"
+                                        disabled
+                                        value={
+                                            humrugList.find(
+                                                h => h.id == selectedHumrugId
+                                            )?.humrug_ner || ""
+                                        }
+                                    />
+                                </div>
+                            </div>
+
+                            {/* ================= DANS ================= */}
+                            <div className="row mt-2">
+                                <div className="col-md-6">
+                                    <label>Дансны дугаар</label>
+                                    <select
+                                        className="form-control"
+                                        {...register("dans_id")}
+                                        disabled={!selectedHumrugId}
+                                    >
+                                        <option value="">
+                                            {selectedHumrugId
+                                                ? "Сонгоно уу"
+                                                : "Эхлээд хөмрөг сонгоно уу"}
+                                        </option>
+
+                                        {filteredDans.map(d => (
+                                            <option key={d.id} value={d.id}>
+                                                {d.dans_dugaar}-{d.dans_ner}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="col-md-6">
+                                    <label>Дансны нэр</label>
+                                    <input
+                                        className="form-control"
+                                        disabled
+                                        value={
+                                            dansList.find(
+                                                d => d.id == selectedDansId
+                                            )?.dans_ner || ""
+                                        }
+                                    />
+                                </div>
+                            </div>
+
+                            {/* ================= Nom ================ */}
+                            <div className="row mt-3">
+                                <div className="col-md-6">
+                                    <label>Номын дугаар</label>
+                                    <input
+                                        className="form-control"
+                                        {...register("nom_dugaar")}
+                                    />
+                                </div>
+
+                                <div className="col-md-6">
+                                        <label>Номын нэр</label>
+                                    <input
+                                        className="form-control"
+                                        {...register("nom_ners")}
+                                    />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div className="modal-footer">
+                            <button className="btn btn-success" type="submit">
+                                Засах
+                            </button>
                             <button
                                 type="button"
-                                className="close"
+                                className="btn btn-danger"
                                 data-dismiss="modal"
                             >
-                                ×
+                                Хаах
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="modal-body">
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="input-group mb-2">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text">
-                                                    Хөмрөгийн дугаар:
-                                                </span>
-                                            </div>
-                                            <select
-                                                className="form-control"
-                                                {...register("humrug_id")}
-                                            >
-                                                <option value="0">
-                                                    Сонгоно уу
-                                                </option>
-                                                {getHumrug.map((el) => (
-                                                    <option
-                                                        key={el.id}
-                                                        value={el.id}
-                                                    >
-                                                        {el.humrug_dugaar}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div className="col-md-6">
-                                        <div className="input-group mb-2">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text">
-                                                    Хөмрөгийн нэр:
-                                                </span>
-                                            </div>
-                                            <input
-                                                {...register("humrug_name")}
-                                                className="form-control"
-                                                disabled
-                                                value={
-                                                    getHumrug.find(
-                                                        (el) =>
-                                                            el.id ==
-                                                            watch("humrug_id")
-                                                    )?.humrug_ner || ""
-                                                }
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="input-group mb-2">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text">
-                                                    Дансны дугаар:
-                                                </span>
-                                            </div>
-                                            <select
-                                                className="form-control"
-                                                {...register("dans_id")}
-                                            >
-                                                <option value="0">
-                                                    Сонгоно уу
-                                                </option>
-                                                {getDans.map((el) => (
-                                                    <option
-                                                        key={el.id}
-                                                        value={el.id}
-                                                    >
-                                                        {el.dans_dugaar}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div className="col-md-6">
-                                        <div className="input-group mb-2">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text">
-                                                    Дансны нэр:
-                                                </span>
-                                            </div>
-                                            <input
-                                                {...register("dans_name")}
-                                                className="form-control"
-                                                disabled={true}
-                                                value={
-                                                    getDans.find(
-                                                        (el) =>
-                                                            el.id ==
-                                                            watch("dans_id")
-                                                    )?.dans_ner || ""
-                                                }
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="row clearfix">
-                                    <div className="col-md-6">
-                                        <div className="input-group mb-2">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text">
-                                                    Номын дугаар:
-                                                </span>
-                                            </div>
-                                            <input
-                                                {...register("nom_dugaar")}
-                                                className="form-control"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="col-md-6">
-                                        <div className="input-group mb-2">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text">
-                                                    Номын нэр:
-                                                </span>
-                                            </div>
-                                            <input
-                                                {...register("nom_ners")}
-                                                className="form-control"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Modal footer */}
-                            <div className="modal-footer">
-                                <button
-                                    type="submit"
-                                    className="btn btn-success"
-                                >
-                                    Засах
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="btn btn-danger"
-                                    data-dismiss="modal"
-                                >
-                                    Хаах
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

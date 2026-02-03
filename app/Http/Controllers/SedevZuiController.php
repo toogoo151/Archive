@@ -17,15 +17,11 @@ class SedevZuiController extends Controller
     {
         try {
             $insertSedevZui = new SedevZuiModel();
+            $insertSedevZui->userID = Auth::id();
             $insertSedevZui->humrug_id = $req->humrug_id;
             $insertSedevZui->dans_id = $req->dans_id;
             $insertSedevZui->zaagch_tobchlol = $req->zaagch_tobchlol;
             $insertSedevZui->zaagch_tailal = $req->zaagch_tailal;
-            // $insertSedevZui->barimt_ner = $req->barimt_ner;
-            // $insertSedevZui->hugatsaa_turul = $req->hugatsaa_turul;
-            // $insertSedevZui->hugatsaa = $req->hugatsaa;
-            // $insertSedevZui->tailbar = $req->tailbar;
-            // $insertSedevZui->tobchlol = $req->tobchlol;
             $insertSedevZui->save();
             return response(
                 array(
@@ -39,6 +35,7 @@ class SedevZuiController extends Controller
                 array(
                     "status" => "error",
                     "msg" => "Алдаа гарлаа."
+                    // "msg" => $th->getMessage()
                 ),
                 500
             );
@@ -47,7 +44,18 @@ class SedevZuiController extends Controller
     public function DeleteSedevZui(Request $req)
     {
         try {
-            $delete = SedevZuiModel::find($req->id);
+            $delete = SedevZuiModel::where("id", $req->id)
+                ->where("userID", Auth::id())
+                ->first();
+            if (!$delete) {
+                return response(
+                    array(
+                        "status" => "error",
+                        "msg" => "Хандах эрхгүй."
+                    ),
+                    403
+                );
+            }
             $delete->delete();
             return response(
                 array(
@@ -70,7 +78,18 @@ class SedevZuiController extends Controller
     public function EditSedevZui(Request $req)
     {
         try {
-            $edit = SedevZuiModel::find($req->id);
+            $edit = SedevZuiModel::where("id", $req->id)
+                ->where("userID", Auth::id())
+                ->first();
+            if (!$edit) {
+                return response(
+                    array(
+                        "status" => "error",
+                        "msg" => "Хандах эрхгүй."
+                    ),
+                    403
+                );
+            }
             $edit->humrug_id = $req->humrug_id;
             $edit->dans_id = $req->dans_id;
             $edit->zaagch_tobchlol = $req->zaagch_tobchlol;

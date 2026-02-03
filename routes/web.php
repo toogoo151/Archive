@@ -223,7 +223,8 @@ Route::post("/delete/humrug", [HumrugController::class, "DeleteHuthereg"]);
 Route::post("/new/humrug", [HumrugController::class, "NewHumrug"])
     ->middleware('auth');
 Route::post("/edit/humrug", [HumrugController::class, "EditHumrug"])
-    ->middleware('auth');;
+    ->middleware('auth');
+;
 Route::get("/get/humrugType", [HumrugController::class, "HumrugType"]);
 //Хөмрөг end
 
@@ -430,6 +431,11 @@ Route::post("/get/Usercount", [StatisticController::class, "UserCount"]);
 Route::post("/get/HutheregCount", [StatisticController::class, "HutheregCount"]);
 // Ganbat nemeh
 Route::post("/get/JagsaaltCount", [StatisticController::class, "JagsaaltCount"]);
+Route::post("/get/SedevZuiCount", [StatisticController::class, "SedevZuiCount"])->middleware('auth');
+Route::post("/get/NomCount", [StatisticController::class, "NomCount"])->middleware('auth');
+Route::post("/get/TovchCount", [StatisticController::class, "TovchCount"])->middleware('auth');
+// GANBAT NEMSEN START
+Route::post("/get/JagsaaltCount", [StatisticController::class, "JagsaaltCount"])->middleware('auth');
 //STATISTIC END
 
 

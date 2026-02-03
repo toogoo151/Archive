@@ -17,15 +17,11 @@ class ArhivTovchlolController extends Controller
     {
         try {
             $insertTovchlol = new ArhivTovchlolModel();
+            $insertTovchlol->userID = Auth::id();
             $insertTovchlol->humrug_id = $req->humrug_id;
             $insertTovchlol->dans_id = $req->dans_id;
             $insertTovchlol->tobchlol = $req->tobchlol;
             $insertTovchlol->tailal = $req->tailal;
-            // $insertTovchlol->barimt_ner = $req->barimt_ner;
-            // $insertTovchlol->hugatsaa_turul = $req->hugatsaa_turul;
-            // $insertTovchlol->hugatsaa = $req->hugatsaa;
-            // $insertTovchlol->tailbar = $req->tailbar;
-            // $insertTovchlol->tobchlol = $req->tobchlol;
             $insertTovchlol->save();
             return response(
                 array(
@@ -47,7 +43,18 @@ class ArhivTovchlolController extends Controller
     public function DeleteTovchlol(Request $req)
     {
         try {
-            $delete = ArhivTovchlolModel::find($req->id);
+            $delete = ArhivTovchlolModel::where("id", $req->id)
+                ->where("userID", Auth::id())
+                ->first();
+            if (!$delete) {
+                return response(
+                    array(
+                        "status" => "error",
+                        "msg" => "Хандах эрхгүй."
+                    ),
+                    403
+                );
+            }
             $delete->delete();
             return response(
                 array(
@@ -70,7 +77,19 @@ class ArhivTovchlolController extends Controller
     public function EditTovchlol(Request $req)
     {
         try {
-            $edit = ArhivTovchlolModel::find($req->id);
+
+            $edit = ArhivTovchlolModel::where("id", $req->id)
+                ->where("userID", Auth::id())
+                ->first();
+            if (!$edit) {
+                return response(
+                    array(
+                        "status" => "error",
+                        "msg" => "Хандах эрхгүй."
+                    ),
+                    403
+                );
+            }
             $edit->humrug_id = $req->humrug_id;
             $edit->dans_id = $req->dans_id;
             $edit->tobchlol = $req->tobchlol;
