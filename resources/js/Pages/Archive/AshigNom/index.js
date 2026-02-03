@@ -241,7 +241,7 @@ const Index = () => {
             <div className="row">
                 <div className="info-box">
                     <div className="col-md-12">
-                        <h1 className="text-center">Ашигласан номын жагсаалт </h1>
+                        <h1 className="text-center">Ашигласан номын жагсаалт 11111 </h1>
 
                         {/* TABLE */}
                         <MUIDatatable
