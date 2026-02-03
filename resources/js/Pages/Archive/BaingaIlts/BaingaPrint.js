@@ -1,5 +1,4 @@
 import { Fragment, useState } from "react";
-import Swal from "sweetalert2";
 import "./Print.css";
 
 const BaingaPrint = ({ show, onClose, selectedRowsData }) => {
@@ -9,77 +8,55 @@ const BaingaPrint = ({ show, onClose, selectedRowsData }) => {
 
     // Хэвлэх функц
     const handlePrint = () => {
-        const content = document.getElementById("printable-content");
-        const printWindow = window.open("", "", "height=600,width=800");
+        const original = document.getElementById("printable-content");
+        const clone = original.cloneNode(true);
 
-        // Хэвлэх цонхонд тохиргоо хийх
+        // input, textarea → div
+        clone.querySelectorAll("input, textarea").forEach((el) => {
+            const div = document.createElement("div");
+            div.innerText = el.value;
+            div.style.whiteSpace = "pre-wrap";
+            div.style.fontFamily = "Times New Roman";
+            div.style.fontSize = "12pt";
+            div.style.marginBottom = "6px";
+            el.replaceWith(div);
+        });
+
+        const printWindow = window.open("", "", "width=900,height=650");
+
         printWindow.document.write(`
         <html>
-            <head>
-                <title>Баримт</title>
-                <style>
-                    body {
-                        margin-left: 3cm;   /* Зүүн талд 3 см */
-                        margin-top: 2cm;    /* Дээд талд 2 см */
-                        margin-right: 1.5cm; /* Баруун талд 1.5 см */
-                        margin-bottom: 2cm;  /* Доод талд 2 см */
-                    }
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                    }
-                    th, td {
-                        padding: 5px;
-                        border: 1px solid black;
-                        text-align: center;
-                    }
-                    .content-header {
-                        text-align: center;
-                    }
-                    .content-header h2 {
-                        margin: 0;
-                    }
-                    .content-footer {
-                        margin-top: 20px;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="content-header">
-                    <h2>ЗЭВСЭГТ ХҮЧНИЙ ЖАНЖИН ШТАБ</h2>
-                    <h3>НУУЦ БАРИМТ БИЧИГ УСТГАХ АКТ № …</h3>
-                    <p>БАТЛАВ: 2019 оны 01 дүгээр сарын ........–ны өдөр</p>
-                </div>
-
-                ${content.innerHTML}
-
-                <div class="content-footer">
-                    <textarea
-                        class="word-text"
-                        defaultValue="КОМИССЫН НАРИЙН БИЧГИЙН ДАРГА: ................."
-                    ></textarea>
-                    <textarea
-                        class="word-text"
-                        defaultValue="ГИШҮҮД: ...................................."
-                    ></textarea>
-                    <textarea
-                        class="word-text"
-                        defaultValue="ГИШҮҮД: ...................................."
-                    ></textarea>
-                </div>
-            </body>
+        <head>
+            <title>Хэвлэх</title>
+            <style>
+                body {
+                    margin-left: 3cm;
+                    margin-top: 2cm;
+                    margin-right: 1.5cm;
+                    margin-bottom: 2cm;
+                    font-family: "Times New Roman";
+                    font-size: 12pt;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border: 1px solid #000;
+                    padding: 5px;
+                    text-align: center;
+                }
+            </style>
+        </head>
+        <body>
+            ${clone.innerHTML}
+        </body>
         </html>
     `);
 
         printWindow.document.close();
+        printWindow.focus();
         printWindow.print();
-
-        Swal.fire({
-            icon: "success",
-            title: "Амжилттай хэвлэгдлээ",
-        });
-
-        onClose();
     };
 
     // Харьяа оноор бүлэглэх
@@ -171,12 +148,6 @@ const BaingaPrint = ({ show, onClose, selectedRowsData }) => {
                                         defaultValue="БАТЛАВ"
                                         onInput={autoResize}
                                     />
-                                    <textarea
-                                        className="word-text auto-textarea"
-                                        style={{ width: "100%" }}
-                                        defaultValue="Зэвсэгт хүчний Жанжин штабын дэргэдэх Баримт бичиг нягтлан шалгах комисс .......... нарын бүрэлдэхүүнтэй комисс нь дараах нууц баримт бичгийг устгахаар тогтов. Үүнд:"
-                                        onInput={autoResize}
-                                    />
                                 </div>
 
                                 {/* ГОЛ */}
@@ -200,6 +171,12 @@ const BaingaPrint = ({ show, onClose, selectedRowsData }) => {
                                     />
                                 </div>
                             </div>
+                            <textarea
+                                className="word-text auto-textarea"
+                                style={{ width: "100%" }}
+                                defaultValue="Зэвсэгт хүчний Жанжин штабын дэргэдэх Баримт бичиг нягтлан шалгах комисс .......... нарын бүрэлдэхүүнтэй комисс нь дараах нууц баримт бичгийг устгахаар тогтов. Үүнд:"
+                                onInput={autoResize}
+                            />
 
                             {/* TABLE */}
                             <table className="table table-bordered">
