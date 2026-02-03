@@ -222,11 +222,8 @@ const Index = () => {
                                 >
                                     <option value={0}>Сонгоно уу</option>
                                     {getHumrug.map((el) => (
-                                        <option
-                                            key={el.humrug_dugaar}
-                                            value={el.humrug_dugaar}
-                                        >
-                                            {el.humrug_dugaar} – {el.humrug_ner}
+                                        <option key={el.id} value={el.id}>
+                                            {el.id} – {el.humrug_ner}
                                         </option>
                                     ))}
                                 </select>

@@ -44,13 +44,13 @@ class BaingaNuuts extends Model
                     // humrug нэрийг 1 ширхэгээр авах
                     DB::raw("(SELECT humrug_ner 
               FROM db_humrug 
-              WHERE db_humrug.humrug_dugaar = db_arhivhnnuuts.humrug_id 
+              WHERE db_humrug.ud = db_arhivhnnuuts.humrug_id 
               LIMIT 1) as humrug_ner"),
 
                     // dans нэрийг 1 ширхэгээр авах
                     DB::raw("(SELECT dans_ner 
               FROM db_arhivdans 
-              WHERE db_arhivdans.dans_dugaar = db_arhivhnnuuts.dans_id 
+              WHERE db_arhivdans.id = db_arhivhnnuuts.dans_id 
               LIMIT 1) as dans_ner"),
 
                     // db_arhivdans доторх dans_baidal утгыг нэмэх
@@ -59,7 +59,7 @@ class BaingaNuuts extends Model
                     // db_arhivdans доторх hadgalah_hugatsaa утгыг нэмэх
                     "db_arhivdans.hadgalah_hugatsaa"
                 )
-                ->leftJoin("db_arhivdans", "db_arhivdans.dans_dugaar", "=", "db_arhivhnnuuts.dans_id")
+                ->leftJoin("db_arhivdans", "db_arhivdans.id", "=", "db_arhivhnnuuts.dans_id")
                 ->whereNotNull("db_arhivhnnuuts.ustgasan_temdeglel")
                 ->where("db_arhivhnnuuts.ustgasan_temdeglel", "!=", "")
 
@@ -133,13 +133,13 @@ class BaingaNuuts extends Model
                     // humrug нэрийг 1 ширхэгээр авах
                     DB::raw("(SELECT humrug_ner 
               FROM db_humrug 
-              WHERE db_humrug.humrug_dugaar = db_arhivhnnuuts.humrug_id 
+              WHERE db_humrug.id = db_arhivhnnuuts.humrug_id 
               LIMIT 1) as humrug_ner"),
 
                     // dans нэрийг 1 ширхэгээр авах
                     DB::raw("(SELECT dans_ner 
               FROM db_arhivdans 
-              WHERE db_arhivdans.dans_dugaar = db_arhivhnnuuts.dans_id 
+              WHERE db_arhivdans.id = db_arhivhnnuuts.dans_id 
               LIMIT 1) as dans_ner"),
 
                     // db_arhivdans доторх dans_baidal утгыг нэмэх
@@ -148,7 +148,7 @@ class BaingaNuuts extends Model
                     // db_arhivdans доторх hadgalah_hugatsaa утгыг нэмэх
                     "db_arhivdans.hadgalah_hugatsaa"
                 )
-                ->leftJoin("db_arhivdans", "db_arhivdans.dans_dugaar", "=", "db_arhivhnnuuts.dans_id")
+                ->leftJoin("db_arhivdans", "db_arhivdans.id", "=", "db_arhivhnnuuts.dans_id")
                 ->where(function ($query) {
                     $query->whereNull("ustgasan_temdeglel")
                         ->orWhere("ustgasan_temdeglel", "");
@@ -171,14 +171,13 @@ class BaingaNuuts extends Model
     {
         try {
             $dans = DB::table("db_arhivdans")
-                ->join("db_humrug", "db_humrug.humrug_dugaar", "=", "db_arhivdans.humrugID")
+                ->join("db_humrug", "db_humrug.id", "=", "db_arhivdans.humrugID")
                 ->where("db_arhivdans.hadgalah_hugatsaa", "Байнга хадгалагдах")
                 ->where("db_arhivdans.dans_baidal", "Нууц")
                 ->where("db_arhivdans.humrugID", $humrugID)
                 ->select(
                     "db_arhivdans.id",
                     "db_arhivdans.humrugID",
-                    "db_arhivdans.dans_dugaar",
                     "db_arhivdans.dans_ner",
                     "db_arhivdans.humrug_niit",
                     "db_arhivdans.dans_niit",
@@ -193,7 +192,6 @@ class BaingaNuuts extends Model
                 ->groupBy(
                     "db_arhivdans.id",
                     "db_arhivdans.humrugID",
-                    "db_arhivdans.dans_dugaar",
                     "db_arhivdans.dans_ner",
                     "db_arhivdans.humrug_niit",
                     "db_arhivdans.dans_niit",

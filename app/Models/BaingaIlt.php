@@ -17,8 +17,8 @@ class BaingaIlt extends Model
     {
         try {
             $baingaIlt = DB::table("db_arhivbaingahad")
-                ->join("db_humrug", "db_humrug.humrug_dugaar", "=", "db_arhivbaingahad.humrug_id")
-                ->leftJoin("db_arhivdans", "db_arhivdans.dans_dugaar", "=", "db_arhivbaingahad.dans_id")
+                ->join("db_humrug", "db_humrug.id", "=", "db_arhivbaingahad.humrug_id")
+                ->leftJoin("db_arhivdans", "db_arhivdans.id", "=", "db_arhivbaingahad.dans_id")
                 ->select(
                     "db_arhivbaingahad.*",
                     "db_humrug.humrug_ner",
@@ -52,13 +52,13 @@ class BaingaIlt extends Model
             $ArchivebaingaIlt = DB::table("db_arhivbaingahad")
                 ->join(
                     "db_humrug",
-                    "db_humrug.humrug_dugaar",
+                    "db_humrug.id",
                     "=",
                     "db_arhivbaingahad.humrug_id"
                 )
                 ->leftJoin(
                     "db_arhivdans",
-                    "db_arhivdans.dans_dugaar",
+                    "db_arhivdans.id",
                     "=",
                     "db_arhivbaingahad.dans_id"
                 )
@@ -87,14 +87,13 @@ class BaingaIlt extends Model
     {
         try {
             $dans = DB::table("db_arhivdans")
-                ->join("db_humrug", "db_humrug.humrug_dugaar", "=", "db_arhivdans.humrugID")
+                ->join("db_humrug", "db_humrug.id", "=", "db_arhivdans.humrugID")
                 ->where("db_arhivdans.hadgalah_hugatsaa", "Байнга хадгалагдах")
                 ->where("db_arhivdans.dans_baidal", "Илт")
                 ->where("db_arhivdans.humrugID", $humrugID)
                 ->select(
                     "db_arhivdans.id",
                     "db_arhivdans.humrugID",
-                    "db_arhivdans.dans_dugaar",
                     "db_arhivdans.dans_ner",
                     "db_arhivdans.humrug_niit",
                     "db_arhivdans.dans_niit",
@@ -109,7 +108,6 @@ class BaingaIlt extends Model
                 ->groupBy(
                     "db_arhivdans.id",
                     "db_arhivdans.humrugID",
-                    "db_arhivdans.dans_dugaar",
                     "db_arhivdans.dans_ner",
                     "db_arhivdans.humrug_niit",
                     "db_arhivdans.dans_niit",
